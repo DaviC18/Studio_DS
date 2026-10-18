@@ -1,0 +1,294 @@
+# Template de Spec — Site Cinematográfico
+
+## Como usar este template
+
+Preencha uma cópia por cliente, na ordem das seções: as seções 1 a 6 são decisões de direção (suas), as 7 a 12 são o contrato que os agentes executam. Nenhum agente começa a codar antes das seções 1 a 6 estarem fechadas.
+
+- **Quem preenche:** você, com o cliente nas seções 1 e 2; você sozinho nas seções 3 a 6.
+- **Como os agentes leem:** este arquivo fica na raiz do projeto como `SPEC.md`. Cada agente recebe a spec inteira e a seção específica da tarefa dele.
+- **Regra de ouro:** se algo não está na spec, o agente não inventa. Ele registra como pergunta aberta.
+- **Campos entre colchetes** `[assim]` são para preencher. Os textos marcados como _Exemplo_ são só referência e devem ser apagados.
+
+## 1. Visão e conceito criativo
+
+O conceito é uma frase que decide todas as outras escolhas. Se uma animação ou seção não serve ao conceito, ela sai.
+
+| Campo                       | Preencher                                                      |
+| --------------------------- | -------------------------------------------------------------- |
+| Cliente                     | [nome, segmento, cidade]                                       |
+| Conceito em 1 frase         | [a ideia central do site]                                      |
+| 3 palavras de personalidade | [ex.: preciso, ousado, caloroso]                               |
+| 3 palavras que o site NÃO é | [ex.: corporativo, fofo, genérico]                             |
+| Metáfora de movimento       | [como o site "se move": rápido, flutuante, mecânico, orgânico] |
+| Referências (até 3)         | [link + o que exatamente pegar de cada uma]                    |
+| Anti-referências            | [link + o que evitar]                                          |
+
+_Exemplo de conceito:_ "Uma clínica de fisioterapia esportiva cujo site se move como um corpo em aquecimento: começa lento e ganha ritmo no scroll."
+
+_Exemplo de referência bem escrita:_ "Site X: pegar só a hierarquia tipográfica do hero e o uso de um único acento de cor. Não pegar layout nem animações."
+
+## 2. Público, objetivo e conversão
+
+Um site cinematográfico que não converte é um portfólio caro. Defina uma ação principal e meça só ela.
+
+| Campo                          | Preencher                                                               |
+| ------------------------------ | ----------------------------------------------------------------------- |
+| Público principal              | [quem, idade, o que busca, de onde chega: Instagram, Google, indicação] |
+| Dispositivo dominante          | [mobile % / desktop %; se não souber, assuma mobile primeiro]           |
+| Ação principal (1 só)          | [ex.: agendar pelo WhatsApp, pedir orçamento, comprar]                  |
+| Ações secundárias              | [ex.: seguir no Instagram, newsletter]                                  |
+| Onde o CTA aparece             | [hero, meio, footer; mínimo 3 pontos]                                   |
+| Métrica de sucesso             | [ex.: cliques no CTA / visitas]                                         |
+| Conteúdo que o cliente entrega | [textos, fotos, vídeos, logo, depoimentos + prazo]                      |
+| Idiomas                        | [pt-BR, en]                                                             |
+
+- [ ] Cliente aprovou o conceito e a ação principal por escrito
+
+## 3. Arquitetura narrativa da página
+
+Cada seção tem uma ideia e uma interação forte, no máximo. A ordem abaixo é o padrão; reordene ou corte por cliente, mas mantenha um ritmo de intenso, calmo, intenso.
+
+| #   | Papel narrativo      | Pergunta que responde      | Interação de destaque                         | Intensidade |
+| --- | -------------------- | -------------------------- | --------------------------------------------- | ----------- |
+| 1   | Hero                 | Quem é e por que importa?  | [entrada do objeto herói, tipografia gigante] | Alta        |
+| 2   | Manifesto            | No que acredita?           | [texto revelado no scroll]                    | Baixa       |
+| 3   | Prova / história     | Por que confiar?           | [galeria horizontal, números animados]        | Média       |
+| 4   | Portais              | Para onde ir agora?        | [hover que expande o portal]                  | Média       |
+| 5   | Momento colecionável | O que é único aqui?        | [grid com hover, 3D, comparação]              | Alta        |
+| 6   | Conversão            | O que eu faço agora?       | [CTA com micro-interação]                     | Média       |
+| 7   | Prova social         | Quem mais confia?          | [logos, depoimentos em loop]                  | Baixa       |
+| 8   | Footer de impacto    | Qual é a última impressão? | [frase grande + objeto herói de novo]         | Alta        |
+
+Páginas internas: [listar cada página, o objetivo dela e quais seções acima ela reutiliza]. Em single page, os "portais" viram âncoras para seções da mesma página.
+
+Páginas de detalhe que contam ponto: 404, loading e estado vazio também recebem motion próprio.
+
+## 4. Design tokens
+
+Os tokens são a única fonte de verdade visual. Nenhum agente usa cor, tamanho ou espaçamento fora desta tabela.
+
+**Cor** (regra do acento único: o acento aparece em no máximo 3 usos por tela)
+
+| Token               | Valor  | Uso permitido                   |
+| ------------------- | ------ | ------------------------------- |
+| `--color-bg`        | [#hex] | fundo principal                 |
+| `--color-surface`   | [#hex] | cards, seções alternadas        |
+| `--color-ink`       | [#hex] | texto principal                 |
+| `--color-ink-muted` | [#hex] | legendas, microcopy             |
+| `--color-accent`    | [#hex] | CTA, destaque de palavra, hover |
+| `--color-line`      | [#hex] | bordas, divisores               |
+
+**Tipografia** (escala fluida com `clamp()`, mínimo no mobile e máximo no desktop)
+
+| Token            | Fonte           | Tamanho mobile → desktop | Peso  | Uso                                |
+| ---------------- | --------------- | ------------------------ | ----- | ---------------------------------- |
+| `--font-display` | [fonte display] | 56px → 200px             | [700] | hero, títulos de portal            |
+| `--font-h2`      | [fonte display] | 36px → 96px              | [600] | títulos de seção                   |
+| `--font-h3`      | [fonte display] | 24px → 40px              | [600] | títulos de card e `PortalCard`     |
+| `--font-body`    | [fonte texto]   | 16px → 18px              | 400   | parágrafos                         |
+| `--font-micro`   | [mono ou texto] | 12px → 14px              | 500   | legendas, microcopy em caixa baixa |
+
+Mínimos de `--font-display` e `--font-h2`: 56px e 36px são o padrão; o tema pode baixar se a fonte for larga. Critério: a palavra mais longa prevista para o hero cabe na coluna de 343px (tela de 375px) sem scroll horizontal.
+
+**Espaço e grid**
+
+- Escala de espaço: 4, 8, 16, 24, 32, 48, 64, 96, 128, 192 px. Nomes seguem o Tailwind (nome × 4 = px): `1, 2, 4, 6, 8, 12, 16, 24, 32, 48`. Nenhum outro passo existe; `npm run lint` falha em utilitário fora da escala.
+- Grid: 4 colunas no mobile (gutter 16px), 12 colunas no desktop (gutter 24px), margem lateral `clamp(16px, 4vw, 64px)`.
+- Breakpoints: 640, 1024, 1440 px.
+- Raio: [0 / 8 / 999] px. Escolha um estilo e mantenha.
+
+**Elementos de marca:** [assinatura, símbolo, padrão gráfico] e onde cada um pode aparecer.
+
+## 5. Motion system
+
+Movimento também é token: 3 curvas, 4 durações e regras de quando usar cada uma. É isso que faz o site parecer dirigido, e não animado ao acaso.
+
+| Token           | Valor                            | Quando usar                                         |
+| --------------- | -------------------------------- | --------------------------------------------------- |
+| `--ease-out`    | `cubic-bezier(0.16, 1, 0.3, 1)`  | entradas, revelações de texto e imagem              |
+| `--ease-in-out` | `cubic-bezier(0.65, 0, 0.35, 1)` | transições de página, elementos que trocam de lugar |
+| `--ease-snap`   | `cubic-bezier(0.7, 0, 0.2, 1)`   | hover, cliques, micro-interações                    |
+| `--dur-fast`    | 200ms                            | hover, foco                                         |
+| `--dur-base`    | 500ms                            | revelação de componentes                            |
+| `--dur-slow`    | 900ms                            | títulos grandes, imagens                            |
+| `--dur-scene`   | 1200–1600ms (base 1400ms)        | entrada do hero, transição de página                |
+| `--stagger`     | 60ms                             | intervalo entre itens de uma lista ou letras        |
+
+**Regras**
+
+1. Uma animação de destaque por seção; o resto é revelação simples (fade + 24px de translate).
+2. Scroll suave com Lenis; animações ligadas ao scroll com GSAP ScrollTrigger. Nada de scroll-jacking que trave o usuário.
+3. Só animar `transform` e `opacity`. Nunca `width`, `top` ou `filter` pesado em loop.
+4. `prefers-reduced-motion`: desliga parallax, scroll-scrub e 3D em rotação; mantém só fades curtos.
+5. Mobile: reduzir distâncias e durações em cerca de 30%; sem efeitos que dependem de hover.
+6. Transição de página: [tipo, ex.: cortina de cor do acento, 1200ms]. Mesma em todas as páginas. Em single page, vale para a navegação entre âncoras.
+7. Loading inicial: no máximo 1,5s visível, e só se houver asset pesado para carregar.
+8. Disparo dos reveals: `top 85%` (topo do elemento a 85% da viewport), uma vez só (`once`). Zoom inicial do `MediaFrame`: 1.1 → 1. Constantes em `src/lib/motion/config.ts`, único lugar delas.
+9. Tokens de motion são estruturais (`src/styles/base.css`) e iguais para todos os clientes. Única exceção: o tema pode sobrescrever `--dur-scene`, via `--theme-dur-scene`, sempre dentro de 1200–1600ms (o base aplica `clamp()`). Sem override, vale 1400ms.
+
+## 6. Objeto herói e assets
+
+Todo projeto tem um objeto herói: o elemento que vira a identidade do site e reaparece no hero, no meio e no footer. Os agentes implementam; os assets vêm de fora.
+
+| Campo           | Preencher                                                                      |
+| --------------- | ------------------------------------------------------------------------------ |
+| Objeto herói    | [produto, logo em 3D, personagem, vídeo, tipografia cinética]                  |
+| Formato técnico | [GLB/Three.js, Rive (.riv), vídeo WebM/MP4, SVG animado, sequência de imagens] |
+| Quem produz     | [cliente, freelancer 3D/Rive, banco de imagens, você]                          |
+| Peso máximo     | GLB ≤ 2MB com Draco, .riv ≤ 300KB, vídeo hero ≤ 3MB                            |
+| Fallback        | [imagem estática para mobile fraco e reduced-motion]                           |
+
+**Inventário de assets** (um por linha; nenhum agente usa placeholder em produção)
+
+| Asset            | Seção | Formato               | Origem                            | Licença    | Status     |
+| ---------------- | ----- | --------------------- | --------------------------------- | ---------- | ---------- |
+| [foto hero]      | 1     | WebP/AVIF 2400px      | [cliente]                         | [própria]  | [pendente] |
+| [vídeo de fundo] | 3     | WebM + MP4, sem áudio | [freelancer]                      | [contrato] | [pendente] |
+| [fontes]         | todas | WOFF2                 | [Google Fonts / licença comprada] | [tipo]     | [pendente] |
+| Big Shoulders Display (tema torrefacao) | todas | WOFF2 variável, `@fontsource-variable` | Google Fonts | OFL | ok |
+| Literata (tema torrefacao) | todas | WOFF2 variável, `@fontsource-variable` | Google Fonts | OFL | ok |
+| Inter Tight (tema neutro) | todas | WOFF2 variável, `@fontsource-variable` | Google Fonts | OFL | ok |
+| Mídia abstrata do catálogo (`public/assets/catalog/`: 6 WebP, 1 vídeo WebM+MP4, 1 poster) | catálogo do DS | WebP, WebM + MP4 sem áudio | gerada por `scripts/generate-catalog-media.py` | própria | ok (só catálogo, não vai para site de cliente) |
+
+Regra: todo asset tem licença registrada. Nada de imagem, fonte ou modelo 3D de terceiros sem direito de uso comercial.
+
+## 7. Spec por seção
+
+Copie este bloco uma vez para cada seção da arquitetura (seção 3). É a unidade de trabalho que um agente recebe.
+
+```markdown
+### Seção [nº] — [nome]
+
+**Objetivo:** [a pergunta que a seção responde, em 1 frase]
+**Conteúdo:** [título, texto, imagens, links; texto final do cliente, não lorem ipsum]
+**Layout desktop:** [descrição ou link do frame]
+**Layout mobile:** [o que muda: ordem, tamanho, o que some]
+**Componentes usados:** [nomes da seção 8]
+**Interação de destaque:** [gatilho → efeito → duração/easing (tokens da seção 5)]
+**Estados:** [hover, foco, carregando, vazio, erro]
+**Assets:** [ids do inventário da seção 6]
+
+**Critérios de aceite**
+
+- [ ] Usa só tokens (nenhum valor solto de cor, fonte ou espaço)
+- [ ] Funciona em 375px, 1024px e 1440px
+- [ ] Com reduced-motion, o conteúdo aparece sem animação
+- [ ] Navegável por teclado, com foco visível
+- [ ] [critério específico desta seção]
+
+**Perguntas abertas:** [o que o agente não conseguiu decidir]
+```
+
+_Exemplo de interação bem especificada:_ "Ao entrar 30% na viewport, o título revela linha por linha de baixo para cima, `--dur-slow`, `--ease-out`, `--stagger` entre linhas. Sem scrub."
+
+## 8. Componentes do design system
+
+Estes componentes são reutilizados entre clientes; só os tokens mudam. É o ativo que deixa cada projeto novo mais rápido que o anterior.
+
+| Componente          | Função                              | Variações                | Motion padrão                     |
+| ------------------- | ----------------------------------- | ------------------------ | --------------------------------- |
+| `Button`            | CTA principal e secundário          | primary, ghost, link     | hover com `--ease-snap`, 200ms    |
+| `Nav`               | menu fixo + menu fullscreen         | desktop, mobile          | abertura em cortina, `--dur-base` |
+| `HeroTitle`         | título gigante revelado             | 1 a 3 linhas             | linhas em stagger, `--dur-scene`  |
+| `RevealText`        | parágrafo revelado no scroll        | por linha, por palavra   | `--dur-slow`, `--ease-out`        |
+| `MediaFrame`        | imagem/vídeo com legenda            | 16:9, 4:5, 1:1           | máscara que abre + leve zoom      |
+| `HorizontalGallery` | galeria horizontal no scroll        | com legenda, com citação | scrub ligado ao scroll            |
+| `PortalCard`        | link grande para outra seção/página | 2 ou 3 colunas           | hover expande e troca imagem      |
+| `CollectionGrid`    | grid de itens com hover             | 2, 3 ou 4 colunas        | imagem base → imagem hover        |
+| `StatCounter`       | números animados                    | com ou sem unidade       | conta ao entrar na viewport       |
+| `LogoWall`          | logos de parceiros                  | estático, marquee        | marquee contínuo, pausa no hover  |
+| `PageTransition`    | transição entre páginas             | 1 por projeto            | `--dur-scene`                     |
+| `Footer`            | frase de impacto + links            | com ou sem objeto herói  | revelação final                   |
+
+**Primitivas de layout** (`src/components/ds/layout/`). Espaço entre componentes é responsabilidade da seção, sempre via `Stack`/`Container`; nunca `div` com classes de espaço avulsas.
+
+| Primitiva   | Função                                         | Variações (union types)                                        | Motion  |
+| ----------- | ---------------------------------------------- | -------------------------------------------------------------- | ------- |
+| `Section`   | faixa de largura total                         | `space` (padding vertical na escala), `theme`, `tone` bg/surface | nenhum |
+| `Container` | margem lateral + grid 4/12 colunas             | `layout`: full, split (6+6), thirds (4+4+4), main-aside (8+4); `gap` | nenhum |
+| `Stack`     | pilha flex entre componentes irmãos            | `direction`: column, row, column-to-row; `gap`; `align`; `justify`; `wrap` | nenhum |
+
+`PortalCard` em 2 ou 3 colunas = `Container layout="split"` ou `"thirds"`.
+
+Novo componente só entra na biblioteca depois de usado em 2 projetos.
+
+## 9. Stack técnica
+
+Stack padrão do estúdio; troque uma camada só com motivo escrito na linha "Exceções". Use sempre a versão estável mais recente de cada pacote no início do projeto e trave no `package.json`.
+
+| Camada            | Padrão                               | Alternativa                                 |
+| ----------------- | ------------------------------------ | ------------------------------------------- |
+| Framework         | Next.js (App Router) + TypeScript    | Vite + React + TypeScript, para single page |
+| Estilo            | Tailwind com tokens em CSS variables | CSS Modules                                 |
+| Scroll suave      | Lenis                                | nativo, se não houver scroll animado        |
+| Animação          | GSAP + ScrollTrigger                 | Motion (Framer Motion) para UI simples      |
+| 3D                | React Three Fiber + drei             | Three.js puro                               |
+| Motion de marca   | Rive (runtime web)                   | Lottie                                      |
+| Conteúdo editável | [Sanity / Payload / arquivos MDX]    | Webflow, se o cliente quiser editar sozinho |
+| Formulários       | [Resend / Formspree / WhatsApp link] | —                                           |
+| Hospedagem        | Vercel                               | Netlify                                     |
+| Analytics         | Vercel Analytics ou Plausible        | GA4, se o cliente exigir                    |
+
+**Estrutura de pastas (Vite):** `src/components/ds/` design system, `src/components/sections/` seções, `src/lib/motion/` hooks e presets de animação, `src/styles/tokens.css` tokens, `public/assets/` mídia otimizada.
+
+**Exceções deste projeto:** Framework → Vite + React + TypeScript, porque o site de teste é single page. Tailwind v4 via `@tailwindcss/vite`, com os tokens ligados por `@theme`.
+
+## 10. Critérios de aceite
+
+O site só é entregue quando passa em todos estes números, medidos no mobile. Bonito e lento não passa.
+
+| Área            | Critério                                                                       | Como medir                             |
+| --------------- | ------------------------------------------------------------------------------ | -------------------------------------- |
+| Performance     | LCP ≤ 2,5s, INP ≤ 200ms, CLS ≤ 0,1                                             | Lighthouse mobile + PageSpeed Insights |
+| Performance     | Lighthouse Performance ≥ 85 no mobile                                          | Lighthouse                             |
+| Performance     | JS inicial ≤ 250KB gzip; 3D e Rive carregados só quando visíveis               | bundle analyzer                        |
+| Performance     | Imagens em AVIF/WebP com `srcset`; nada acima de 400KB fora do hero            | inspeção de rede                       |
+| Fluidez         | 60fps no scroll em celular médio                                               | DevTools Performance, CPU 4x lento     |
+| Acessibilidade  | contraste AA, foco visível, ordem de tab lógica, `alt` em toda imagem          | axe + teclado                          |
+| Acessibilidade  | site utilizável com `prefers-reduced-motion`                                   | emulação no DevTools                   |
+| SEO             | título, description, Open Graph e favicon                                      | inspeção + preview de link             |
+| SEO             | HTML semântico (1 `h1` por página), sitemap, robots, dados estruturados [tipo] | Lighthouse SEO, Rich Results Test      |
+| Compatibilidade | Chrome, Safari iOS, Firefox, Edge; 375px a 1920px                              | teste manual                           |
+| Conversão       | CTA principal visível em até 1 scroll no mobile                                | teste manual                           |
+
+## 11. Equipe de agentes e fluxo de trabalho
+
+Cinco papéis bastam: um orquestrador, três tipos de executor e um revisor. A Fundação roda primeiro; Seções e Motion só começam quando os tokens e componentes existem.
+
+Fluxo:
+
+1. **Você (diretor)** fecha as seções 1 a 6 da spec.
+2. **Orquestrador** divide a spec em tarefas.
+3. **Agentes executores:** Fundação (tokens e componentes) → depois, em paralelo, Seções (1 agente por seção) e Motion e 3D (3D, Rive e transições).
+4. **Revisor (QA)** checa os critérios da seção 10. Reprovado: volta ao agente da tarefa.
+5. **Você** faz a revisão visual em celular real e desktop.
+6. **Deploy na Vercel** com link de preview para o cliente.
+
+O revisor nunca corrige sozinho: devolve a lista de erros ao agente da tarefa, e só o que passa chega à sua revisão visual.
+
+| Agente              | Recebe                  | Entrega                                                       | Não pode                                |
+| ------------------- | ----------------------- | ------------------------------------------------------------- | --------------------------------------- |
+| Orquestrador        | `SPEC.md` inteira       | lista de tarefas com dependências e ordem                     | escrever código de seção                |
+| Fundação            | seções 4, 5, 8 e 9      | `tokens.css`, componentes, presets de motion, projeto rodando | criar seção de página                   |
+| Seção (1 por seção) | spec + bloco da seção 7 | seção pronta com critérios marcados                           | criar token ou componente sem registrar |
+| Motion e 3D         | seções 5 e 6 + assets   | objeto herói, transições, fallbacks                           | usar asset fora do inventário           |
+| Revisor             | branch + seção 10       | relatório passa/falha com prints                              | corrigir o código da tarefa             |
+
+**No Claude Code:** cada papel vira um subagente com seu arquivo em `.claude/agents/`, e cada executor trabalha em uma branch ou worktree própria para não pisar no código do outro.
+
+## 12. Checklist de entrega
+
+Marque tudo antes de mandar o link final ao cliente.
+
+- [ ] Todos os critérios da seção 10 passaram (prints do Lighthouse salvos)
+- [ ] Nenhum placeholder, lorem ipsum ou asset sem licença
+- [ ] Revisão visual sua em celular real (iOS e Android) e em desktop
+- [ ] Textos revisados pelo cliente
+- [ ] Formulários e CTAs testados de ponta a ponta
+- [ ] Domínio, HTTPS e redirecionamento www configurados
+- [ ] Analytics ativo e evento do CTA principal registrado
+- [ ] 404 e Open Graph conferidos
+- [ ] Manual curto para o cliente: como editar conteúdo e a quem pedir suporte
+- [ ] Repositório e acessos transferidos conforme o contrato
+- [ ] Componentes novos que funcionaram bem levados para a biblioteca do design system
+- [ ] Gravação de tela do site para o seu portfólio

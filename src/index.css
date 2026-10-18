@@ -1,0 +1,4 @@
+@import "tailwindcss";
+@import "./styles/base.css";
+@import "./styles/themes/torrefacao.css";
+@import "./styles/themes/neutro.css";

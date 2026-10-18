@@ -1,0 +1,345 @@
+/*
+ * base.css — camada estrutural do design system.
+ * Igual para todos os clientes: espaço, grid, breakpoints, motion (SPEC §5),
+ * reset e foco. Identidade (cor, fonte, tamanhos display, raio) vive em
+ * themes/[tema].css.
+ *
+ * Níveis de token:
+ *   marca      --brand-*            definido só no tema
+ *   semântico  --color-*, --font-*,  definido pelo tema, consumido pelos componentes
+ *              --text-display|h2|h3, --radius-base
+ *   componente --button-*, --focus-* derivado do semântico, aqui embaixo
+ */
+
+/* ---------------------------------------------------------------------------
+ * Tokens estruturais. `--*: initial` remove todo o tema padrão do Tailwind:
+ * só existe utilitário para token desta lista. Valor fora da escala não gera
+ * classe; scripts/check-spacing.mjs barra no lint.
+ * ------------------------------------------------------------------------- */
+@theme {
+  --*: initial;
+
+  /* Espaço (SPEC §4). Convenção do Tailwind: nome × 4 = px (p-4 = 16px). */
+  --spacing-0: 0;
+  --spacing-1: 0.25rem; /*   4px */
+  --spacing-2: 0.5rem; /*    8px */
+  --spacing-4: 1rem; /*     16px */
+  --spacing-6: 1.5rem; /*   24px */
+  --spacing-8: 2rem; /*     32px */
+  --spacing-12: 3rem; /*    48px */
+  --spacing-16: 4rem; /*    64px */
+  --spacing-24: 6rem; /*    96px */
+  --spacing-32: 8rem; /*   128px */
+  --spacing-48: 12rem; /*  192px */
+
+  /* Breakpoints (SPEC §4): 640, 1024, 1440. */
+  --breakpoint-sm: 40rem;
+  --breakpoint-lg: 64rem;
+  --breakpoint-xl: 90rem;
+
+  /* Proporções de mídia (SPEC §8, MediaFrame). */
+  --aspect-video: 16 / 9;
+  --aspect-portrait: 4 / 5;
+  --aspect-square: 1 / 1;
+
+  /* Código (catálogo/documentação): fonte do sistema, sem download. */
+  --font-code: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+
+  /* Medida de leitura: linhas abaixo de 80 caracteres. */
+  --container-measure: 68ch;
+
+  /* Texto corrido e microcopy: fixos entre clientes. */
+  --text-body: clamp(1rem, 0.956rem + 0.188vw, 1.125rem);
+  --text-body--line-height: 1.6;
+  --text-body--font-weight: 400;
+  --text-micro: clamp(0.75rem, 0.706rem + 0.188vw, 0.875rem);
+  --text-micro--line-height: 1.4;
+  --text-micro--font-weight: 500;
+
+  /* Curvas (SPEC §5). Viram `ease-out`, `ease-in-out`, `ease-snap`. */
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-in-out: cubic-bezier(0.65, 0, 0.35, 1);
+  --ease-snap: cubic-bezier(0.7, 0, 0.2, 1);
+
+  /* Durações (SPEC §5). Viram `duration-fast` etc. via @utility abaixo. */
+  --dur-fast: 200ms;
+  --dur-base: 500ms;
+  --dur-slow: 900ms;
+  --stagger: 60ms;
+
+  --default-font-family: var(--font-text);
+  --default-transition-duration: var(--dur-fast);
+  --default-transition-timing-function: var(--ease-snap);
+}
+
+/* ---------------------------------------------------------------------------
+ * Contrato do tema. Estes nomes são registrados no Tailwind sem valor: quem
+ * preenche é o arquivo de tema. Tema que esquecer um deles quebra visível.
+ * ------------------------------------------------------------------------- */
+@theme reference {
+  --color-bg: var(--color-bg);
+  --color-surface: var(--color-surface);
+  --color-ink: var(--color-ink);
+  --color-ink-muted: var(--color-ink-muted);
+  --color-accent: var(--color-accent);
+  --color-line: var(--color-line);
+
+  --font-display: var(--font-display);
+  --font-text: var(--font-text);
+
+  --text-display: var(--text-display);
+  --text-display--line-height: var(--text-display--line-height);
+  --text-display--font-weight: var(--text-display--font-weight);
+  --text-display--letter-spacing: var(--text-display--letter-spacing);
+  --text-h2: var(--text-h2);
+  --text-h2--line-height: var(--text-h2--line-height);
+  --text-h2--font-weight: var(--text-h2--font-weight);
+  --text-h2--letter-spacing: var(--text-h2--letter-spacing);
+  --text-h3: var(--text-h3);
+  --text-h3--line-height: var(--text-h3--line-height);
+  --text-h3--font-weight: var(--text-h3--font-weight);
+  --text-h3--letter-spacing: var(--text-h3--letter-spacing);
+
+  --radius-base: var(--radius-base);
+}
+
+/* --dur-scene: único token de motion que o tema pode sobrescrever, via
+ * --theme-dur-scene, sempre preso a 1200–1600ms (SPEC §5). Registrado como
+ * <time> para o JS ler o valor já resolvido. */
+@property --dur-scene {
+  syntax: "<time>";
+  inherits: true;
+  initial-value: 1400ms;
+}
+
+/* Registrados para o JS (src/lib/motion) ler valores já resolvidos. */
+@property --motion-scale {
+  syntax: "<number>";
+  inherits: true;
+  initial-value: 1;
+}
+
+@property --reveal-distance {
+  syntax: "<length>";
+  inherits: true;
+  initial-value: 0px;
+}
+
+/* Declarado também em [data-theme] para recalcular quando um tema é aplicado
+ * num subtree. Em @layer base para o tema (sem layer) sempre vencer; o reset
+ * de --theme-dur-scene impede herdar o valor de um tema externo. */
+@layer base {
+  :root,
+  [data-theme] {
+    --theme-dur-scene: 1400ms;
+    --dur-scene: clamp(1200ms, var(--theme-dur-scene), 1600ms);
+
+    /* Grid (SPEC §4): 4 col / 16px no mobile, 12 col / 24px a partir de 1024. */
+    --grid-columns: 4;
+    --grid-gutter: var(--spacing-4);
+    --page-margin: clamp(1rem, 4vw, 4rem);
+
+    /* Motion mobile ~30% menor (SPEC §5.5); presets multiplicam durações
+     * por isto. */
+    --motion-scale: 0.7;
+    --reveal-distance: calc(var(--spacing-6) * var(--motion-scale));
+
+    /* Folga da máscara de linha: acentos de maiúscula (Á É Ã) e cedilha (Ç)
+     * saem da caixa com line-height < 1. Em em, acompanha o tamanho. */
+    --mask-bleed-top: 0.25em;
+    --mask-bleed-bottom: 0.2em;
+    --mask-bleed-inline: 0.1em;
+    --mask-clip: inset(
+      calc(var(--mask-bleed-top) * -1) calc(var(--mask-bleed-inline) * -1)
+        calc(var(--mask-bleed-bottom) * -1)
+    );
+
+    /* Componente: foco */
+    --focus-ring-color: var(--color-ink);
+    --focus-ring-width: 2px;
+    --focus-ring-offset: var(--spacing-1);
+
+    /* Componente: global */
+    --touch-target: 2.75rem; /* 44px, alvo mínimo de toque */
+    --line-width: 1px;
+
+    /* Componente: Button */
+    --button-radius: var(--radius-base);
+    --button-font-weight: 500;
+    --button-line-height: 1.2;
+    --button-primary-bg: var(--color-accent);
+    --button-primary-ink: var(--color-bg);
+    --button-primary-hover-bg: var(--color-ink);
+    --button-ghost-ink: var(--color-ink);
+    --button-ghost-border: var(--color-ink-muted);
+    --button-ghost-hover-bg: var(--color-surface);
+    --button-link-ink: var(--color-ink);
+    --button-link-line: var(--color-ink-muted);
+    --button-link-line-hover: var(--color-accent);
+    --button-disabled-opacity: 0.45;
+
+    /* Componente: MediaFrame */
+    --media-radius: var(--radius-base);
+    --media-placeholder: var(--color-surface);
+    --media-control-bg: var(--color-bg);
+    --media-control-ink: var(--color-ink);
+
+    /* Componente: PortalCard */
+    --portal-radius: var(--radius-base);
+    --portal-zoom: 1.04;
+
+    @variant lg {
+      --grid-columns: 12;
+      --grid-gutter: var(--spacing-6);
+      --motion-scale: 1;
+    }
+
+    /* Reduced-motion (SPEC §5.4): sem deslocamento; os presets trocam tudo
+     * por fade de --dur-fast. */
+    @media (prefers-reduced-motion: reduce) {
+      --reveal-distance: 0px;
+    }
+  }
+}
+
+/* ---------------------------------------------------------------------------
+ * Utilitários estruturais
+ * ------------------------------------------------------------------------- */
+@utility duration-* {
+  transition-duration: --value(--dur-*);
+}
+
+@utility duration-scene {
+  transition-duration: var(--dur-scene);
+}
+
+@utility page-grid {
+  display: grid;
+  grid-template-columns: repeat(var(--grid-columns), minmax(0, 1fr));
+  column-gap: var(--grid-gutter);
+  padding-inline: var(--page-margin);
+
+  /* Grid dentro de grid: a margem lateral já foi aplicada pelo de fora. */
+  & & {
+    padding-inline: 0;
+  }
+}
+
+/* Papéis tipográficos completos: família + tamanho + entrelinha + peso. */
+@utility type-display {
+  font-family: var(--font-display);
+  font-size: var(--text-display);
+  line-height: var(--text-display--line-height);
+  font-weight: var(--text-display--font-weight);
+  letter-spacing: var(--text-display--letter-spacing);
+}
+
+@utility type-h2 {
+  font-family: var(--font-display);
+  font-size: var(--text-h2);
+  line-height: var(--text-h2--line-height);
+  font-weight: var(--text-h2--font-weight);
+  letter-spacing: var(--text-h2--letter-spacing);
+}
+
+@utility type-h3 {
+  font-family: var(--font-display);
+  font-size: var(--text-h3);
+  line-height: var(--text-h3--line-height);
+  font-weight: var(--text-h3--font-weight);
+  letter-spacing: var(--text-h3--letter-spacing);
+}
+
+@utility type-body {
+  font-family: var(--font-text);
+  font-size: var(--text-body);
+  line-height: var(--text-body--line-height);
+  font-weight: var(--text-body--font-weight);
+}
+
+@utility type-micro {
+  font-family: var(--font-text);
+  font-size: var(--text-micro);
+  line-height: var(--text-micro--line-height);
+  font-weight: var(--text-micro--font-weight);
+}
+
+/* Linha mascarada para reveals. O corte é um clip-path com inset negativo:
+ * a área visível passa da caixa pela folga sem mudar o layout (margem
+ * negativa colapsaria entre linhas vizinhas). */
+@utility mask-line {
+  display: block;
+  clip-path: var(--mask-clip);
+}
+
+@utility type-button {
+  font-family: var(--font-text);
+  font-size: var(--text-body);
+  line-height: var(--button-line-height);
+  font-weight: var(--button-font-weight);
+}
+
+/* ---------------------------------------------------------------------------
+ * Reset complementar ao preflight do Tailwind
+ * ------------------------------------------------------------------------- */
+@layer base {
+  html {
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    min-height: 100dvh;
+    background-color: var(--color-bg);
+    color: var(--color-ink);
+    font-family: var(--font-text);
+    font-size: var(--text-body);
+    line-height: var(--text-body--line-height);
+  }
+
+  /* Tema aplicado num subtree: herdar do body traria a fonte e a cor do
+   * tema externo. */
+  [data-theme] {
+    color: var(--color-ink);
+    font-family: var(--font-text);
+  }
+
+  h1,
+  h2,
+  h3 {
+    text-wrap: balance;
+  }
+
+  p {
+    text-wrap: pretty;
+  }
+
+  img,
+  video,
+  svg {
+    display: block;
+    max-width: 100%;
+  }
+
+  :focus-visible {
+    outline: var(--focus-ring-width) solid var(--focus-ring-color);
+    outline-offset: var(--focus-ring-offset);
+  }
+
+  :focus:not(:focus-visible) {
+    outline: none;
+  }
+}
+
+/* Máscaras criadas pelo SplitText ("ds-line" → "ds-line-mask", "ds-word" →
+ * "ds-word-mask"). Ele põe overflow: clip inline; trocamos pelo clip-path com
+ * folga. --mask-clip usa em: resolve no tamanho de fonte de cada máscara. */
+@layer components {
+  .ds-line-mask,
+  .ds-word-mask {
+    clip-path: var(--mask-clip);
+    overflow: visible !important;
+  }
+}

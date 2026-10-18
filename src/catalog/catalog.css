@@ -1,0 +1,47 @@
+/* Catálogo: valores só da página de documentação. Não fazem parte do DS. */
+:root {
+  --catalog-device-width: 375px;
+  --catalog-device-height: min(85dvh, 52rem);
+  --catalog-swatch: 4.5rem;
+}
+
+.catalog-device {
+  width: var(--catalog-device-width);
+  max-width: 100%;
+  height: var(--catalog-device-height);
+  border: var(--line-width) solid var(--color-line);
+  border-radius: var(--radius-base);
+  background: var(--color-bg);
+}
+
+.catalog-swatch {
+  width: var(--catalog-swatch);
+  height: var(--catalog-swatch);
+}
+
+/* Barra que enche com a curva do token: mostra a easing em movimento. */
+@keyframes catalog-ease {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(1);
+  }
+}
+
+.catalog-ease-bar {
+  transform-origin: left;
+  animation: catalog-ease var(--dur-slow) var(--ease-out) infinite alternate;
+}
+.catalog-ease-bar[data-ease="in-out"] {
+  animation-timing-function: var(--ease-in-out);
+}
+.catalog-ease-bar[data-ease="snap"] {
+  animation-timing-function: var(--ease-snap);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .catalog-ease-bar {
+    animation: none;
+  }
+}
