@@ -26,6 +26,12 @@ export function Catalog({ initial }: { initial: ThemeName }) {
 
   return (
     <>
+      <a
+        href="#conteudo"
+        className="sr-only z-10 rounded-base bg-bg px-4 py-2 type-button focus:not-sr-only focus:fixed focus:top-4 focus:left-4"
+      >
+        Pular para o conteúdo
+      </a>
       <Section as="header" space={16}>
         <Container layout="main-aside" gap={12}>
           <Stack gap={8}>
@@ -52,7 +58,7 @@ export function Catalog({ initial }: { initial: ThemeName }) {
         </Container>
       </Section>
       {/* key: troca de tema remonta tudo (relê tokens, refaz splits de linha). */}
-      <main key={theme}>
+      <main key={theme} id="conteudo" tabIndex={-1}>
         <TokensSection />
         <ComponentsSection />
         <MotionSection />

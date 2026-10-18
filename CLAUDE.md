@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Single-page "cinematic" studio site built from a reusable design system. `SPEC.md` (Portuguese) is the source of truth: read it before any task. Its golden rule: if something is not in the spec, do not invent it — record it as an open question.
 
-Current state: the project is only the studio design system; the single page is a catalog of it (`src/App.tsx`). No tests or test runner exist yet.
+Current state: the project is only the studio design system; the single page is its catalog (`src/catalog/`, `?view=stress` renders the 375px stress test). No tests or test runner exist yet; checks are `npm run lint` and `npm run build`.
 
 ## Commands
 
@@ -21,7 +21,7 @@ npm run preview   # serve the production build
 
 Vite + React 19 + TypeScript (strict unused locals/params, `verbatimModuleSyntax`, `erasableSyntaxOnly` — use `import type`, no enums/namespaces). Tailwind v4 via `@tailwindcss/vite`, tokens bound through `@theme`. Lenis for smooth scroll, GSAP + ScrollTrigger for scroll animation. Deploy target: Vercel.
 
-Fonts are self-hosted with `@fontsource-variable/*` (no Google CDN), imported by the theme file. `vite.config.ts` preloads only the hero display font (`HERO_FONT`); change it together with the theme.
+Fonts are self-hosted with `@fontsource-variable/*` (no Google CDN), declared by `@font-face` in the theme file (latin + latin-ext only), each with a `size-adjust` local fallback against CLS. The active site theme lives only in `site.config.ts`; `vite.config.ts` derives `<html data-theme>` and the hero font preload from it (`heroFont` in `src/styles/themes/index.ts`). New client theme: follow `DESIGN-SYSTEM.md`. Last review: `REVIEW.md`.
 
 ## Intended structure (SPEC §9)
 

@@ -49,13 +49,18 @@ function Video({ media, priority }: { media: FrameVideo; priority: boolean }) {
   useEffect(() => {
     const video = ref.current;
     if (!video || !ambient) return;
-    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
     const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !userPaused.current) video.play().catch(() => {});
+      if (entry.isIntersecting && !userPaused.current && !reduce.matches) video.play().catch(() => {});
       else video.pause();
     });
+    const onReduce = () => reduce.matches && video.pause();
     io.observe(video);
-    return () => io.disconnect();
+    reduce.addEventListener("change", onReduce);
+    return () => {
+      io.disconnect();
+      reduce.removeEventListener("change", onReduce);
+    };
   }, [ambient]);
 
   const toggle = () => {

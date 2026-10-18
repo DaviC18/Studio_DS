@@ -162,6 +162,7 @@
     /* Componente: global */
     --touch-target: 2.75rem; /* 44px, alvo mínimo de toque */
     --line-width: 1px;
+    --tap-highlight: color-mix(in srgb, var(--color-ink) 12%, transparent);
 
     /* Componente: Button */
     --button-radius: var(--radius-base);
@@ -292,6 +293,7 @@
 
   body {
     min-height: 100dvh;
+    overflow-wrap: break-word;
     background-color: var(--color-bg);
     color: var(--color-ink);
     font-family: var(--font-text);
@@ -314,6 +316,15 @@
 
   p {
     text-wrap: pretty;
+  }
+
+  a,
+  button,
+  label,
+  input,
+  summary {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: var(--tap-highlight);
   }
 
   img,

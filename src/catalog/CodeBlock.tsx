@@ -3,6 +3,7 @@ export function CodeBlock({ code, label }: { code: string; label: string }) {
   return (
     <pre
       tabIndex={0}
+      translate="no"
       aria-label={label}
       className="overflow-x-auto rounded-base border border-line bg-surface p-4 font-code type-micro"
     >

@@ -1,43 +1,39 @@
 import tailwindcss from "@tailwindcss/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig, type Plugin } from "vite";
+import { SITE_THEME } from "./site.config.ts";
+import { THEMES } from "./src/styles/themes/index.ts";
 
-// Fonte display do hero do tema ativo. Trocar junto com o tema.
-const HERO_FONT = "big-shoulders-display-latin-wght-normal.woff2";
-
-// Preload só da fonte do hero, apontando para o arquivo com hash do build.
-function preloadHeroFont(file: string): Plugin {
+// Aplica o tema do site no <html> e, no build, faz preload só da fonte do
+// hero desse tema, apontando para o arquivo com hash.
+function siteTheme(): Plugin {
+  const theme = THEMES.find((t) => t.id === SITE_THEME);
+  if (!theme) throw new Error(`site.config.ts: tema "${SITE_THEME}" não existe em THEMES`);
   let base = "/";
   return {
-    name: "preload-hero-font",
-    apply: "build",
+    name: "site-theme",
     configResolved(config) {
       base = config.base;
     },
     transformIndexHtml: {
       order: "post",
-      handler(_html, ctx) {
-        const asset = Object.values(ctx.bundle ?? {}).find(
-          (out) =>
-            out.type === "asset" &&
-            out.originalFileNames.some((name) => name.endsWith(file)),
+      handler(html, ctx) {
+        const out = html.replace("<html ", `<html data-theme="${theme.id}" `);
+        if (!ctx.bundle) return out;
+        const asset = Object.values(ctx.bundle).find(
+          (o) => o.type === "asset" && o.originalFileNames.some((n) => n.endsWith(theme.heroFont)),
         );
-        if (!asset) {
-          this.error(`preload-hero-font: ${file} não está no bundle`);
-        }
-        return [
-          {
-            tag: "link",
-            attrs: {
-              rel: "preload",
-              href: base + asset.fileName,
-              as: "font",
-              type: "font/woff2",
-              crossorigin: "",
+        if (!asset) this.error(`site-theme: ${theme.heroFont} não está no bundle`);
+        return {
+          html: out,
+          tags: [
+            {
+              tag: "link",
+              attrs: { rel: "preload", href: base + asset.fileName, as: "font", type: "font/woff2", crossorigin: "" },
+              injectTo: "head-prepend",
             },
-            injectTo: "head-prepend",
-          },
-        ];
+          ],
+        };
       },
     },
   };
@@ -45,5 +41,5 @@ function preloadHeroFont(file: string): Plugin {
 
 // https://vite.dev/config/
 export default defineConfig({
-  plugins: [react(), tailwindcss(), preloadHeroFont(HERO_FONT)],
+  plugins: [react(), tailwindcss(), siteTheme()],
 });

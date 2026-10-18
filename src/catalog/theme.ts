@@ -1,3 +1,4 @@
+import { syncThemeColor } from "../lib/theme-color";
 import { THEMES, type ThemeName } from "../styles/themes";
 
 const KEY = "studio-ds:theme";
@@ -22,7 +23,12 @@ export function initialTheme(): ThemeName {
 
 export function applyTheme(theme: ThemeName, persist = false) {
   document.documentElement.dataset.theme = theme;
+  syncThemeColor();
   if (!persist) return;
+  // URL reflete o estado: o link compartilhado abre no mesmo tema.
+  const url = new URL(location.href);
+  url.searchParams.set("theme", theme);
+  history.replaceState(null, "", url);
   try {
     localStorage.setItem(KEY, theme);
   } catch {

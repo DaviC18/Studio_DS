@@ -10,7 +10,8 @@ export type StackProps = {
   align?: "start" | "center" | "end" | "stretch" | "baseline";
   justify?: "start" | "center" | "end" | "between";
   wrap?: boolean;
-  as?: "div" | "ul" | "ol";
+  /** dl: filhos devem ser <div> com <dt>/<dd> dentro. */
+  as?: "div" | "ul" | "ol" | "dl";
 };
 
 const DIRECTION = {

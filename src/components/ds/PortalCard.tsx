@@ -1,5 +1,6 @@
-import { createElement, useId, useRef } from "react";
+import { createElement, useEffect, useRef } from "react";
 import { cx } from "../../lib/cx";
+import { isEmptyText } from "../../lib/dev";
 import {
   gsap,
   PORTAL_ACTIVE_END,
@@ -9,7 +10,7 @@ import {
 } from "../../lib/motion";
 import { RATIO, type MediaRatio } from "./ratio";
 
-/** Imagem decorativa: o nome do link vem do título. */
+/** Imagem decorativa: o nome do link vem do texto visível (título + descrição). */
 export type PortalImage = { src: string; srcSet?: string; sizes?: string };
 
 export type PortalCardProps = {
@@ -20,7 +21,7 @@ export type PortalCardProps = {
   /** Troca no hover, no foco por teclado e, sem hover (touch), no centro da tela. */
   hoverImage: PortalImage;
   ratio?: MediaRatio;
-  titleAs?: "h2" | "h3";
+  titleAs?: "h2" | "h3" | "h4";
 };
 
 // Hover só existe em (hover: hover); foco e [data-active] dão o mesmo estado.
@@ -57,8 +58,12 @@ export function PortalCard({
   titleAs = "h3",
 }: PortalCardProps) {
   const ref = useRef<HTMLAnchorElement>(null);
-  const titleId = useId();
-  const descId = useId();
+
+  useEffect(() => {
+    if (import.meta.env.DEV && isEmptyText(title)) {
+      console.error(`PortalCard: título vazio (href="${href}"). O link fica sem nome acessível.`);
+    }
+  }, [title, href]);
 
   // Touch: ativa enquanto o card cruza o centro da viewport.
   useGSAP(
@@ -84,8 +89,6 @@ export function PortalCard({
     <a
       ref={ref}
       href={href}
-      aria-labelledby={titleId}
-      aria-describedby={description ? descId : undefined}
       className="group block rounded-(--portal-radius)"
     >
       <div
@@ -107,9 +110,9 @@ export function PortalCard({
           />
         </div>
       </div>
-      {createElement(titleAs, { id: titleId, className: "mt-4 type-h3" }, title)}
+      {createElement(titleAs, { className: "mt-4 type-h3" }, title)}
       {description && (
-        <p id={descId} className="mt-2 max-w-measure type-body text-ink-muted">
+        <p className="mt-2 max-w-measure type-body text-ink-muted">
           {description}
         </p>
       )}

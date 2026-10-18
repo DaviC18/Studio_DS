@@ -1,5 +1,6 @@
-import type { AnchorHTMLAttributes, ButtonHTMLAttributes, ReactNode } from "react";
+import { useEffect, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type ReactNode } from "react";
 import { cx } from "../../lib/cx";
+import { isEmptyText } from "../../lib/dev";
 
 export type ButtonVariant = "primary" | "ghost" | "link";
 
@@ -85,6 +86,12 @@ function Content({ variant, disabled, children }: Required<Omit<Common, "childre
 /** CTA. Com `href` vira <a>; sem, <button>. `disabled` desativa de verdade. */
 export function Button(props: ButtonProps) {
   const { variant = "primary", disabled = false, children } = props;
+
+  useEffect(() => {
+    if (import.meta.env.DEV && isEmptyText(children)) {
+      console.error("Button: label vazio. O botão fica sem nome acessível.");
+    }
+  }, [children]);
   const className = cx(
     ROOT,
     VARIANT[variant],

@@ -67,6 +67,14 @@ Páginas de detalhe que contam ponto: 404, loading e estado vazio também recebe
 
 Os tokens são a única fonte de verdade visual. Nenhum agente usa cor, tamanho ou espaçamento fora desta tabela.
 
+**Arquitetura** (passo a passo para tema novo em `DESIGN-SYSTEM.md`)
+
+- Duas camadas. `src/styles/base.css`: estrutura igual para todo cliente (escala de espaço, grid, breakpoints, tokens de motion, reset, foco, tokens de componente). `src/styles/themes/[tema].css`: só identidade (cores, fontes, tamanhos display/h2/h3, raio, `--theme-dur-scene` opcional). Trocar de cliente = trocar o arquivo de tema.
+- Três níveis: marca `--brand-*` (só no tema) → semântico `--color-*`, `--font-*`, `--text-*`, `--radius-base` (tema preenche, componentes consomem) → componente `--button-*`, `--media-*`, `--portal-*`, `--focus-*`, `--touch-target` (no base, derivados do semântico). Componente nunca usa token de marca.
+- Tudo ligado ao Tailwind v4 por `@theme`, que começa com `--*: initial`: só existe utilitário para token. O contrato do tema é um `@theme reference` no base.
+- Tema ativo do site: `site.config.ts` (único lugar). Dele saem o `data-theme` do `<html>` e o preload da fonte do hero.
+- Fontes: auto-hospedadas com `@fontsource-variable` (sem CDN), só subsets latin e latin-ext, `font-display: swap`, preload só da display do hero. Cada fonte tem um fallback local com `size-adjust` medido, para a troca não mudar quebras de linha (CLS).
+
 **Cor** (regra do acento único: o acento aparece em no máximo 3 usos por tela)
 
 | Token               | Valor  | Uso permitido                   |
@@ -95,7 +103,10 @@ Mínimos de `--font-display` e `--font-h2`: 56px e 36px são o padrão; o tema p
 - Escala de espaço: 4, 8, 16, 24, 32, 48, 64, 96, 128, 192 px. Nomes seguem o Tailwind (nome × 4 = px): `1, 2, 4, 6, 8, 12, 16, 24, 32, 48`. Nenhum outro passo existe; `npm run lint` falha em utilitário fora da escala.
 - Grid: 4 colunas no mobile (gutter 16px), 12 colunas no desktop (gutter 24px), margem lateral `clamp(16px, 4vw, 64px)`.
 - Breakpoints: 640, 1024, 1440 px.
-- Raio: [0 / 8 / 999] px. Escolha um estilo e mantenha.
+- Raio: [0 / 8 / 999] px. Escolha um estilo e mantenha (`--radius-base` no tema).
+- Proporções de mídia: `--aspect-video` 16:9, `--aspect-portrait` 4:5, `--aspect-square` 1:1.
+- Alvo de toque mínimo: `--touch-target` 44px.
+- Máscara de linha (reveals): folga `--mask-bleed-top` 0.25em, `--mask-bleed-bottom` 0.2em, `--mask-bleed-inline` 0.1em, aplicada por `clip-path`. Acentos de maiúscula (Á É Ã) e cedilha não são cortados com line-height < 1.
 
 **Elementos de marca:** [assinatura, símbolo, padrão gráfico] e onde cada um pode aparecer.
 
@@ -117,10 +128,10 @@ Movimento também é token: 3 curvas, 4 durações e regras de quando usar cada 
 **Regras**
 
 1. Uma animação de destaque por seção; o resto é revelação simples (fade + 24px de translate).
-2. Scroll suave com Lenis; animações ligadas ao scroll com GSAP ScrollTrigger. Nada de scroll-jacking que trave o usuário.
+2. Scroll suave com Lenis; animações ligadas ao scroll com GSAP ScrollTrigger, sincronizados pelo `gsap.ticker`. Nada de scroll-jacking que trave o usuário. Presets em `src/lib/motion/`: `reveal`, `revealLines`, `revealWords`, `mask`, `staggerChildren`, cada um com hook (`useGSAP` + `gsap.matchMedia`, cleanup automático). Curvas e durações são lidas do CSS; nenhum valor de motion em JS fora de `config.ts`.
 3. Só animar `transform` e `opacity`. Nunca `width`, `top` ou `filter` pesado em loop.
-4. `prefers-reduced-motion`: desliga parallax, scroll-scrub e 3D em rotação; mantém só fades curtos.
-5. Mobile: reduzir distâncias e durações em cerca de 30%; sem efeitos que dependem de hover.
+4. `prefers-reduced-motion`: desliga parallax, scroll-scrub e 3D em rotação; mantém só fades curtos. Implementação: todo preset vira fade de `--dur-fast`, sem translate, sem split de texto; o conteúdo sempre termina visível. Lenis fica sem smooth; vídeo de ambiente não toca.
+5. Mobile: reduzir distâncias e durações em cerca de 30% (`--motion-scale` 0.7 abaixo de 1024px); sem efeitos que dependem de hover (hover do Tailwind só existe em `(hover: hover)`; o `PortalCard` ativa no centro da tela no toque).
 6. Transição de página: [tipo, ex.: cortina de cor do acento, 1200ms]. Mesma em todas as páginas. Em single page, vale para a navegação entre âncoras.
 7. Loading inicial: no máximo 1,5s visível, e só se houver asset pesado para carregar.
 8. Disparo dos reveals: `top 85%` (topo do elemento a 85% da viewport), uma vez só (`once`). Zoom inicial do `MediaFrame`: 1.1 → 1. Constantes em `src/lib/motion/config.ts`, único lugar delas.
@@ -210,6 +221,14 @@ Estes componentes são reutilizados entre clientes; só os tokens mudam. É o at
 
 `PortalCard` em 2 ou 3 colunas = `Container layout="split"` ou `"thirds"`.
 
+**Implementados** (`src/components/ds/`, documentados no catálogo com snippet e "use quando / não use quando"). Regras comuns: props tipadas, variações por union type, sem `className`/`style`, só tokens.
+
+- `Button`: `variant` primary | ghost | link. Com `href` vira `<a>`, sem vira `<button>`. `disabled` real (button `disabled`; link sem `href` e com `aria-disabled`). Altura mínima 44px. Hover e foco: camada que sobe com `--ease-snap`, `--dur-fast`. Label vazio dá `console.error` em dev.
+- `HeroTitle`: `lines` com 1 a 3 itens, `as` h1 | h2 | p, `play` load | scroll. Linhas em máscara com stagger e `--dur-scene`. Avisa em dev se houver mais de um `h1`.
+- `RevealText`: `by` line | word, `as`, `size` body | h3 | h2, `tone` ink | muted. O leitor de tela lê uma cópia `sr-only`; a parte dividida pelo SplitText fica `aria-hidden`.
+- `MediaFrame`: `ratio` video | portrait | square; mídia `image` (`alt` obrigatório no tipo) ou `video` (`label`, `poster`, `muted`, `playsInline`; `ambient` = loop sem controles, toca só visível, com botão de pausa e parado em reduced-motion). Proporção fixa, então CLS zero. `lazy` por padrão; `priority` = `eager` + `fetchpriority=high` e sem máscara.
+- `PortalCard`: o card inteiro é um link, e o nome vem do texto visível (título + descrição). Imagem troca no hover, no foco por teclado e, sem hover, no centro da tela. Imagens `absolute` dentro da proporção, então sem layout shift. `titleAs` h2 | h3 | h4. Título vazio dá `console.error` em dev.
+
 Novo componente só entra na biblioteca depois de usado em 2 projetos.
 
 ## 9. Stack técnica
@@ -229,7 +248,9 @@ Stack padrão do estúdio; troque uma camada só com motivo escrito na linha "Ex
 | Hospedagem        | Vercel                               | Netlify                                     |
 | Analytics         | Vercel Analytics ou Plausible        | GA4, se o cliente exigir                    |
 
-**Estrutura de pastas (Vite):** `src/components/ds/` design system, `src/components/sections/` seções, `src/lib/motion/` hooks e presets de animação, `src/styles/tokens.css` tokens, `public/assets/` mídia otimizada.
+**Estrutura de pastas (Vite):** `src/components/ds/` design system (e `ds/layout/` com Section, Container, Stack), `src/components/sections/` seções, `src/lib/motion/` hooks, presets e `config.ts`, `src/styles/base.css` estrutura, `src/styles/themes/[tema].css` identidade (registrados em `themes/index.ts`), `site.config.ts` tema ativo, `src/catalog/` catálogo do DS, `scripts/` checks de lint e build, `public/assets/` mídia otimizada.
+
+**Checks automáticos:** `npm run lint` = eslint + `scripts/check-spacing.mjs` (falha em espaço fora da escala). `npm run build` = tsc + vite + `scripts/check-bundle.mjs` (falha com JS inicial acima de 250 kB gzip e mostra o valor).
 
 **Exceções deste projeto:** Framework → Vite + React + TypeScript, porque o site de teste é single page. Tailwind v4 via `@tailwindcss/vite`, com os tokens ligados por `@theme`.
 
@@ -246,6 +267,9 @@ O site só é entregue quando passa em todos estes números, medidos no mobile. 
 | Fluidez         | 60fps no scroll em celular médio                                               | DevTools Performance, CPU 4x lento     |
 | Acessibilidade  | contraste AA, foco visível, ordem de tab lógica, `alt` em toda imagem          | axe + teclado                          |
 | Acessibilidade  | site utilizável com `prefers-reduced-motion`                                   | emulação no DevTools                   |
+| Acessibilidade  | nenhum `Button` com label vazio nem `PortalCard` com título vazio (o dev mostra `console.error`) | console do `npm run dev` + leitura do código |
+| Acessibilidade  | alvo de toque ≥ 44px; um `h1`; link "pular para o conteúdo"                     | teclado + inspeção                     |
+| Código          | `npm run lint` e `npm run build` passam (escala de espaço e orçamento de JS)   | terminal                               |
 | SEO             | título, description, Open Graph e favicon                                      | inspeção + preview de link             |
 | SEO             | HTML semântico (1 `h1` por página), sitemap, robots, dados estruturados [tipo] | Lighthouse SEO, Rich Results Test      |
 | Compatibilidade | Chrome, Safari iOS, Firefox, Edge; 375px a 1920px                              | teste manual                           |

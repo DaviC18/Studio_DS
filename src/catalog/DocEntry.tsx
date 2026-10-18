@@ -20,18 +20,16 @@ export function DocEntry({ name, use, avoid, snippet, children }: DocEntryProps)
           <h3 id={`doc-${name}`} className="type-h3">
             {name}
           </h3>
-          <dl className="max-w-measure">
-            <Stack gap={2}>
-              <div>
-                <dt className="type-micro text-ink-muted">Use quando</dt>
-                <dd>{use}</dd>
-              </div>
-              <div>
-                <dt className="type-micro text-ink-muted">Não use quando</dt>
-                <dd>{avoid}</dd>
-              </div>
-            </Stack>
-          </dl>
+          <Stack as="dl" gap={2}>
+            <div className="max-w-measure">
+              <dt className="type-micro text-ink-muted">Use quando</dt>
+              <dd>{use}</dd>
+            </div>
+            <div className="max-w-measure">
+              <dt className="type-micro text-ink-muted">Não use quando</dt>
+              <dd>{avoid}</dd>
+            </div>
+          </Stack>
           <CodeBlock code={snippet} label={`Exemplo de uso de ${name}`} />
         </Stack>
         {children}

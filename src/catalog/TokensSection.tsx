@@ -49,11 +49,11 @@ function Colors() {
           <Stack key={c.name} direction="row" gap={4} align="start">
             <div className={`catalog-swatch shrink-0 rounded-base border border-line ${c.swatch}`} />
             <Stack gap={1}>
-              <p className="type-button">--color-{c.name}</p>
-              <p className="font-code type-micro">{toHex(value)}</p>
+              <p translate="no" className="type-button">--color-{c.name}</p>
+              <p translate="no" className="font-code tabular-nums type-micro">{toHex(value)}</p>
               <p className="type-micro text-ink-muted">{c.use}</p>
               {"text" in c && (
-                <p className="type-micro">
+                <p className="tabular-nums type-micro">
                   {onBg.toFixed(2)} sobre bg · {onSurface.toFixed(2)} sobre surface ·{" "}
                   {Math.min(onBg, onSurface) >= 4.5 ? "AA ok" : "abaixo de AA"}
                 </p>
@@ -71,7 +71,7 @@ function Typography() {
     <Stack gap={12}>
       {TYPE.map((t) => (
         <Stack key={t.name} gap={2}>
-          <p className="font-code type-micro text-ink-muted">
+          <p translate="no" className="font-code tabular-nums type-micro text-ink-muted">
             {t.spec} · {t.token}: {token(t.token)}
           </p>
           <p className={t.cls}>Ação épica na torréfação</p>
@@ -103,23 +103,23 @@ function Motion() {
           <EaseCurve key={e} name={e} />
         ))}
       </Stack>
-      <dl>
-        <Stack gap={2}>
+      <Stack gap={2}>
+        <Stack as="dl" gap={2}>
           {DURATIONS.map((d) => (
             <Stack key={d} direction="row" gap={4} justify="between">
-              <dt className="font-code type-micro">--dur-{d}</dt>
-              <dd className="font-code type-micro">{ms(token(`--dur-${d}`))}</dd>
+              <dt translate="no" className="font-code tabular-nums type-micro">--dur-{d}</dt>
+              <dd translate="no" className="font-code tabular-nums type-micro">{ms(token(`--dur-${d}`))}</dd>
             </Stack>
           ))}
           <Stack direction="row" gap={4} justify="between">
-            <dt className="font-code type-micro">--stagger</dt>
-            <dd className="font-code type-micro">{ms(token("--stagger"))}</dd>
+            <dt translate="no" className="font-code tabular-nums type-micro">--stagger</dt>
+            <dd translate="no" className="font-code tabular-nums type-micro">{ms(token("--stagger"))}</dd>
           </Stack>
-          <p className="type-micro text-ink-muted">
-            --dur-scene é o único que o tema muda (1200–1600ms). No mobile os presets usam 70%.
-          </p>
         </Stack>
-      </dl>
+        <p className="type-micro text-ink-muted">
+          --dur-scene é o único que o tema muda (1200–1600ms). No mobile os presets usam 70%.
+        </p>
+      </Stack>
     </Container>
   );
 }
@@ -153,7 +153,7 @@ export function TokensSection() {
           <Block title="Raio">
             <Stack direction="row" gap={4} align="center">
               <div className="catalog-swatch rounded-base border border-ink-muted" />
-              <p className="font-code type-micro">--radius-base: {token("--radius-base")}</p>
+              <p translate="no" className="font-code tabular-nums type-micro">--radius-base: {token("--radius-base")}</p>
             </Stack>
           </Block>
         </Container>

@@ -32,7 +32,7 @@ export function StressView() {
   }, []);
 
   return (
-    <main>
+    <main id="conteudo">
       <Section space={8}>
         <Container gap={4}>
           <h1 className="type-h3">Stress test</h1>
@@ -70,7 +70,7 @@ export function StressView() {
           </Stack>
           <HeroTitle as="p" lines={[""]} />
           <RevealText>{""}</RevealText>
-          <PortalCard href="#" title="" image={PORTAL.a} hoverImage={PORTAL.b} />
+          <PortalCard href="#" title="" image={PORTAL.a} hoverImage={PORTAL.b} titleAs="h2" />
         </Container>
       </Section>
 
@@ -86,6 +86,7 @@ export function StressView() {
             description={LONG}
             image={PORTAL.a}
             hoverImage={PORTAL.b}
+            titleAs="h2"
           />
           <MediaFrame ratio="portrait" media={IMAGE.tall} caption={LONG} />
         </Container>
