@@ -4,20 +4,20 @@ Data: 2026-10-18. Escopo: design system (`src/styles`, `src/lib/motion`, `src/co
 
 ## Resultado
 
-| Check | Resultado | Status |
-|---|---|---|
-| `npm run lint` (eslint + escala de espaço) | 0 erros; `check-spacing: ok` | passou |
-| `npm run build` (tsc + vite + orçamento) | **JS inicial 133.04 kB gzip / 250 kB (53%)**; CSS 7 kB gzip | passou |
-| Lighthouse mobile, Performance | 94 (3 execuções) | passou (≥ 85) |
-| Lighthouse mobile, Acessibilidade | 100 (era 93 antes das correções) | passou |
-| Lighthouse mobile, Best Practices / SEO | 100 / 100 (SEO era 83) | passou |
-| CLS | 0 no Lighthouse; 0.0001–0.0034 com fonte atrasada em 1.2s | passou (≤ 0.1) |
-| LCP | **2.6 s** (render delay de 2.18 s); FCP 2.3 s; TBT 30–70 ms | **falhou por 0.1 s** (≤ 2.5 s) |
-| Teclado | 37 paradas de Tab; primeira é "Pular para o conteúdo"; todas com anel de 2px `--color-ink`, `:focus-visible`, dentro da tela e com opacidade 1; grupo de rádio é uma parada só; iframe navegável | passou |
-| Contraste AA | calculado ao vivo no catálogo nos dois temas: todos os textos ≥ 4.5 | passou |
-| Stress test em 375px | sem scroll horizontal nos dois temas; acentos inteiros; labels longos quebram dentro do botão | passou |
-| Reduced-motion | presets viram fade de `--dur-fast`; Lenis sem smooth; vídeo de ambiente parado | passou |
-| Um `h1`, alvo de toque ≥ 44px | sim (catálogo e stress test) | passou |
+| Check                                      | Resultado                                                                                                                                                                                        | Status                         |
+| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ |
+| `npm run lint` (eslint + escala de espaço) | 0 erros; `check-spacing: ok`                                                                                                                                                                     | passou                         |
+| `npm run build` (tsc + vite + orçamento)   | **JS inicial 133.04 kB gzip / 250 kB (53%)**; CSS 7 kB gzip                                                                                                                                      | passou                         |
+| Lighthouse mobile, Performance             | 94 (3 execuções)                                                                                                                                                                                 | passou (≥ 85)                  |
+| Lighthouse mobile, Acessibilidade          | 100 (era 93 antes das correções)                                                                                                                                                                 | passou                         |
+| Lighthouse mobile, Best Practices / SEO    | 100 / 100 (SEO era 83)                                                                                                                                                                           | passou                         |
+| CLS                                        | 0 no Lighthouse; 0.0001–0.0034 com fonte atrasada em 1.2s                                                                                                                                        | passou (≤ 0.1)                 |
+| LCP                                        | **2.6 s** (render delay de 2.18 s); FCP 2.3 s; TBT 30–70 ms                                                                                                                                      | **falhou por 0.1 s** (≤ 2.5 s) |
+| Teclado                                    | 37 paradas de Tab; primeira é "Pular para o conteúdo"; todas com anel de 2px `--color-ink`, `:focus-visible`, dentro da tela e com opacidade 1; grupo de rádio é uma parada só; iframe navegável | passou                         |
+| Contraste AA                               | calculado ao vivo no catálogo nos dois temas: todos os textos ≥ 4.5                                                                                                                              | passou                         |
+| Stress test em 375px                       | sem scroll horizontal nos dois temas; acentos inteiros; labels longos quebram dentro do botão                                                                                                    | passou                         |
+| Reduced-motion                             | presets viram fade de `--dur-fast`; Lenis sem smooth; vídeo de ambiente parado                                                                                                                   | passou                         |
+| Um `h1`, alvo de toque ≥ 44px              | sim (catálogo e stress test)                                                                                                                                                                     | passou                         |
 
 Lighthouse: v12.8.2, emulação mobile, throttling simulado (4G lento, CPU 4×), `vite preview` local.
 
@@ -57,12 +57,12 @@ Lighthouse: v12.8.2, emulação mobile, throttling simulado (4G lento, CPU 4×),
 - **`unused-javascript`:** no carregamento, GSAP e o código das seções de baixo ainda não foram usados. Isso se resolve com a decisão 1.
 - **Componentes ainda não feitos:** `Nav`, `HorizontalGallery`, `CollectionGrid`, `StatCounter`, `LogoWall`, `PageTransition` e `Footer` (SPEC §8) ficaram fora do escopo destas etapas.
 - **Agentes:** as definições de papéis em `.claude/agents/` (SPEC §11) ainda não existem.
-- **Git:** o projeto não é um repositório git; nada foi commitado.
+- **Git:** tudo está commitado em `master` (commit `27ec592`).
 
 ## Bundle
 
-| Arquivo | gzip |
-|---|---|
-| JS inicial (1 chunk) | 133.04 kB (53% do orçamento) |
-| CSS | ~7 kB |
+| Arquivo                                                | gzip                                        |
+| ------------------------------------------------------ | ------------------------------------------- |
+| JS inicial (1 chunk)                                   | 133.04 kB (53% do orçamento)                |
+| CSS                                                    | ~7 kB                                       |
 | Fontes do tema ativo (sob demanda por `unicode-range`) | display latin 35.5 kB + texto latin 52.5 kB |
