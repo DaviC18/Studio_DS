@@ -6,17 +6,17 @@ Data: 2026-10-18, atualizada em 2026-10-19 (etapa 7: LCP e robots). Escopo: desi
 
 Decisão: ficar no Vite, pré-renderizar o HTML no build e fazer a entrada do hero só em CSS.
 
-| Medida (mobile, mediana de 3) | Antes (etapa 6)      | Depois                |
-| ----------------------------- | -------------------- | --------------------- |
-| **LCP**                       | **2.6 s** (falhava)  | **1.5 s** (meta ≤ 2.0 s) |
-| FCP                           | 2.3 s                | 1.2 s                 |
-| Speed Index                   | —                    | 1.2 s                 |
-| TBT                           | 30–70 ms             | 50–80 ms              |
-| CLS                           | 0                    | 0                     |
-| Performance                   | 94                   | 100                   |
-| Acessibilidade                | 100                  | 100                   |
-| Best Practices                | 100                  | 100                   |
-| SEO                           | 100                  | 66 (esperado: só falha `is-crawlable`, por causa do `noindex`) |
+| Medida (mobile, mediana de 3) | Antes (etapa 6)     | Depois                                                         |
+| ----------------------------- | ------------------- | -------------------------------------------------------------- |
+| **LCP**                       | **2.6 s** (falhava) | **1.5 s** (meta ≤ 2.0 s)                                       |
+| FCP                           | 2.3 s               | 1.2 s                                                          |
+| Speed Index                   | —                   | 1.2 s                                                          |
+| TBT                           | 30–70 ms            | 50–80 ms                                                       |
+| CLS                           | 0                   | 0                                                              |
+| Performance                   | 94                  | 100                                                            |
+| Acessibilidade                | 100                 | 100                                                            |
+| Best Practices                | 100                 | 100                                                            |
+| SEO                           | 100                 | 66 (esperado: só falha `is-crawlable`, por causa do `noindex`) |
 
 As 3 execuções deram o mesmo LCP (1.5 s), FCP 1.2 s e CLS 0, com Performance 100 em todas. TBT: 50, 80 e 50 ms.
 
@@ -44,20 +44,20 @@ Teclado, de novo depois da mudança: 37 paradas, a primeira é "Pular para o con
 
 ## Resultado (etapa 6, atualizado)
 
-| Check                                      | Resultado                                                                                                                                                                                        | Status                         |
-| ------------------------------------------ | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ------------------------------ |
-| `npm run lint` (eslint + escala de espaço) | 0 erros; `check-spacing: ok`                                                                                                                                                                     | passou                         |
-| `npm run build` (tsc + vite + prerender + orçamento) | **JS inicial 133.32 kB gzip / 250 kB (53%)**; CSS 6.6 kB gzip                                                                                                                          | passou                         |
-| Lighthouse mobile, Performance             | 100 (3 execuções; era 94)                                                                                                                                                                        | passou (≥ 85)                  |
-| Lighthouse mobile, Acessibilidade          | 100 (era 93 antes das correções da etapa 6)                                                                                                                                                      | passou                         |
-| Lighthouse mobile, Best Practices / SEO    | 100 / 66. SEO só falha `is-crawlable`, de propósito (`noindex`)                                                                                                                                  | passou                         |
-| CLS                                        | 0 no Lighthouse; 0.0001–0.0034 com fonte atrasada em 1.2s (medido na etapa 6)                                                                                                                    | passou (≤ 0.1)                 |
-| LCP                                        | **1.5 s** (era 2.6 s); FCP 1.2 s; TBT 50–80 ms                                                                                                                                                   | passou (meta ≤ 2.0 s)          |
-| Teclado                                    | 37 paradas de Tab; primeira é "Pular para o conteúdo"; todas com anel de 2px `--color-ink`, `:focus-visible`, dentro da tela e com opacidade 1; grupo de rádio é uma parada só; iframe navegável | passou                         |
-| Contraste AA                               | calculado ao vivo no catálogo nos dois temas: todos os textos ≥ 4.5                                                                                                                              | passou                         |
-| Stress test em 375px                       | sem scroll horizontal nos dois temas; acentos inteiros; labels longos quebram dentro do botão                                                                                                    | passou                         |
-| Reduced-motion                             | presets viram fade de `--dur-fast`; Lenis sem smooth; vídeo de ambiente parado                                                                                                                   | passou                         |
-| Um `h1`, alvo de toque ≥ 44px              | sim (catálogo e stress test)                                                                                                                                                                     | passou                         |
+| Check                                                | Resultado                                                                                                                                                                                        | Status                |
+| ---------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | --------------------- |
+| `npm run lint` (eslint + escala de espaço)           | 0 erros; `check-spacing: ok`                                                                                                                                                                     | passou                |
+| `npm run build` (tsc + vite + prerender + orçamento) | **JS inicial 133.32 kB gzip / 250 kB (53%)**; CSS 6.6 kB gzip                                                                                                                                    | passou                |
+| Lighthouse mobile, Performance                       | 100 (3 execuções; era 94)                                                                                                                                                                        | passou (≥ 85)         |
+| Lighthouse mobile, Acessibilidade                    | 100 (era 93 antes das correções da etapa 6)                                                                                                                                                      | passou                |
+| Lighthouse mobile, Best Practices / SEO              | 100 / 66. SEO só falha `is-crawlable`, de propósito (`noindex`)                                                                                                                                  | passou                |
+| CLS                                                  | 0 no Lighthouse; 0.0001–0.0034 com fonte atrasada em 1.2s (medido na etapa 6)                                                                                                                    | passou (≤ 0.1)        |
+| LCP                                                  | **1.5 s** (era 2.6 s); FCP 1.2 s; TBT 50–80 ms                                                                                                                                                   | passou (meta ≤ 2.0 s) |
+| Teclado                                              | 37 paradas de Tab; primeira é "Pular para o conteúdo"; todas com anel de 2px `--color-ink`, `:focus-visible`, dentro da tela e com opacidade 1; grupo de rádio é uma parada só; iframe navegável | passou                |
+| Contraste AA                                         | calculado ao vivo no catálogo nos dois temas: todos os textos ≥ 4.5                                                                                                                              | passou                |
+| Stress test em 375px                                 | sem scroll horizontal nos dois temas; acentos inteiros; labels longos quebram dentro do botão                                                                                                    | passou                |
+| Reduced-motion                                       | presets viram fade de `--dur-fast`; Lenis sem smooth; vídeo de ambiente parado                                                                                                                   | passou                |
+| Um `h1`, alvo de toque ≥ 44px                        | sim (catálogo e stress test)                                                                                                                                                                     | passou                |
 
 Lighthouse: v12.8.2, emulação mobile, throttling simulado (4G lento, CPU 4×), `vite preview` local.
 
@@ -101,9 +101,9 @@ Lighthouse: v12.8.2, emulação mobile, throttling simulado (4G lento, CPU 4×),
 
 ## Bundle
 
-| Arquivo                                                | gzip                                        |
-| ------------------------------------------------------ | ------------------------------------------- |
-| JS inicial (1 chunk, buscado depois do primeiro paint) | 133.32 kB (53% do orçamento; era 133.04 kB) |
-| CSS                                                    | 6.6 kB                                      |
+| Arquivo                                                | gzip                                                                            |
+| ------------------------------------------------------ | ------------------------------------------------------------------------------- |
+| JS inicial (1 chunk, buscado depois do primeiro paint) | 133.32 kB (53% do orçamento; era 133.04 kB)                                     |
+| CSS                                                    | 6.6 kB                                                                          |
 | HTML pré-renderizado                                   | `index.html` 48.6 kB sem compressão (6.8 kB transferidos); `stress.html` 7.6 kB |
-| Fontes do tema ativo (sob demanda por `unicode-range`) | display latin 35.5 kB + texto latin 52.5 kB |
+| Fontes do tema ativo (sob demanda por `unicode-range`) | display latin 35.5 kB + texto latin 52.5 kB                                     |

@@ -153,15 +153,15 @@ Todo projeto tem um objeto herói: o elemento que vira a identidade do site e re
 
 **Inventário de assets** (um por linha; nenhum agente usa placeholder em produção)
 
-| Asset            | Seção | Formato               | Origem                            | Licença    | Status     |
-| ---------------- | ----- | --------------------- | --------------------------------- | ---------- | ---------- |
-| [foto hero]      | 1     | WebP/AVIF 2400px      | [cliente]                         | [própria]  | [pendente] |
-| [vídeo de fundo] | 3     | WebM + MP4, sem áudio | [freelancer]                      | [contrato] | [pendente] |
-| [fontes]         | todas | WOFF2                 | [Google Fonts / licença comprada] | [tipo]     | [pendente] |
-| Big Shoulders Display (tema torrefacao) | todas | WOFF2 variável, `@fontsource-variable` | Google Fonts | OFL | ok |
-| Literata (tema torrefacao) | todas | WOFF2 variável, `@fontsource-variable` | Google Fonts | OFL | ok |
-| Inter Tight (tema neutro) | todas | WOFF2 variável, `@fontsource-variable` | Google Fonts | OFL | ok |
-| Mídia abstrata do catálogo (`public/assets/catalog/`: 6 WebP, 1 vídeo WebM+MP4, 1 poster) | catálogo do DS | WebP, WebM + MP4 sem áudio | gerada por `scripts/generate-catalog-media.py` | própria | ok (só catálogo, não vai para site de cliente) |
+| Asset                                                                                     | Seção          | Formato                                | Origem                                         | Licença    | Status                                         |
+| ----------------------------------------------------------------------------------------- | -------------- | -------------------------------------- | ---------------------------------------------- | ---------- | ---------------------------------------------- |
+| [foto hero]                                                                               | 1              | WebP/AVIF 2400px                       | [cliente]                                      | [própria]  | [pendente]                                     |
+| [vídeo de fundo]                                                                          | 3              | WebM + MP4, sem áudio                  | [freelancer]                                   | [contrato] | [pendente]                                     |
+| [fontes]                                                                                  | todas          | WOFF2                                  | [Google Fonts / licença comprada]              | [tipo]     | [pendente]                                     |
+| Big Shoulders Display (tema torrefacao)                                                   | todas          | WOFF2 variável, `@fontsource-variable` | Google Fonts                                   | OFL        | ok                                             |
+| Literata (tema torrefacao)                                                                | todas          | WOFF2 variável, `@fontsource-variable` | Google Fonts                                   | OFL        | ok                                             |
+| Inter Tight (tema neutro)                                                                 | todas          | WOFF2 variável, `@fontsource-variable` | Google Fonts                                   | OFL        | ok                                             |
+| Mídia abstrata do catálogo (`public/assets/catalog/`: 6 WebP, 1 vídeo WebM+MP4, 1 poster) | catálogo do DS | WebP, WebM + MP4 sem áudio             | gerada por `scripts/generate-catalog-media.py` | própria    | ok (só catálogo, não vai para site de cliente) |
 
 Regra: todo asset tem licença registrada. Nada de imagem, fonte ou modelo 3D de terceiros sem direito de uso comercial.
 
@@ -215,11 +215,11 @@ Estes componentes são reutilizados entre clientes; só os tokens mudam. É o at
 
 **Primitivas de layout** (`src/components/ds/layout/`). Espaço entre componentes é responsabilidade da seção, sempre via `Stack`/`Container`; nunca `div` com classes de espaço avulsas.
 
-| Primitiva   | Função                                         | Variações (union types)                                        | Motion  |
-| ----------- | ---------------------------------------------- | -------------------------------------------------------------- | ------- |
-| `Section`   | faixa de largura total                         | `space` (padding vertical na escala), `theme`, `tone` bg/surface | nenhum |
-| `Container` | margem lateral + grid 4/12 colunas             | `layout`: full, split (6+6), thirds (4+4+4), main-aside (8+4); `gap` | nenhum |
-| `Stack`     | pilha flex entre componentes irmãos            | `direction`: column, row, column-to-row; `gap`; `align`; `justify`; `wrap` | nenhum |
+| Primitiva   | Função                              | Variações (union types)                                                    | Motion |
+| ----------- | ----------------------------------- | -------------------------------------------------------------------------- | ------ |
+| `Section`   | faixa de largura total              | `space` (padding vertical na escala), `theme`, `tone` bg/surface           | nenhum |
+| `Container` | margem lateral + grid 4/12 colunas  | `layout`: full, split (6+6), thirds (4+4+4), main-aside (8+4); `gap`       | nenhum |
+| `Stack`     | pilha flex entre componentes irmãos | `direction`: column, row, column-to-row; `gap`; `align`; `justify`; `wrap` | nenhum |
 
 `PortalCard` em 2 ou 3 colunas = `Container layout="split"` ou `"thirds"`.
 
@@ -262,22 +262,22 @@ Stack padrão do estúdio; troque uma camada só com motivo escrito na linha "Ex
 
 O site só é entregue quando passa em todos estes números, medidos no mobile. Bonito e lento não passa.
 
-| Área            | Critério                                                                       | Como medir                             |
-| --------------- | ------------------------------------------------------------------------------ | -------------------------------------- |
-| Performance     | LCP ≤ 2,5s, INP ≤ 200ms, CLS ≤ 0,1                                             | Lighthouse mobile + PageSpeed Insights |
-| Performance     | Lighthouse Performance ≥ 85 no mobile                                          | Lighthouse                             |
-| Performance     | JS inicial ≤ 250KB gzip; 3D e Rive carregados só quando visíveis               | bundle analyzer                        |
-| Performance     | Imagens em AVIF/WebP com `srcset`; nada acima de 400KB fora do hero            | inspeção de rede                       |
-| Fluidez         | 60fps no scroll em celular médio                                               | DevTools Performance, CPU 4x lento     |
-| Acessibilidade  | contraste AA, foco visível, ordem de tab lógica, `alt` em toda imagem          | axe + teclado                          |
-| Acessibilidade  | site utilizável com `prefers-reduced-motion`                                   | emulação no DevTools                   |
+| Área            | Critério                                                                                         | Como medir                                   |
+| --------------- | ------------------------------------------------------------------------------------------------ | -------------------------------------------- |
+| Performance     | LCP ≤ 2,5s, INP ≤ 200ms, CLS ≤ 0,1                                                               | Lighthouse mobile + PageSpeed Insights       |
+| Performance     | Lighthouse Performance ≥ 85 no mobile                                                            | Lighthouse                                   |
+| Performance     | JS inicial ≤ 250KB gzip; 3D e Rive carregados só quando visíveis                                 | bundle analyzer                              |
+| Performance     | Imagens em AVIF/WebP com `srcset`; nada acima de 400KB fora do hero                              | inspeção de rede                             |
+| Fluidez         | 60fps no scroll em celular médio                                                                 | DevTools Performance, CPU 4x lento           |
+| Acessibilidade  | contraste AA, foco visível, ordem de tab lógica, `alt` em toda imagem                            | axe + teclado                                |
+| Acessibilidade  | site utilizável com `prefers-reduced-motion`                                                     | emulação no DevTools                         |
 | Acessibilidade  | nenhum `Button` com label vazio nem `PortalCard` com título vazio (o dev mostra `console.error`) | console do `npm run dev` + leitura do código |
-| Acessibilidade  | alvo de toque ≥ 44px; um `h1`; link "pular para o conteúdo"                     | teclado + inspeção                     |
-| Código          | `npm run lint` e `npm run build` passam (escala de espaço e orçamento de JS)   | terminal                               |
-| SEO             | título, description, Open Graph e favicon                                      | inspeção + preview de link             |
-| SEO             | HTML semântico (1 `h1` por página), sitemap, robots, dados estruturados [tipo] | Lighthouse SEO, Rich Results Test      |
-| Compatibilidade | Chrome, Safari iOS, Firefox, Edge; 375px a 1920px                              | teste manual                           |
-| Conversão       | CTA principal visível em até 1 scroll no mobile                                | teste manual                           |
+| Acessibilidade  | alvo de toque ≥ 44px; um `h1`; link "pular para o conteúdo"                                      | teclado + inspeção                           |
+| Código          | `npm run lint` e `npm run build` passam (escala de espaço e orçamento de JS)                     | terminal                                     |
+| SEO             | título, description, Open Graph e favicon                                                        | inspeção + preview de link                   |
+| SEO             | HTML semântico (1 `h1` por página), sitemap, robots, dados estruturados [tipo]                   | Lighthouse SEO, Rich Results Test            |
+| Compatibilidade | Chrome, Safari iOS, Firefox, Edge; 375px a 1920px                                                | teste manual                                 |
+| Conversão       | CTA principal visível em até 1 scroll no mobile                                                  | teste manual                                 |
 
 ## 11. Equipe de agentes e fluxo de trabalho
 

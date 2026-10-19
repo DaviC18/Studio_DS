@@ -37,9 +37,9 @@ Fonts are self-hosted with `@fontsource-variable/*` (no Google CDN), declared by
 
 `@theme` resets the default theme. Spacing keeps the Tailwind convention (name × 4 = px: `p-4` = 16px) but exists **only** for the SPEC §4 scale:
 
-| name | 0 | 1 | 2 | 4 | 6 | 8 | 12 | 16 | 24 | 32 | 48 |
-|---|---|---|---|---|---|---|---|---|---|---|---|
-| px | 0 | 4 | 8 | 16 | 24 | 32 | 48 | 64 | 96 | 128 | 192 |
+| name | 0   | 1   | 2   | 4   | 6   | 8   | 12  | 16  | 24  | 32  | 48  |
+| ---- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
+| px   | 0   | 4   | 8   | 16  | 24  | 32  | 48  | 64  | 96  | 128 | 192 |
 
 Anything else (`p-5`, `gap-3`, `p-[13px]`) generates no CSS and fails silently in the browser, so `npm run lint` runs `scripts/check-spacing.mjs`, which fails on it. For a component token use `p-(--token)`.
 

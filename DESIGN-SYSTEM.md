@@ -9,9 +9,11 @@ O design system tem duas camadas. `src/styles/base.css` é estrutura e não muda
 2. **Valide o contraste antes de escrever CSS.** `--color-ink`, `--color-ink-muted` e `--color-accent` precisam de ≥ 4.5:1 sobre `--color-bg` e sobre `--color-surface`. `--color-bg` sobre `--color-accent` também, porque é o texto do botão primário. `--color-line` é decorativo.
 
 3. **Instale as fontes** com versão travada:
+
    ```bash
    npm i --save-exact @fontsource-variable/<display> @fontsource-variable/<texto>
    ```
+
    As duas precisam ter licença de uso comercial (OFL no Google Fonts). Registre no inventário do SPEC §6.
 
 4. **Copie um tema existente**, por exemplo `cp src/styles/themes/torrefacao.css src/styles/themes/<cliente>.css`, e troque:

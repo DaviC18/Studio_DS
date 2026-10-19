@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "deny": [
+      "Skill(impeccable)",
+      "Agent(impeccable-asset-producer)",
+      "Agent(impeccable-documenter)",
+      "Agent(impeccable-finish-reviewer)",
+      "Agent(impeccable-manual-edit-applier)",
+      "Agent(caveman:cavecrew-builder)",
+      "Agent(caveman:cavecrew-investigator)",
+      "Agent(caveman:cavecrew-reviewer)"
+    ]
+  }
+}
