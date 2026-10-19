@@ -1,4 +1,5 @@
 import { Fragment, useEffect, useRef } from "react";
+import { cx } from "../../lib/cx";
 import { useRevealLines } from "../../lib/motion";
 
 export type HeroTitleLines =
@@ -11,14 +12,19 @@ export type HeroTitleProps = {
   lines: HeroTitleLines;
   /** Só um h1 por página: use "h2" ou "p" nos outros. */
   as?: "h1" | "h2" | "p";
-  /** "load" toca ao montar (hero); "scroll" ao entrar na viewport. */
+  /**
+   * "load": entrada só em CSS (.hero-in), toca no primeiro paint sem esperar o
+   * JS (SPEC §5, hero = CSS). "scroll": GSAP ao entrar na viewport.
+   */
   play?: "load" | "scroll";
 };
+
+const NO_TARGET = { current: null };
 
 /** Título gigante; linhas sobem em stagger com --dur-scene. */
 export function HeroTitle({ lines, as = "h1", play = "load" }: HeroTitleProps) {
   const ref = useRef<HTMLSpanElement>(null);
-  useRevealLines(ref, { scroll: play === "scroll", duration: "scene" });
+  useRevealLines(play === "scroll" ? ref : NO_TARGET, { duration: "scene" });
 
   useEffect(() => {
     if (import.meta.env.DEV && as === "h1" && document.querySelectorAll("h1").length > 1) {
@@ -31,7 +37,7 @@ export function HeroTitle({ lines, as = "h1", play = "load" }: HeroTitleProps) {
   // entre elas.
   return (
     <Tag className="type-display">
-      <span ref={ref} className="block">
+      <span ref={ref} className={cx("block", play === "load" && "hero-in")}>
         {lines.map((line, i) => (
           <Fragment key={i}>
             {i > 0 && " "}

@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 // Orçamento de JS inicial (SPEC §10): falha o build se passar de 250 kB gzip.
-// "Inicial" = o <script type="module"> e os <link rel="modulepreload"> do
+// "Inicial" = o script de entrada (src= ou o import() que o vite.config.ts
+// adia para depois do primeiro paint) e os <link rel="modulepreload"> do
 // dist/index.html. Chunks carregados sob demanda (3D, Rive) ficam de fora.
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
@@ -13,6 +14,7 @@ const html = readFileSync(join(DIST, "index.html"), "utf8");
 const files = [
   ...html.matchAll(/<script[^>]+type="module"[^>]+src="([^"]+)"/g),
   ...html.matchAll(/<link[^>]+rel="modulepreload"[^>]+href="([^"]+)"/g),
+  ...html.matchAll(/<script type="module">[^<]*import\("([^"]+)"\)/g),
 ].map((m) => m[1]);
 
 if (files.length === 0) {

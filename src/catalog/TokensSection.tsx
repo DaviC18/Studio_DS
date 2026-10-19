@@ -1,5 +1,6 @@
 import type { ReactNode } from "react";
 import { Container, Section, Stack } from "../components/ds";
+import { useHydrated } from "../lib/hydrated";
 import type { DurationToken, EaseToken } from "../lib/motion";
 import { contrast, toHex, token } from "./css";
 import { EaseCurve } from "./EaseCurve";
@@ -31,31 +32,49 @@ const SPACE = [
 const EASES: EaseToken[] = ["out", "in-out", "snap"];
 const DURATIONS: DurationToken[] = ["fast", "base", "slow", "scene"];
 
+/** Valor ainda desconhecido no HTML pré-renderizado (estilos só existem no browser). */
+const PENDING = "…";
+
+/** Lê um token resolvido; antes da hidratação devolve PENDING. */
+function useToken() {
+  const ready = useHydrated();
+  return (name: string) => (ready ? token(name) : PENDING);
+}
+
 function ms(value: string) {
+  if (value === PENDING) return value;
   const n = parseFloat(value);
   return `${value.endsWith("ms") ? n : n * 1000}ms`;
 }
 
 function Colors() {
-  const bg = token("--color-bg");
-  const surface = token("--color-surface");
+  const read = useToken();
+  const bg = read("--color-bg");
+  const surface = read("--color-surface");
   return (
     <Container layout="thirds" gap={8}>
       {COLORS.map((c) => {
-        const value = token(`--color-${c.name}`);
-        const onBg = contrast(value, bg);
-        const onSurface = contrast(value, surface);
+        const value = read(`--color-${c.name}`);
+        const known = value !== PENDING;
+        const onBg = known ? contrast(value, bg) : 0;
+        const onSurface = known ? contrast(value, surface) : 0;
         return (
           <Stack key={c.name} direction="row" gap={4} align="start">
             <div className={`catalog-swatch shrink-0 rounded-base border border-line ${c.swatch}`} />
             <Stack gap={1}>
               <p translate="no" className="type-button">--color-{c.name}</p>
-              <p translate="no" className="font-code tabular-nums type-micro">{toHex(value)}</p>
+              <p translate="no" className="font-code tabular-nums type-micro">{known ? toHex(value) : PENDING}</p>
               <p className="type-micro text-ink-muted">{c.use}</p>
               {"text" in c && (
                 <p className="tabular-nums type-micro">
-                  {onBg.toFixed(2)} sobre bg · {onSurface.toFixed(2)} sobre surface ·{" "}
-                  {Math.min(onBg, onSurface) >= 4.5 ? "AA ok" : "abaixo de AA"}
+                  {known ? (
+                    <>
+                      {onBg.toFixed(2)} sobre bg · {onSurface.toFixed(2)} sobre surface ·{" "}
+                      {Math.min(onBg, onSurface) >= 4.5 ? "AA ok" : "abaixo de AA"}
+                    </>
+                  ) : (
+                    PENDING
+                  )}
                 </p>
               )}
             </Stack>
@@ -67,12 +86,13 @@ function Colors() {
 }
 
 function Typography() {
+  const read = useToken();
   return (
     <Stack gap={12}>
       {TYPE.map((t) => (
         <Stack key={t.name} gap={2}>
           <p translate="no" className="font-code tabular-nums type-micro text-ink-muted">
-            {t.spec} · {t.token}: {token(t.token)}
+            {t.spec} · {t.token}: {read(t.token)}
           </p>
           <p className={t.cls}>Ação épica na torréfação</p>
         </Stack>
@@ -96,6 +116,7 @@ function Spacing() {
 }
 
 function Motion() {
+  const read = useToken();
   return (
     <Container layout="split" gap={12}>
       <Stack direction="row" gap={8} wrap>
@@ -108,12 +129,12 @@ function Motion() {
           {DURATIONS.map((d) => (
             <Stack key={d} direction="row" gap={4} justify="between">
               <dt translate="no" className="font-code tabular-nums type-micro">--dur-{d}</dt>
-              <dd translate="no" className="font-code tabular-nums type-micro">{ms(token(`--dur-${d}`))}</dd>
+              <dd translate="no" className="font-code tabular-nums type-micro">{ms(read(`--dur-${d}`))}</dd>
             </Stack>
           ))}
           <Stack direction="row" gap={4} justify="between">
             <dt translate="no" className="font-code tabular-nums type-micro">--stagger</dt>
-            <dd translate="no" className="font-code tabular-nums type-micro">{ms(token("--stagger"))}</dd>
+            <dd translate="no" className="font-code tabular-nums type-micro">{ms(read("--stagger"))}</dd>
           </Stack>
         </Stack>
         <p className="type-micro text-ink-muted">
@@ -129,6 +150,16 @@ function Block({ title, children }: { title: string; children: ReactNode }) {
     <Stack gap={8}>
       <h3 className="type-h3">{title}</h3>
       {children}
+    </Stack>
+  );
+}
+
+function Radius() {
+  const read = useToken();
+  return (
+    <Stack direction="row" gap={4} align="center">
+      <div className="catalog-swatch rounded-base border border-ink-muted" />
+      <p translate="no" className="font-code tabular-nums type-micro">--radius-base: {read("--radius-base")}</p>
     </Stack>
   );
 }
@@ -151,10 +182,7 @@ export function TokensSection() {
             <Spacing />
           </Block>
           <Block title="Raio">
-            <Stack direction="row" gap={4} align="center">
-              <div className="catalog-swatch rounded-base border border-ink-muted" />
-              <p translate="no" className="font-code tabular-nums type-micro">--radius-base: {token("--radius-base")}</p>
-            </Stack>
+            <Radius />
           </Block>
         </Container>
         <Block title="Motion">

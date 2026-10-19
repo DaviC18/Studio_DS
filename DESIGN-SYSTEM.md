@@ -44,3 +44,4 @@ O design system tem duas camadas. `src/styles/base.css` é estrutura e não muda
 - Espaço entre componentes: só `Section`, `Container` e `Stack`. Escala: `1 2 4 6 8 12 16 24 32 48` (× 4 = px).
 - Acento: no máximo 3 usos por tela.
 - Motion: tokens do `base.css` e constantes de `src/lib/motion/config.ts`. Todo preset tem variante de reduced-motion.
+- Hero = CSS, scroll = GSAP: a entrada do hero não espera o JS. O conteúdo fica visível mesmo se o JS falhar (SPEC §5.10–11).

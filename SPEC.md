@@ -136,6 +136,8 @@ Movimento também é token: 3 curvas, 4 durações e regras de quando usar cada 
 7. Loading inicial: no máximo 1,5s visível, e só se houver asset pesado para carregar.
 8. Disparo dos reveals: `top 85%` (topo do elemento a 85% da viewport), uma vez só (`once`). Zoom inicial do `MediaFrame`: 1.1 → 1. Constantes em `src/lib/motion/config.ts`, único lugar delas.
 9. Tokens de motion são estruturais (`src/styles/base.css`) e iguais para todos os clientes. Única exceção: o tema pode sobrescrever `--dur-scene`, via `--theme-dur-scene`, sempre dentro de 1200–1600ms (o base aplica `clamp()`). Sem override, vale 1400ms.
+10. **Hero = CSS, scroll = GSAP.** A entrada do hero (o que aparece na primeira dobra ao carregar) é só CSS: `@keyframes` com `--dur-scene`, `--ease-out` e `--stagger`, que toca no primeiro paint sem esperar o JS (`HeroTitle play="load"`, classe `.hero-in` no `base.css`). GSAP só anima o que vem abaixo da dobra, no scroll. Reduced-motion vale por media query também no CSS (fade de `--dur-fast`).
+11. **Conteúdo visível sem JS.** O HTML é pré-renderizado e nada começa em `opacity: 0` sem um fallback em CSS: a animação CSS do hero termina sozinha, e os presets GSAP só escondem um elemento quando o JS já rodou. Se o JS falhar, tudo fica visível.
 
 ## 6. Objeto herói e assets
 
@@ -224,7 +226,7 @@ Estes componentes são reutilizados entre clientes; só os tokens mudam. É o at
 **Implementados** (`src/components/ds/`, documentados no catálogo com snippet e "use quando / não use quando"). Regras comuns: props tipadas, variações por union type, sem `className`/`style`, só tokens.
 
 - `Button`: `variant` primary | ghost | link. Com `href` vira `<a>`, sem vira `<button>`. `disabled` real (button `disabled`; link sem `href` e com `aria-disabled`). Altura mínima 44px. Hover e foco: camada que sobe com `--ease-snap`, `--dur-fast`. Label vazio dá `console.error` em dev.
-- `HeroTitle`: `lines` com 1 a 3 itens, `as` h1 | h2 | p, `play` load | scroll. Linhas em máscara com stagger e `--dur-scene`. Avisa em dev se houver mais de um `h1`.
+- `HeroTitle`: `lines` com 1 a 3 itens, `as` h1 | h2 | p, `play` load | scroll. Linhas em máscara com stagger e `--dur-scene`; `load` = só CSS (§5.10), `scroll` = GSAP. Avisa em dev se houver mais de um `h1`.
 - `RevealText`: `by` line | word, `as`, `size` body | h3 | h2, `tone` ink | muted. O leitor de tela lê uma cópia `sr-only`; a parte dividida pelo SplitText fica `aria-hidden`.
 - `MediaFrame`: `ratio` video | portrait | square; mídia `image` (`alt` obrigatório no tipo) ou `video` (`label`, `poster`, `muted`, `playsInline`; `ambient` = loop sem controles, toca só visível, com botão de pausa e parado em reduced-motion). Proporção fixa, então CLS zero. `lazy` por padrão; `priority` = `eager` + `fetchpriority=high` e sem máscara.
 - `PortalCard`: o card inteiro é um link, e o nome vem do texto visível (título + descrição). Imagem troca no hover, no foco por teclado e, sem hover, no centro da tela. Imagens `absolute` dentro da proporção, então sem layout shift. `titleAs` h2 | h3 | h4. Título vazio dá `console.error` em dev.
@@ -248,11 +250,13 @@ Stack padrão do estúdio; troque uma camada só com motivo escrito na linha "Ex
 | Hospedagem        | Vercel                               | Netlify                                     |
 | Analytics         | Vercel Analytics ou Plausible        | GA4, se o cliente exigir                    |
 
-**Estrutura de pastas (Vite):** `src/components/ds/` design system (e `ds/layout/` com Section, Container, Stack), `src/components/sections/` seções, `src/lib/motion/` hooks, presets e `config.ts`, `src/styles/base.css` estrutura, `src/styles/themes/[tema].css` identidade (registrados em `themes/index.ts`), `site.config.ts` tema ativo, `src/catalog/` catálogo do DS, `scripts/` checks de lint e build, `public/assets/` mídia otimizada.
+**Estrutura de pastas (Vite):** `src/components/ds/` design system (e `ds/layout/` com Section, Container, Stack), `src/components/sections/` seções, `src/lib/motion/` hooks, presets e `config.ts`, `src/styles/base.css` estrutura, `src/styles/themes/[tema].css` identidade (registrados em `themes/index.ts`), `site.config.ts` tema ativo, `src/catalog/` catálogo do DS, `src/App.tsx` árvore da página (igual no servidor e no cliente), `src/entry-server.tsx` render para o pré-render, `scripts/` checks e pré-render, `public/assets/` mídia otimizada. Uma página por HTML: `index.html` (catálogo) e `stress.html` (stress test em 375px, aberto no iframe do catálogo).
 
-**Checks automáticos:** `npm run lint` = eslint + `scripts/check-spacing.mjs` (falha em espaço fora da escala). `npm run build` = tsc + vite + `scripts/check-bundle.mjs` (falha com JS inicial acima de 250 kB gzip e mostra o valor).
+**Render (Vite):** o build pré-renderiza cada HTML com `renderToString` (`scripts/prerender.mjs`) e o cliente hidrata com `hydrateRoot`; em dev o `#root` chega vazio e o React renderiza do zero. Sem hydration mismatch: o primeiro render do cliente tem que ser igual ao do servidor. Valor que só o browser sabe (tema escolhido, estilo computado, medida) entra por `useSyncExternalStore` com snapshot de servidor (`useTheme`, `useHydrated`), nunca lido direto no render. O tema escolhido no catálogo é aplicado no `<html>` por um script inline no `<head>`, antes do paint. O JS de entrada só hidrata, então é buscado depois do primeiro paint e não disputa banda com HTML, CSS e fontes.
 
-**Exceções deste projeto:** Framework → Vite + React + TypeScript, porque o site de teste é single page. Tailwind v4 via `@tailwindcss/vite`, com os tokens ligados por `@theme`.
+**Checks automáticos:** `npm run lint` = eslint + `scripts/check-spacing.mjs` (falha em espaço fora da escala). `npm run build` = tsc + vite (cliente) + vite `--ssr` + `scripts/prerender.mjs` + `scripts/check-bundle.mjs` (falha com JS inicial acima de 250 kB gzip e mostra o valor).
+
+**Exceções deste projeto:** Framework → Vite + React + TypeScript com pré-render no build (sem Next.js), porque o site de teste é single page. O catálogo é ferramenta interna: `robots.txt` com `Disallow: /` e `<meta name="robots" content="noindex">`. Tailwind v4 via `@tailwindcss/vite`, com os tokens ligados por `@theme`.
 
 ## 10. Critérios de aceite
 

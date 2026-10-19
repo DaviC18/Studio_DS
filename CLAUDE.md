@@ -6,13 +6,13 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Single-page "cinematic" studio site built from a reusable design system. `SPEC.md` (Portuguese) is the source of truth: read it before any task. Its golden rule: if something is not in the spec, do not invent it — record it as an open question.
 
-Current state: the project is only the studio design system; the single page is its catalog (`src/catalog/`, `?view=stress` renders the 375px stress test). No tests or test runner exist yet; checks are `npm run lint` and `npm run build`.
+Current state: the project is only the studio design system; the single page is its catalog (`src/catalog/`; `stress.html` renders the 375px stress test). Both HTML pages are prerendered at build (`renderToString` → `scripts/prerender.mjs`) and hydrated with `hydrateRoot`: never read browser-only values (theme, computed styles) during render — use `useTheme`/`useHydrated` (`useSyncExternalStore` with a server snapshot). Hero entrance is CSS only (`HeroTitle play="load"`); GSAP is for below-the-fold scroll motion (SPEC §5.10–11). No tests or test runner exist yet; checks are `npm run lint` and `npm run build`.
 
 ## Commands
 
 ```bash
 npm run dev       # Vite dev server with HMR
-npm run build     # tsc -b (type check) then vite build
+npm run build     # tsc -b, vite build, SSR build + prerender, JS budget check
 npm run lint      # eslint .
 npm run preview   # serve the production build
 ```

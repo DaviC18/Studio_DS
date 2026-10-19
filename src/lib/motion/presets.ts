@@ -53,6 +53,8 @@ export function reveal(el: HTMLElement, opts: RunOptions) {
 // Sobe peças (linhas ou palavras) de dentro das máscaras, em stagger. Cada
 // peça parte da própria altura + folgas: o acento nunca aparece antes.
 function riseFromMask(pieces: Element[], el: HTMLElement, opts: RunOptions) {
+  // Texto vazio: nada para animar (evita o aviso "GSAP target not found").
+  if (pieces.length === 0) return;
   return gsap.from(pieces, {
     y: (_i: number, piece: HTMLElement) => {
       const bleed = maskBleed(piece);

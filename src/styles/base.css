@@ -344,6 +344,45 @@
   }
 }
 
+/* Entrada do hero (SPEC §5, hero = CSS): as linhas do HeroTitle play="load"
+ * sobem da máscara no primeiro paint, sem esperar o JS. Mesmo movimento do
+ * preset revealLines: --dur-scene, --ease-out, --stagger, × --motion-scale.
+ * O fill "both" segura o estado inicial só enquanto a animação existe; ela
+ * roda sem JS, então o texto sempre termina visível. */
+@keyframes hero-rise {
+  from {
+    transform: translateY(calc(100% + var(--mask-bleed-top) + var(--mask-bleed-bottom)));
+  }
+}
+
+@keyframes hero-fade {
+  from {
+    opacity: 0;
+  }
+}
+
+@layer components {
+  .hero-in [data-line] {
+    animation: hero-rise calc(var(--dur-scene) * var(--motion-scale)) var(--ease-out) both;
+  }
+
+  .hero-in > :nth-child(2) [data-line] {
+    animation-delay: calc(var(--stagger) * var(--motion-scale));
+  }
+
+  .hero-in > :nth-child(3) [data-line] {
+    animation-delay: calc(var(--stagger) * var(--motion-scale) * 2);
+  }
+
+  /* Reduced-motion (SPEC §5.4): fade curto, sem deslocamento nem stagger. */
+  @media (prefers-reduced-motion: reduce) {
+    /* :nth-child(n) iguala a especificidade das regras de delay acima. */
+    .hero-in > :nth-child(n) [data-line] {
+      animation: hero-fade var(--dur-fast) var(--ease-out) both;
+    }
+  }
+}
+
 /* Máscaras criadas pelo SplitText ("ds-line" → "ds-line-mask", "ds-word" →
  * "ds-word-mask"). Ele põe overflow: clip inline; trocamos pelo clip-path com
  * folga. --mask-clip usa em: resolve no tamanho de fonte de cada máscara. */

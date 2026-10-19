@@ -1,16 +1,14 @@
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
+import { createRoot, hydrateRoot } from 'react-dom/client'
 import './index.css'
-import App from './App.tsx'
-import { applyTheme, initialTheme } from './catalog/theme'
-import { MotionProvider } from './lib/motion'
+import App, { type Page } from './App.tsx'
+import { syncThemeColor } from './lib/theme-color'
 
-applyTheme(initialTheme())
+const root = document.getElementById('root')!
+const page = (root.dataset.page ?? 'catalog') as Page
 
-createRoot(document.getElementById('root')!).render(
-  <StrictMode>
-    <MotionProvider>
-      <App />
-    </MotionProvider>
-  </StrictMode>,
-)
+syncThemeColor()
+
+// Build: o HTML vem pré-renderizado (scripts/prerender.mjs) e é hidratado.
+// Dev: o #root chega vazio e o React renderiza do zero.
+if (root.hasChildNodes()) hydrateRoot(root, <App page={page} />)
+else createRoot(root).render(<App page={page} />)

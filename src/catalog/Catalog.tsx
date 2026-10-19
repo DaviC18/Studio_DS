@@ -1,11 +1,9 @@
-import { useState } from "react";
 import { Button, Container, HeroTitle, Section, Stack } from "../components/ds";
-import type { ThemeName } from "../styles/themes";
 import "./catalog.css";
 import { ComponentsSection } from "./ComponentsSection";
 import { MotionSection } from "./MotionSection";
 import { StressSection } from "./StressSection";
-import { applyTheme } from "./theme";
+import { applyTheme, useTheme } from "./theme";
 import { ThemeSwitcher } from "./ThemeSwitcher";
 import { TokensSection } from "./TokensSection";
 
@@ -17,12 +15,8 @@ const NAV = [
 ];
 
 /** Catálogo do design system: a documentação que os agentes leem. */
-export function Catalog({ initial }: { initial: ThemeName }) {
-  const [theme, setTheme] = useState(initial);
-  const change = (next: ThemeName) => {
-    applyTheme(next, true);
-    setTheme(next);
-  };
+export function Catalog() {
+  const theme = useTheme();
 
   return (
     <>
@@ -42,7 +36,7 @@ export function Catalog({ initial }: { initial: ThemeName }) {
             </p>
           </Stack>
           <Stack gap={6} align="start">
-            <ThemeSwitcher value={theme} onChange={change} />
+            <ThemeSwitcher value={theme} onChange={applyTheme} />
             <nav aria-label="Seções do catálogo">
               <Stack as="ul" gap={1}>
                 {NAV.map((n) => (

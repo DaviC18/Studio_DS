@@ -1,9 +1,12 @@
 import type { EaseToken } from "../lib/motion";
+import { useHydrated } from "../lib/hydrated";
 import { bezier } from "./css";
 
 /** Curva do token desenhada + barra que enche com ela. */
 export function EaseCurve({ name }: { name: EaseToken }) {
-  const [x1, y1, x2, y2] = bezier(`--ease-${name}`);
+  // Curva lida do CSS só no browser; no HTML pré-renderizado, linha reta.
+  const ready = useHydrated();
+  const [x1, y1, x2, y2] = ready ? bezier(`--ease-${name}`) : [0, 0, 1, 1];
   const p = (v: number) => (v * 100).toFixed(1);
   const q = (v: number) => (100 - v * 100).toFixed(1);
   return (
@@ -20,7 +23,7 @@ export function EaseCurve({ name }: { name: EaseToken }) {
         <div data-ease={name} className="catalog-ease-bar size-full bg-ink-muted" />
       </div>
       <figcaption className="type-micro text-ink-muted">
-        --ease-{name}: {x1}, {y1}, {x2}, {y2}
+        --ease-{name}: {ready ? `${x1}, ${y1}, ${x2}, ${y2}` : "…"}
       </figcaption>
     </figure>
   );
