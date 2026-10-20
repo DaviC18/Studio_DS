@@ -256,7 +256,7 @@ Stack padrão do estúdio; troque uma camada só com motivo escrito na linha "Ex
 
 **Render (Vite):** o build pré-renderiza cada HTML com `renderToString` (`scripts/prerender.mjs`) e o cliente hidrata com `hydrateRoot`; em dev o `#root` chega vazio e o React renderiza do zero. Sem hydration mismatch: o primeiro render do cliente tem que ser igual ao do servidor. Valor que só o browser sabe (tema escolhido, estilo computado, medida) entra por `useSyncExternalStore` com snapshot de servidor (`useTheme`, `useHydrated`), nunca lido direto no render. O tema escolhido no catálogo é aplicado no `<html>` por um script inline no `<head>`, antes do paint. O JS de entrada só hidrata, então é buscado depois do primeiro paint e não disputa banda com HTML, CSS e fontes.
 
-**Checks automáticos:** `npm run lint` = eslint + `scripts/check-tokens.mjs` (falha em espaço fora da escala, em cor arbitrária em classe como `text-[#…]` ou `bg-[rgb(…)]`, e em hex/rgb/hsl/oklch fora de `src/styles/themes/` e das definições de token do `base.css`). `npm run build` = tsc + vite (cliente) + vite `--ssr` + `scripts/prerender.mjs` + `scripts/check-bundle.mjs` (falha com JS inicial acima de 250 kB gzip e mostra o valor).
+**Checks automáticos:** `npm run lint` = eslint + `prettier --check .` (formatação; `npm run format` corrige) + `scripts/check-tokens.mjs` (falha em espaço fora da escala, em cor arbitrária em classe como `text-[#…]` ou `bg-[rgb(…)]`, e em hex/rgb/hsl/oklch fora de `src/styles/themes/` e das definições de token do `base.css`). `npm run build` = tsc + vite (cliente) + vite `--ssr` + `scripts/prerender.mjs` + `scripts/check-bundle.mjs` (falha com JS inicial acima de 250 kB gzip e mostra o valor).
 
 **Exceções deste projeto:** Framework → Vite + React + TypeScript com pré-render no build (sem Next.js), porque o site de teste é single page. O catálogo é ferramenta interna: `<meta name="robots" content="noindex">` no catálogo e no stress. O `robots.txt` não bloqueia o catálogo, para o robô conseguir ler o `noindex`; com `indexable: false`, ele vira `Disallow: /` e o site também leva `noindex`. Tailwind v4 via `@tailwindcss/vite`, com os tokens ligados por `@theme`.
 
@@ -283,16 +283,17 @@ O site só é entregue quando passa em todos estes números, medidos no mobile. 
 
 ## 11. Equipe de agentes e fluxo de trabalho
 
-Cinco papéis bastam: um orquestrador, três tipos de executor e um revisor. A Fundação roda primeiro; Seções e Motion só começam quando os tokens e componentes existem.
+Seis papéis: um orquestrador, três tipos de executor, um revisor técnico e um crítico de direção de arte. A Fundação roda primeiro; Seções e Motion só começam quando os tokens e componentes existem.
 
 Fluxo:
 
 1. **Você (diretor)** fecha as seções 1 a 6 da spec.
 2. **Orquestrador** divide a spec em tarefas.
 3. **Agentes executores:** Fundação (tokens e componentes) → depois, em paralelo, Seções (1 agente por seção) e Motion e 3D (3D, Rive e transições).
-4. **Revisor (QA)** checa os critérios da seção 10. Reprovado: volta ao agente da tarefa. No máximo 2 voltas por tarefa; se uma terceira revisão fosse necessária, o orquestrador para e pergunta ao diretor.
-5. **Você** faz a revisão visual em celular real e desktop.
-6. **Deploy na Vercel** com link de preview para o cliente.
+4. **Revisor (QA)** checa os critérios da seção 10. Depois do PASSA, toda entrega visual (seção, componente que aparece na página, motion) vai ao **Crítico**, que julga a direção de arte contra o `DESIGN.md`. Reprovado por qualquer um dos dois: volta ao agente da tarefa. No máximo 2 voltas por tarefa, somando revisor e crítico; se uma terceira fosse necessária, o orquestrador para e pergunta ao diretor.
+5. **Rodada 7:** antes da sua revisão, um passe de `impeccable polish`, `harden` e `clarify`, cada dono nos próprios arquivos, e de novo revisor e crítico.
+6. **Você** faz a revisão visual em celular real e desktop.
+7. **Deploy na Vercel** com link de preview para o cliente.
 
 O revisor nunca corrige sozinho: devolve a lista de erros ao agente da tarefa, e só o que passa chega à sua revisão visual.
 
@@ -303,8 +304,9 @@ O revisor nunca corrige sozinho: devolve a lista de erros ao agente da tarefa, e
 | Seção (1 por seção) | spec + bloco da seção 7 | seção pronta com critérios marcados                           | criar token ou componente sem registrar |
 | Motion e 3D         | seções 5 e 6 + assets   | objeto herói, transições, fallbacks                           | usar asset fora do inventário           |
 | Revisor             | branch + seção 10       | relatório passa/falha com prints (screenshots salvos fora do repo, em pasta temporária, com o caminho citado no relatório) | corrigir o código da tarefa             |
+| Crítico             | entrega visual + `DESIGN.md` + `PRODUCT.md` | relatório APROVADO/AJUSTES com itens, prints (fora do repo) e nota 0–10 de "parece feito por estúdio" | corrigir código; sugerir mudar token ou tema (vira pergunta ao diretor) |
 
-**No Claude Code:** o orquestrador é a sessão principal, guiada pelo comando `/orquestrar` (`.claude/commands/orquestrar.md`), porque os subagentes do projeto não têm a ferramenta `Agent` e não chamam outros agentes. Os outros papéis viram subagentes com seu arquivo em `.claude/agents/` (`fundacao`, `secao`, `motion`, `revisor`), e cada executor trabalha em uma branch ou worktree própria para não pisar no código do outro.
+**No Claude Code:** o orquestrador é a sessão principal, guiada pelo comando `/orquestrar` (`.claude/commands/orquestrar.md`), porque os subagentes do projeto não têm a ferramenta `Agent` e não chamam outros agentes. Os outros papéis viram subagentes com seu arquivo em `.claude/agents/` (`fundacao`, `secao`, `motion`, `revisor`, `critico`), e cada executor trabalha em uma branch ou worktree própria para não pisar no código do outro.
 
 **Dono de cada arquivo** (o revisor reprova edição fora da coluna do autor):
 
@@ -314,8 +316,35 @@ O revisor nunca corrige sozinho: devolve a lista de erros ao agente da tarefa, e
 | `secao`    | `src/components/sections/<Nome>.tsx`, uma seção por tarefa; `src/App.tsx` só para importar e ordenar seções                                   |
 | `motion`   | `src/lib/motion/` e as partes de motion de `src/components/sections/` que o orquestrador indicar. Mudança em `src/components/ds/` vira pedido à `fundacao` |
 | `revisor`  | nada                                                                                                                                         |
+| `critico`  | nada                                                                                                                                         |
 
-O orquestrador não edita código. O resto (`vite.config.ts`, `index.html`, `catalogo/*.html`, `src/main.tsx`, `src/entry-server.tsx`, `src/Site.tsx`, `scripts/`, docs e `.claude/`) fica com o diretor.
+O orquestrador não edita código. O resto (`vite.config.ts`, `index.html`, `catalogo/*.html`, `src/main.tsx`, `src/entry-server.tsx`, `src/Site.tsx`, `scripts/`, docs, `DESIGN.md`, `PRODUCT.md`, `.impeccable/` e `.claude/`) fica com o diretor. `src/Site.tsx`, `src/main.tsx` e `src/entry-server.tsx` são do diretor por decisão da rodada 1; a `secao` passa as seções como filhos de `<Site>` em `src/App.tsx`.
+
+**Estética travada.** `DESIGN.md` (gerado do código pela `impeccable document`; North Star "A Torra Lenta") e `PRODUCT.md` (da `Spec_Golden_Grains.md`) são o critério de direção de arte. O código vence o `DESIGN.md`: se divergirem, regenera-se o arquivo. Mudar token, tema ou um desses arquivos é decisão do diretor.
+
+**Skills por agente** (pré-carregadas pelo campo `skills` do agente, ou lidas do arquivo):
+
+| Agente     | Skills                                                                                                                                  |
+| ---------- | --------------------------------------------------------------------------------------------------------------------------------------- |
+| `motion`   | `emil-design-eng` (+ as `gsap-*` já listadas)                                                                                          |
+| `secao`    | `frontend-design` (plugin oficial, escopo do projeto), sempre abaixo da spec e do `DESIGN.md`                                             |
+| `critico`  | `impeccable critique` e `audit` (tool Skill); `review-animations` lida de `.claude/skills/review-animations/` (ela não carrega pela tool) |
+| `fundacao`, `secao`, `motion` | `impeccable polish`, `harden` e `clarify`, só no passe da rodada 7                                                     |
+
+`emil-design-eng` e `review-animations` estão copiadas em `.claude/skills/` (`npx skills add emilkowalski/skills`, travadas em `skills-lock.json`).
+
+**Impeccable com uso restrito.** Neste projeto só passam `critique`, `audit`, `harden`, `clarify`, `polish` e `document`. Os comandos que criam estética (`bolder`, `colorize`, `overdrive`, `delight`, `animate`, `typeset`, `layout`) e os demais são negados por regras `Skill(args:…)` no `.claude/settings.json` e por uma lista branca no hook `.claude/hooks/impeccable-guard.mjs`, que também nega pedido livre e chamada sem comando. Os subagentes `impeccable-*` ficam bloqueados. Os hooks de detector da impeccable estão desligados neste projeto (`.impeccable/config.json`, `hook.enabled: false`).
+
+**Duração: interação rápida, cena lenta.** A regra da `review-animations` (animação de UI abaixo de 300ms) vale só para interação: hover, botão, menu, foco, toggle, controle de vídeo, com `--dur-fast` e `--ease-snap`. Não vale para cena e scroll (hero, revelações, `StatCounter`, galeria, footer, transição de página), que seguem os tokens do §5: `--dur-base`, `--dur-slow` e `--dur-scene`. O ritmo lento é o conceito da marca; o crítico não reprova duração de cena que usa o token certo.
+
+**Decisões da rodada 1 (site Golden Grains):**
+
+- Dono de `src/Site.tsx`, `src/main.tsx` e `src/entry-server.tsx`: diretor.
+- `SiteMode = "production" | "preview"` aprovado: `preview` mantém a troca de tema no site; `production` tira.
+- Separar a entrada JS do catálogo da do site: rodada 7.
+- Link "pular para o conteúdo" com alvo de 44px: rodada 3.
+- Prettier com check no `npm run lint` (`.prettierrc.json`, `printWidth` 100; Markdown fica fora).
+- A spec do site é `Spec_Golden_Grains.md`.
 
 ## 12. Checklist de entrega
 

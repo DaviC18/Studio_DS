@@ -51,7 +51,8 @@ function Video({ media, priority }: { media: FrameVideo; priority: boolean }) {
     if (!video || !ambient) return;
     const reduce = window.matchMedia("(prefers-reduced-motion: reduce)");
     const io = new IntersectionObserver(([entry]) => {
-      if (entry.isIntersecting && !userPaused.current && !reduce.matches) video.play().catch(() => {});
+      if (entry.isIntersecting && !userPaused.current && !reduce.matches)
+        video.play().catch(() => {});
       else video.pause();
     });
     const onReduce = () => reduce.matches && video.pause();
@@ -126,26 +127,24 @@ export function MediaFrame({
       >
         <div className="size-full">
           {media.kind === "image" ? (
-              <img
-                className={FILL}
-                src={media.src}
-                srcSet={media.srcSet}
-                sizes={media.sizes}
-                alt={media.alt}
-                width={media.width}
-                height={media.height}
-                loading={priority ? "eager" : "lazy"}
-                fetchPriority={priority ? "high" : "auto"}
-                decoding="async"
-              />
-            ) : (
-              <Video media={media} priority={priority} />
-            )}
+            <img
+              className={FILL}
+              src={media.src}
+              srcSet={media.srcSet}
+              sizes={media.sizes}
+              alt={media.alt}
+              width={media.width}
+              height={media.height}
+              loading={priority ? "eager" : "lazy"}
+              fetchPriority={priority ? "high" : "auto"}
+              decoding="async"
+            />
+          ) : (
+            <Video media={media} priority={priority} />
+          )}
         </div>
       </div>
-      {caption && (
-        <figcaption className="mt-2 type-micro text-ink-muted">{caption}</figcaption>
-      )}
+      {caption && <figcaption className="mt-2 type-micro text-ink-muted">{caption}</figcaption>}
     </figure>
   );
 }

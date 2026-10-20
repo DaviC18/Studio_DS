@@ -10,7 +10,12 @@ const COLORS = [
   { name: "surface", swatch: "bg-surface", use: "cards, seções alternadas" },
   { name: "ink", swatch: "bg-ink", use: "texto principal", text: true },
   { name: "ink-muted", swatch: "bg-ink-muted", use: "legendas, microcopy", text: true },
-  { name: "accent", swatch: "bg-accent", use: "CTA, destaque, hover (máx. 3 por tela)", text: true },
+  {
+    name: "accent",
+    swatch: "bg-accent",
+    use: "CTA, destaque, hover (máx. 3 por tela)",
+    text: true,
+  },
   { name: "line", swatch: "bg-line", use: "bordas e divisores (decorativo)" },
 ] as const;
 
@@ -24,9 +29,16 @@ const TYPE = [
 ] as const;
 
 const SPACE = [
-  { step: 1, w: "w-1" }, { step: 2, w: "w-2" }, { step: 4, w: "w-4" }, { step: 6, w: "w-6" },
-  { step: 8, w: "w-8" }, { step: 12, w: "w-12" }, { step: 16, w: "w-16" }, { step: 24, w: "w-24" },
-  { step: 32, w: "w-32" }, { step: 48, w: "w-48" },
+  { step: 1, w: "w-1" },
+  { step: 2, w: "w-2" },
+  { step: 4, w: "w-4" },
+  { step: 6, w: "w-6" },
+  { step: 8, w: "w-8" },
+  { step: 12, w: "w-12" },
+  { step: 16, w: "w-16" },
+  { step: 24, w: "w-24" },
+  { step: 32, w: "w-32" },
+  { step: 48, w: "w-48" },
 ] as const;
 
 const EASES: EaseToken[] = ["out", "in-out", "snap"];
@@ -60,10 +72,16 @@ function Colors() {
         const onSurface = known ? contrast(value, surface) : 0;
         return (
           <Stack key={c.name} direction="row" gap={4} align="start">
-            <div className={`catalog-swatch shrink-0 rounded-base border border-line ${c.swatch}`} />
+            <div
+              className={`catalog-swatch shrink-0 rounded-base border border-line ${c.swatch}`}
+            />
             <Stack gap={1}>
-              <p translate="no" className="type-button">--color-{c.name}</p>
-              <p translate="no" className="font-code tabular-nums type-micro">{known ? toHex(value) : PENDING}</p>
+              <p translate="no" className="type-button">
+                --color-{c.name}
+              </p>
+              <p translate="no" className="font-code tabular-nums type-micro">
+                {known ? toHex(value) : PENDING}
+              </p>
               <p className="type-micro text-ink-muted">{c.use}</p>
               {"text" in c && (
                 <p className="tabular-nums type-micro">
@@ -128,13 +146,21 @@ function Motion() {
         <Stack as="dl" gap={2}>
           {DURATIONS.map((d) => (
             <Stack key={d} direction="row" gap={4} justify="between">
-              <dt translate="no" className="font-code tabular-nums type-micro">--dur-{d}</dt>
-              <dd translate="no" className="font-code tabular-nums type-micro">{ms(read(`--dur-${d}`))}</dd>
+              <dt translate="no" className="font-code tabular-nums type-micro">
+                --dur-{d}
+              </dt>
+              <dd translate="no" className="font-code tabular-nums type-micro">
+                {ms(read(`--dur-${d}`))}
+              </dd>
             </Stack>
           ))}
           <Stack direction="row" gap={4} justify="between">
-            <dt translate="no" className="font-code tabular-nums type-micro">--stagger</dt>
-            <dd translate="no" className="font-code tabular-nums type-micro">{ms(read("--stagger"))}</dd>
+            <dt translate="no" className="font-code tabular-nums type-micro">
+              --stagger
+            </dt>
+            <dd translate="no" className="font-code tabular-nums type-micro">
+              {ms(read("--stagger"))}
+            </dd>
           </Stack>
         </Stack>
         <p className="type-micro text-ink-muted">
@@ -159,7 +185,9 @@ function Radius() {
   return (
     <Stack direction="row" gap={4} align="center">
       <div className="catalog-swatch rounded-base border border-ink-muted" />
-      <p translate="no" className="font-code tabular-nums type-micro">--radius-base: {read("--radius-base")}</p>
+      <p translate="no" className="font-code tabular-nums type-micro">
+        --radius-base: {read("--radius-base")}
+      </p>
     </Stack>
   );
 }

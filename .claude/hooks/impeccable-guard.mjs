@@ -14,7 +14,11 @@ const input = JSON.parse(raw).tool_input ?? {};
 const skill = String(input.skill ?? "").replace(/^\//, "");
 if (skill !== "impeccable" && !skill.endsWith(":impeccable")) process.exit(0);
 
-const command = String(input.args ?? "").trim().split(/\s+/)[0].replace(/^\//, "").toLowerCase();
+const command = String(input.args ?? "")
+  .trim()
+  .split(/\s+/)[0]
+  .replace(/^\//, "")
+  .toLowerCase();
 if (ALLOWED.has(command)) process.exit(0);
 
 const reason =
@@ -22,6 +26,10 @@ const reason =
   `"${command || "(sem comando)"}" não é permitido (SPEC §11). Mudança estética passa pelo diretor.`;
 console.log(
   JSON.stringify({
-    hookSpecificOutput: { hookEventName: "PreToolUse", permissionDecision: "deny", permissionDecisionReason: reason },
+    hookSpecificOutput: {
+      hookEventName: "PreToolUse",
+      permissionDecision: "deny",
+      permissionDecisionReason: reason,
+    },
   }),
 );

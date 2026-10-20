@@ -1,7 +1,7 @@
 # Product
 
 <!-- impeccable:product-schema 1 -->
-<!-- Fonte: "Spec do site — Golden Grains.md" (§1, §2, §5, §9). A spec é a fonte da verdade; se divergir, a spec vence. -->
+<!-- Fonte: `Spec_Golden_Grains.md` (§1, §2, §5, §9). A spec é a fonte da verdade; se divergir, a spec vence. -->
 
 ## Platform
 

@@ -15,7 +15,9 @@ const SRC = join(ROOT, "src");
 const BASE_CSS = join(SRC, "styles/base.css");
 const THEMES = join(SRC, "styles/themes/");
 // Os HTML de entrada (site e catálogo) também vão para o cliente (meta theme-color, estilo inline).
-const ROOT_FILES = ["index.html", "catalogo/index.html", "catalogo/stress.html"].map((f) => join(ROOT, f));
+const ROOT_FILES = ["index.html", "catalogo/index.html", "catalogo/stress.html"].map((f) =>
+  join(ROOT, f),
+);
 
 // --- Espaço ---------------------------------------------------------------
 
@@ -25,14 +27,63 @@ const scale = new Set(
 );
 
 const UTILITIES = [
-  "p", "px", "py", "ps", "pe", "pt", "pr", "pb", "pl",
-  "m", "mx", "my", "ms", "me", "mt", "mr", "mb", "ml",
-  "gap", "gap-x", "gap-y", "space-x", "space-y",
-  "inset", "inset-x", "inset-y", "top", "right", "bottom", "left", "start", "end",
-  "w", "h", "min-w", "min-h", "max-w", "max-h", "size", "basis", "indent",
-  "translate-x", "translate-y",
-  "scroll-m", "scroll-mx", "scroll-my", "scroll-mt", "scroll-mr", "scroll-mb", "scroll-ml",
-  "scroll-p", "scroll-px", "scroll-py", "scroll-pt", "scroll-pr", "scroll-pb", "scroll-pl",
+  "p",
+  "px",
+  "py",
+  "ps",
+  "pe",
+  "pt",
+  "pr",
+  "pb",
+  "pl",
+  "m",
+  "mx",
+  "my",
+  "ms",
+  "me",
+  "mt",
+  "mr",
+  "mb",
+  "ml",
+  "gap",
+  "gap-x",
+  "gap-y",
+  "space-x",
+  "space-y",
+  "inset",
+  "inset-x",
+  "inset-y",
+  "top",
+  "right",
+  "bottom",
+  "left",
+  "start",
+  "end",
+  "w",
+  "h",
+  "min-w",
+  "min-h",
+  "max-w",
+  "max-h",
+  "size",
+  "basis",
+  "indent",
+  "translate-x",
+  "translate-y",
+  "scroll-m",
+  "scroll-mx",
+  "scroll-my",
+  "scroll-mt",
+  "scroll-mr",
+  "scroll-mb",
+  "scroll-ml",
+  "scroll-p",
+  "scroll-px",
+  "scroll-py",
+  "scroll-pt",
+  "scroll-pr",
+  "scroll-pb",
+  "scroll-pl",
 ];
 
 // variantes? !? -? utilitário-valor, onde valor é número ou [arbitrário].
@@ -92,11 +143,17 @@ for (const file of [...walk(SRC), ...ROOT_FILES]) {
       }
       if (colorAllowed(file, line)) return;
       const arbitrary = [...line.matchAll(ARBITRARY_COLOR)];
-      for (const m of arbitrary) report(file, i, m[0], "cor arbitrária em classe; use um token --color-*");
+      for (const m of arbitrary)
+        report(file, i, m[0], "cor arbitrária em classe; use um token --color-*");
       // Literal solto (fora de classe arbitrária já reportada).
       const rest = arbitrary.reduce((acc, m) => acc.replace(m[0], ""), line);
       for (const m of rest.matchAll(COLOR)) {
-        report(file, i, m[0], "cor crua fora de src/styles/themes/ e das definições de token do base.css");
+        report(
+          file,
+          i,
+          m[0],
+          "cor crua fora de src/styles/themes/ e das definições de token do base.css",
+        );
       }
     });
 }

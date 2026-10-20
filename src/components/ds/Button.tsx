@@ -1,4 +1,9 @@
-import { useEffect, type AnchorHTMLAttributes, type ButtonHTMLAttributes, type ReactNode } from "react";
+import {
+  useEffect,
+  type AnchorHTMLAttributes,
+  type ButtonHTMLAttributes,
+  type ReactNode,
+} from "react";
 import { cx } from "../../lib/cx";
 import { isEmptyText } from "../../lib/dev";
 
@@ -42,10 +47,13 @@ const HOVER_LAYER: Partial<Record<ButtonVariant, string>> = {
   ghost: "bg-(--button-ghost-hover-bg)",
 };
 
-const TRANSITION =
-  "transition-transform duration-fast ease-snap motion-reduce:transition-none";
+const TRANSITION = "transition-transform duration-fast ease-snap motion-reduce:transition-none";
 
-function Content({ variant, disabled, children }: Required<Omit<Common, "children">> & { children: ReactNode }) {
+function Content({
+  variant,
+  disabled,
+  children,
+}: Required<Omit<Common, "children">> & { children: ReactNode }) {
   const layer = HOVER_LAYER[variant];
   return (
     <>
@@ -120,7 +128,13 @@ export function Button(props: ButtonProps) {
     );
   }
 
-  const { type = "button", variant: _variant, disabled: _disabled, children: _children, ...rest } = props;
+  const {
+    type = "button",
+    variant: _variant,
+    disabled: _disabled,
+    children: _children,
+    ...rest
+  } = props;
   return (
     <button {...rest} type={type} disabled={disabled} className={className}>
       {content}

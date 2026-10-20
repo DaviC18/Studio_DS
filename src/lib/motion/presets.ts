@@ -4,14 +4,7 @@
 // split, sem scrub. O estado final é sempre o elemento visível.
 import { COUNT_FROM, DEFAULT_ONCE, DEFAULT_START, MASK_ZOOM } from "./config";
 import { gsap, SplitText } from "./gsap";
-import {
-  duration,
-  ease,
-  maskBleed,
-  revealDistance,
-  stagger,
-  type DurationToken,
-} from "./tokens";
+import { duration, ease, maskBleed, revealDistance, stagger, type DurationToken } from "./tokens";
 
 export type PresetOptions = {
   /** false = toca ao montar, sem ScrollTrigger (ex.: hero). */
@@ -24,9 +17,7 @@ export type PresetOptions = {
 type RunOptions = PresetOptions & { reduce: boolean };
 
 function scrollTrigger(trigger: Element, { scroll = true, start }: PresetOptions) {
-  return scroll
-    ? { trigger, start: start ?? DEFAULT_START, once: DEFAULT_ONCE }
-    : undefined;
+  return scroll ? { trigger, start: start ?? DEFAULT_START, once: DEFAULT_ONCE } : undefined;
 }
 
 function fade(targets: Element | Element[], trigger: Element, opts: PresetOptions) {

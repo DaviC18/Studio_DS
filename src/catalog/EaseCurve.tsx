@@ -12,7 +12,11 @@ export function EaseCurve({ name }: { name: EaseToken }) {
   return (
     <figure className="flex w-48 max-w-full flex-col gap-2">
       <svg viewBox="-4 -4 108 108" className="size-24 overflow-visible" aria-hidden="true">
-        <path d="M0 100 L100 0" className="fill-none stroke-line [stroke-width:var(--line-width)]" vectorEffect="non-scaling-stroke" />
+        <path
+          d="M0 100 L100 0"
+          className="fill-none stroke-line [stroke-width:var(--line-width)]"
+          vectorEffect="non-scaling-stroke"
+        />
         <path
           d={`M0 100 C${p(x1)} ${q(y1)} ${p(x2)} ${q(y2)} 100 0`}
           className="fill-none stroke-ink [stroke-width:var(--focus-ring-width)]"

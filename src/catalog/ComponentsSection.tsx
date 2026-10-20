@@ -15,7 +15,14 @@ import { IMAGE, PORTAL, VIDEO } from "./media";
 
 /** Célula visível para demonstrar o layout. */
 function Cell({ children }: { children: ReactNode }) {
-  return <div translate="no" className="rounded-base border border-line bg-surface p-4 font-code type-micro">{children}</div>;
+  return (
+    <div
+      translate="no"
+      className="rounded-base border border-line bg-surface p-4 font-code type-micro"
+    >
+      {children}
+    </div>
+  );
 }
 
 export function ComponentsSection() {
@@ -61,7 +68,7 @@ export function ComponentsSection() {
         <DocEntry
           name="HeroTitle"
           use="título principal do hero ou de uma seção de abertura, 1 a 3 linhas curtas."
-          avoid="o texto passa de 3 linhas ou é parágrafo (use RevealText); já existe um h1 e você não passou as=&quot;h2&quot;."
+          avoid='o texto passa de 3 linhas ou é parágrafo (use RevealText); já existe um h1 e você não passou as="h2".'
           snippet={`
 <HeroTitle lines={["Café", "de origem"]} />            // h1, toca ao carregar
 <HeroTitle as="h2" play="scroll" lines={["Torra lenta"]} />`}
@@ -88,8 +95,8 @@ export function ComponentsSection() {
           <Container layout="split" gap={12}>
             <Variant label="por linha, body">
               <RevealText>
-                Torramos em lotes pequenos, sempre de manhã, e anotamos cada curva de temperatura.
-                O café sai da torra, descansa dois dias e só depois vai para a xícara.
+                Torramos em lotes pequenos, sempre de manhã, e anotamos cada curva de temperatura. O
+                café sai da torra, descansa dois dias e só depois vai para a xícara.
               </RevealText>
             </Variant>
             <Variant label="por palavra, h2">
@@ -130,14 +137,36 @@ export function ComponentsSection() {
         >
           <Variant label="2 colunas (Container split)">
             <Container layout="split" gap={12}>
-              <PortalCard titleAs="h4" href="#componentes" title="Torra clara" description="Notas cítricas e corpo leve." image={PORTAL.a} hoverImage={PORTAL.b} />
-              <PortalCard titleAs="h4" href="#componentes" title="Torra escura" description="Chocolate amargo e corpo denso." image={PORTAL.c} hoverImage={PORTAL.b} />
+              <PortalCard
+                titleAs="h4"
+                href="#componentes"
+                title="Torra clara"
+                description="Notas cítricas e corpo leve."
+                image={PORTAL.a}
+                hoverImage={PORTAL.b}
+              />
+              <PortalCard
+                titleAs="h4"
+                href="#componentes"
+                title="Torra escura"
+                description="Chocolate amargo e corpo denso."
+                image={PORTAL.c}
+                hoverImage={PORTAL.b}
+              />
             </Container>
           </Variant>
           <Variant label="3 colunas (Container thirds), 1:1">
             <Container layout="thirds" gap={12}>
               {["Origem", "Processo", "Loja"].map((t) => (
-                <PortalCard key={t} titleAs="h4" href="#componentes" title={t} ratio="square" image={PORTAL.d} hoverImage={PORTAL.e} />
+                <PortalCard
+                  key={t}
+                  titleAs="h4"
+                  href="#componentes"
+                  title={t}
+                  ratio="square"
+                  image={PORTAL.d}
+                  hoverImage={PORTAL.e}
+                />
               ))}
             </Container>
           </Variant>

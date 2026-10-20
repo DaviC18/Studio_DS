@@ -1,4 +1,4 @@
-# Spec do site — Golden Grains
+# Spec do site: Golden Grains
 
 Oct 19, 2026 · @Davi Curty
 
@@ -224,7 +224,7 @@ Sete rodadas de `/orquestrar`, em sequência. Cada uma termina com PASSA do revi
 Prompt da primeira rodada:
 
 ```text
-/orquestrar Leia SITE-SPEC.md (spec do site Golden Grains) e execute a
+/orquestrar Leia Spec_Golden_Grains.md (spec do site Golden Grains) e execute a
 rodada 1 do plano de execução (§8): estrutura. Não avance para a
 rodada 2.
 ```

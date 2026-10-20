@@ -1,5 +1,13 @@
 import { useRef, useState, type ReactNode } from "react";
-import { Button, Container, HeroTitle, MediaFrame, RevealText, Section, Stack } from "../components/ds";
+import {
+  Button,
+  Container,
+  HeroTitle,
+  MediaFrame,
+  RevealText,
+  Section,
+  Stack,
+} from "../components/ds";
 import { useReveal, useStagger, type EaseToken } from "../lib/motion";
 import { CodeBlock } from "./CodeBlock";
 import { EaseCurve } from "./EaseCurve";
@@ -77,21 +85,46 @@ export function MotionSection() {
             deslocamento.
           </p>
         </Stack>
-        <PresetDemo name="revealLines" ease="out" timing="--dur-scene no HeroTitle, --dur-slow no RevealText; --stagger entre linhas" hook={`useRevealLines(ref, { scroll: false, duration: "scene" })\n// ou <HeroTitle lines={[…]} />`}>
+        <PresetDemo
+          name="revealLines"
+          ease="out"
+          timing="--dur-scene no HeroTitle, --dur-slow no RevealText; --stagger entre linhas"
+          hook={`useRevealLines(ref, { scroll: false, duration: "scene" })\n// ou <HeroTitle lines={[…]} />`}
+        >
           <HeroTitle as="p" play="load" lines={["Ação", "torréfação", "épica"]} />
         </PresetDemo>
-        <PresetDemo name="revealWords" ease="out" timing="--dur-slow; --stagger entre palavras" hook={`<RevealText by="word" size="h2">…</RevealText>`}>
+        <PresetDemo
+          name="revealWords"
+          ease="out"
+          timing="--dur-slow; --stagger entre palavras"
+          hook={`<RevealText by="word" size="h2">…</RevealText>`}
+        >
           <RevealText as="p" size="h2" by="word">
             Do grão à xícara, sem pressa
           </RevealText>
         </PresetDemo>
-        <PresetDemo name="reveal" ease="out" timing="--dur-base; fade + --reveal-distance" hook={`useReveal(ref)              // dispara em "top 85%", uma vez`}>
+        <PresetDemo
+          name="reveal"
+          ease="out"
+          timing="--dur-base; fade + --reveal-distance"
+          hook={`useReveal(ref)              // dispara em "top 85%", uma vez`}
+        >
           <RevealBox />
         </PresetDemo>
-        <PresetDemo name="mask" ease="out" timing="--dur-slow; cortina + zoom 1.1 → 1" hook={`<MediaFrame ratio="video" media={…} />   // useMask por dentro`}>
+        <PresetDemo
+          name="mask"
+          ease="out"
+          timing="--dur-slow; cortina + zoom 1.1 → 1"
+          hook={`<MediaFrame ratio="video" media={…} />   // useMask por dentro`}
+        >
           <MediaFrame ratio="video" media={IMAGE.wide} />
         </PresetDemo>
-        <PresetDemo name="stagger" ease="out" timing="--dur-base; --stagger entre filhos" hook={`useStagger(listRef)`}>
+        <PresetDemo
+          name="stagger"
+          ease="out"
+          timing="--dur-base; --stagger entre filhos"
+          hook={`useStagger(listRef)`}
+        >
           <StaggerList />
         </PresetDemo>
       </Container>

@@ -1,0 +1,8 @@
+dist
+dist-ssr
+node_modules
+public/assets
+package-lock.json
+skills-lock.json
+.claude/skills
+*.md

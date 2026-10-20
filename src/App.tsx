@@ -16,9 +16,7 @@ function App({ page }: { page: Page }) {
     <StrictMode>
       <MotionProvider>
         {page === "site" && (
-          <Site>
-            {/* Seções do site em ordem (Spec do site §3): importar e ordenar aqui. */}
-          </Site>
+          <Site>{/* Seções do site em ordem (Spec do site §3): importar e ordenar aqui. */}</Site>
         )}
         {page === "catalog" && <Catalog />}
         {page === "stress" && <StressView />}

@@ -86,11 +86,7 @@ export function PortalCard({
   );
 
   return (
-    <a
-      ref={ref}
-      href={href}
-      className="group block rounded-(--portal-radius)"
-    >
+    <a ref={ref} href={href} className="group block rounded-(--portal-radius)">
       <div
         className={cx(
           "relative overflow-clip rounded-(--portal-radius) bg-(--media-placeholder)",
@@ -111,11 +107,7 @@ export function PortalCard({
         </div>
       </div>
       {createElement(titleAs, { className: "mt-4 type-h3" }, title)}
-      {description && (
-        <p className="mt-2 max-w-measure type-body text-ink-muted">
-          {description}
-        </p>
-      )}
+      {description && <p className="mt-2 max-w-measure type-body text-ink-muted">{description}</p>}
     </a>
   );
 }

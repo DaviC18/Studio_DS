@@ -3,9 +3,7 @@ import { cx } from "../../lib/cx";
 import { useRevealLines } from "../../lib/motion";
 
 export type HeroTitleLines =
-  | readonly [string]
-  | readonly [string, string]
-  | readonly [string, string, string];
+  readonly [string] | readonly [string, string] | readonly [string, string, string];
 
 export type HeroTitleProps = {
   /** 1 a 3 linhas (SPEC §8). Cada uma tem a própria máscara. */
@@ -28,7 +26,7 @@ export function HeroTitle({ lines, as = "h1", play = "load" }: HeroTitleProps) {
 
   useEffect(() => {
     if (import.meta.env.DEV && as === "h1" && document.querySelectorAll("h1").length > 1) {
-      console.warn("HeroTitle: mais de um <h1> na página. Use as=\"h2\" ou \"p\".");
+      console.warn('HeroTitle: mais de um <h1> na página. Use as="h2" ou "p".');
     }
   }, [as]);
 

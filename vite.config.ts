@@ -50,7 +50,13 @@ function siteTheme(): Plugin {
           tags: [
             {
               tag: "link",
-              attrs: { rel: "preload", href: base + asset.fileName, as: "font", type: "font/woff2", crossorigin: "" },
+              attrs: {
+                rel: "preload",
+                href: base + asset.fileName,
+                as: "font",
+                type: "font/woff2",
+                crossorigin: "",
+              },
               injectTo: "head-prepend",
             },
           ],

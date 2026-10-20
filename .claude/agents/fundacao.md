@@ -1,7 +1,7 @@
 ---
 name: fundacao
 description: Agente Fundação do SPEC §11. Use para tokens, temas, componentes de src/components/ds, presets de motion em src/lib e o catálogo. Roda antes de Seção e Motion. Não cria seção de página.
-tools: Read, Edit, Write, Grep, Glob, Bash
+tools: Read, Edit, Write, Grep, Glob, Bash, Skill
 skills: [tailwind-design-system]
 color: blue
 ---
@@ -42,6 +42,10 @@ Pedidos de `secao` (componente que falta) e de `motion` (mudança em `src/compon
 - Chamar outros agentes.
 
 Componente novo do ds: registre no `index.ts` e no catálogo.
+
+## Impeccable (só na rodada 7)
+
+Você tem a tool Skill para um uso só: quando o orquestrador pedir o passe de acabamento da rodada 7, rode `impeccable polish`, `impeccable harden` e `impeccable clarify` sobre os seus arquivos (`skill: "impeccable"`, `args: "polish <alvo>"`). Fora disso, não use a impeccable. Ela trabalha dentro do `DESIGN.md`: não mude token, tema, curva, duração nem copy da spec; copy nova vira questão aberta.
 
 ## Checks
 

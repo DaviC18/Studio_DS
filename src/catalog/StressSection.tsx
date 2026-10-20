@@ -11,8 +11,8 @@ export function StressSection({ theme }: { theme: ThemeName }) {
             Stress test em 375px
           </h2>
           <p className="max-w-measure">
-            Palavra mais longa no display, acentos em todos os tamanhos, texto vazio, texto 3×
-            maior e botão com label longo. O topo da moldura diz se houve scroll horizontal.
+            Palavra mais longa no display, acentos em todos os tamanhos, texto vazio, texto 3× maior
+            e botão com label longo. O topo da moldura diz se houve scroll horizontal.
           </p>
         </Stack>
         <iframe

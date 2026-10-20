@@ -13,7 +13,14 @@ import {
 import { IMAGE, PORTAL } from "./media";
 
 const ACCENTS = "ÁÉÇÃ Ação épica";
-const SIZES = ["type-display", "type-h2", "type-h3", "type-body", "type-micro", "type-button"] as const;
+const SIZES = [
+  "type-display",
+  "type-h2",
+  "type-h3",
+  "type-body",
+  "type-micro",
+  "type-button",
+] as const;
 const LONG =
   "Torramos em lotes pequenos, sempre de manhã, e anotamos cada curva de temperatura. O café sai da torra, descansa dois dias e só depois vai para a xícara. ";
 
@@ -38,7 +45,11 @@ export function StressView() {
         <Container gap={4}>
           <h1 className="type-h3">Stress test</h1>
           <p role="status" className="type-micro">
-            {overflow === null ? "medindo…" : overflow ? "FALHA: há scroll horizontal" : "ok: sem scroll horizontal"}
+            {overflow === null
+              ? "medindo…"
+              : overflow
+                ? "FALHA: há scroll horizontal"
+                : "ok: sem scroll horizontal"}
           </p>
         </Container>
       </Section>

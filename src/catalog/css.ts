@@ -7,13 +7,21 @@ function toRgb(color: string): [number, number, number] {
   const probe = document.createElement("span");
   probe.style.color = color;
   document.body.appendChild(probe);
-  const rgb = getComputedStyle(probe).color.match(/[\d.]+/g)!.slice(0, 3).map(Number);
+  const rgb = getComputedStyle(probe)
+    .color.match(/[\d.]+/g)!
+    .slice(0, 3)
+    .map(Number);
   probe.remove();
   return [rgb[0], rgb[1], rgb[2]];
 }
 
 export function toHex(color: string): string {
-  return "#" + toRgb(color).map((v) => v.toString(16).padStart(2, "0")).join("");
+  return (
+    "#" +
+    toRgb(color)
+      .map((v) => v.toString(16).padStart(2, "0"))
+      .join("")
+  );
 }
 
 function luminance(color: string): number {
@@ -32,6 +40,8 @@ export function contrast(a: string, b: string): number {
 
 /** Pontos de controle de um cubic-bezier() lido de um token. */
 export function bezier(name: string): [number, number, number, number] {
-  const nums = token(name).match(/-?[\d.]+/g)?.map(Number) ?? [0, 0, 1, 1];
+  const nums = token(name)
+    .match(/-?[\d.]+/g)
+    ?.map(Number) ?? [0, 0, 1, 1];
   return [nums[0], nums[1], nums[2], nums[3]];
 }

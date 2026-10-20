@@ -6,14 +6,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Single-page "cinematic" studio site built from a reusable design system. `SPEC.md` (Portuguese) is the source of truth: read it before any task. Its golden rule: if something is not in the spec, do not invent it — record it as an open question.
 
-Current state: the root (`index.html`, `data-page="site"`) is the Golden Grains test site (`Spec do site — Golden Grains.md`), an empty shell (`src/Site.tsx`: skip link + `<main id="conteudo">`) until sections land; `src/App.tsx` switches page by `data-page`. The design system catalog lives at `/catalogo/` (`catalogo/index.html`, `src/catalog/`) and `catalogo/stress.html` renders the 375px stress test, both `noindex`. All three HTML pages are prerendered at build (`renderToString` → `scripts/prerender.mjs`) and hydrated with `hydrateRoot`: never read browser-only values (theme, computed styles) during render — use `useTheme`/`useHydrated` (`useSyncExternalStore` with a server snapshot). Hero entrance is CSS only (`HeroTitle play="load"`); GSAP is for below-the-fold scroll motion (SPEC §5.10–11). No tests or test runner exist yet; checks are `npm run lint` and `npm run build`.
+Current state: the root (`index.html`, `data-page="site"`) is the Golden Grains test site (`Spec_Golden_Grains.md`), an empty shell (`src/Site.tsx`: skip link + `<main id="conteudo">`) until sections land; `src/App.tsx` switches page by `data-page`. The design system catalog lives at `/catalogo/` (`catalogo/index.html`, `src/catalog/`) and `catalogo/stress.html` renders the 375px stress test, both `noindex`. All three HTML pages are prerendered at build (`renderToString` → `scripts/prerender.mjs`) and hydrated with `hydrateRoot`: never read browser-only values (theme, computed styles) during render — use `useTheme`/`useHydrated` (`useSyncExternalStore` with a server snapshot). Hero entrance is CSS only (`HeroTitle play="load"`); GSAP is for below-the-fold scroll motion (SPEC §5.10–11). No tests or test runner exist yet; checks are `npm run lint` and `npm run build`.
 
 ## Commands
 
 ```bash
 npm run dev       # Vite dev server with HMR
 npm run build     # tsc -b, vite build, SSR build + prerender, JS budget check
-npm run lint      # eslint . + scripts/check-tokens.mjs (spacing scale, raw colors)
+npm run lint      # eslint . + prettier --check . + scripts/check-tokens.mjs (spacing scale, raw colors)
+npm run format    # prettier --write . (Markdown is ignored)
 npm run preview   # serve the production build
 ```
 
@@ -68,8 +69,9 @@ Espaço ENTRE componentes é responsabilidade da seção, sempre via `Stack`/`Co
 
 ## Agent workflow (SPEC §11)
 
-Roles: Orchestrator, Foundation (`base.css` + `themes/` + ds components + motion presets; runs first), Section (one per section), Motion & 3D, Reviewer. Sections and Motion start only after Foundation lands. Reviewer reports pass/fail and never fixes code itself. Each executor works in its own branch or worktree.
+Roles: Orchestrator, Foundation (`base.css` + `themes/` + ds components + motion presets; runs first), Section (one per section), Motion & 3D, Reviewer (technical), Critic (art direction). Sections and Motion start only after Foundation lands. Reviewer reports pass/fail and never fixes code itself. Each executor works in its own branch or worktree.
 
 - Orchestrator = the main session, driven by `/orquestrar` (`.claude/commands/orquestrar.md`); it never edits code. Max 2 return loops per task; a third review means stop and ask the director.
-- Executors and reviewer = subagents in `.claude/agents/`: `fundacao`, `secao`, `motion`, `revisor`. None has the `Agent` tool.
-- File owners (SPEC §11 table): `fundacao` = `src/styles/`, `src/components/ds/`, `src/lib/`, `src/catalog/`, `src/index.css`, `site.config.ts`, `package.json`, `public/assets/`; `secao` = `src/components/sections/<Nome>.tsx` and `src/App.tsx` (only importing and ordering sections); `motion` = `src/lib/motion/` and motion parts of sections, asks `fundacao` for `ds/` changes; `revisor` = nothing (screenshots go to a temp dir outside the repo).
+- Executors, reviewer and critic = subagents in `.claude/agents/`: `fundacao`, `secao`, `motion`, `revisor`, `critico`. None has the `Agent` tool. Visual deliveries go `revisor` (PASSA) then `critico` (APROVADO/AJUSTES + 0–10 "studio" score); motion gets `review-animations`. Max 2 loops counts both. Round 7 adds an `impeccable polish`/`harden`/`clarify` pass by each owner before the director review.
+- Aesthetic is locked by `DESIGN.md` (North Star "A Torra Lenta") and `PRODUCT.md`; code wins if they drift. Impeccable is restricted here to `critique`, `audit`, `harden`, `clarify`, `polish`, `document` (`.claude/settings.json` `Skill(args:…)` denies + `.claude/hooks/impeccable-guard.mjs` allowlist); its detector hooks are off (`.impeccable/config.json`). UI interaction animations stay under 300ms (`--dur-fast`); scene/scroll motion follows SPEC §5 tokens (`--dur-slow` 900ms, `--dur-scene` 1600ms) and is never shortened to fit that rule.
+- File owners (SPEC §11 table): `fundacao` = `src/styles/`, `src/components/ds/`, `src/lib/`, `src/catalog/`, `src/index.css`, `site.config.ts`, `package.json`, `public/assets/`; `secao` = `src/components/sections/<Nome>.tsx` and `src/App.tsx` (only importing and ordering sections); `motion` = `src/lib/motion/` and motion parts of sections, asks `fundacao` for `ds/` changes; `revisor` and `critico` = nothing (screenshots go to a temp dir outside the repo). `src/Site.tsx`, `src/main.tsx`, `src/entry-server.tsx` and the rest belong to the director.
