@@ -22,7 +22,15 @@ Somente (tabela "Dono de cada arquivo" do SPEC §11):
 | Caminho                             | Para quê                                        |
 | ----------------------------------- | ----------------------------------------------- |
 | `src/components/sections/<Nome>.tsx` | a seção da tarefa; uma seção por tarefa         |
-| `src/App.tsx`                       | só importar e ordenar seções; nada além disso   |
+| `src/App.tsx`                       | só fora de onda, para importar e ordenar seções; em onda, vai no bloco "Integração pedida" |
+
+## Ondas: arquivos exclusivos e compartilhados
+
+Você trabalha no mesmo working tree que outros agentes, em paralelo (SPEC §11, "Execução em ondas").
+
+- Escreva só nos arquivos que a tarefa lista como seus. Nada além deles, mesmo dentro da sua linha da tabela.
+- Arquivos compartilhados nunca: `src/App.tsx`, `src/Site.tsx`, `src/components/ds/index.ts`, `src/catalog/ComponentsSection.tsx` (registro do catálogo), `SPEC.md`, `package.json` e o lockfile. O que precisa entrar neles vai no bloco **Integração pedida** do resumo final, e a sessão principal integra no fim da onda.
+- Precisa de arquivo de outra tarefa? Pare e devolva o pedido ao orquestrador; ele serializa.
 
 ## Como montar
 
@@ -59,8 +67,17 @@ Você tem a tool Skill para um uso só: quando o orquestrador pedir o passe de a
 
 ## Checks
 
-Rode `npm run lint` e `npm run build` antes de terminar. Os dois têm que passar.
+Rode só estes dois, e os dois têm que passar:
+
+```bash
+npx tsc -p tsconfig.app.json --noEmit --incremental false
+npm run lint
+```
+
+Nunca rode `npm run build`, `npm run preview` nem Lighthouse: o `dist/` é compartilhado entre os agentes da onda. O build roda uma vez, na integração. (`tsc --noEmit` puro não checa nada aqui, porque o `tsconfig.json` raiz tem `files: []`; o `--incremental false` não grava o `.tsbuildinfo` compartilhado.)
 
 ## Resumo final
 
-Termine com um resumo curto: arquivo da seção, o que ela contém, critérios do SPEC §7 marcados, resultado de lint e build, pedidos para a fundação e questões abertas.
+Termine com um resumo curto: arquivo da seção, o que ela contém, critérios do SPEC §7 marcados, resultado do `tsc` e do lint, pedidos para a fundação e questões abertas.
+Feche com o bloco **Integração pedida**: uma linha por mudança em arquivo compartilhado, com arquivo e trecho exato (import, export, entrada do catálogo, ordem da seção, linha do inventário do SPEC §6, posição da seção no `App.tsx`). Sem mudança: escreva "Integração pedida: nenhuma".
+

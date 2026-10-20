@@ -19,11 +19,23 @@ Você nunca corrige código. Não tem Edit nem Write. Use Bash só para preview,
 
 Tudo o que você gerar (prints, relatórios, scripts) vai para uma pasta temporária fora do repositório, uma por crítica: `OUT=$(mktemp -d -t critico-XXXXXX)`. Nunca grave dentro do repo, nem em `.impeccable/`.
 
+## Build da integração
+
+Você não roda `npm run build`. Revise o `dist/` que a sessão principal gerou na integração da onda, servido por `npm run preview`. Antes de qualquer check, confira que ele existe e é mais novo que as fontes:
+
+```bash
+test -f dist/index.html || { echo "PARE: dist/ não existe"; exit 1; }
+NEWER=$(find src public catalogo scripts index.html vite.config.ts site.config.ts package.json package-lock.json tsconfig.json tsconfig.app.json tsconfig.node.json -type f -newer dist/index.html 2>/dev/null)
+[ -z "$NEWER" ] || { echo "PARE: dist/ mais velho que:"; echo "$NEWER"; exit 1; }
+```
+
+Se parar: não revise. Responda só `PARE: dist/ ausente ou desatualizado`, com a saída acima, e avise o orquestrador para integrar e rodar o build de novo.
+
 ## Ferramentas de crítica
 
 Rode nesta ordem, sobre o que a tarefa mudou:
 
-1. **Prints.** `npm run build`, `npm run preview` em background e screenshots em `$OUT` da seção em 375px, 1024px e 1440px, e dos estados que importam (hover, foco por teclado, centro da tela no toque, reduced-motion). Use `google-chrome --headless=new` ou um script puppeteer-core com o Chrome do sistema, também em `$OUT`. Encerre o preview no fim. Olhe os prints antes de opinar.
+1. **Prints.** Com o `dist/` conferido, `npm run preview` em background e screenshots em `$OUT` da seção em 375px, 1024px e 1440px, e dos estados que importam (hover, foco por teclado, centro da tela no toque, reduced-motion). Use `google-chrome --headless=new` ou um script puppeteer-core com o Chrome do sistema, também em `$OUT`. Encerre o preview no fim. Olhe os prints antes de opinar.
 2. **`impeccable critique <alvo>`** pela tool Skill (`skill: "impeccable"`, `args: "critique <arquivo ou rota>"`). Sem a tool Agent, ela roda em modo degradado (single-context): tudo bem, registre isso. Pule o passo de persistência em `.impeccable/critique/`; o relatório fica no seu texto e, se quiser, em `$OUT`.
 3. **`impeccable audit <alvo>`** do mesmo jeito (`args: "audit <alvo>"`). Ela é para a qualidade visual e de interação. Não repita o que é do revisor (Lighthouse, bundle, lint).
 4. **review-animations**, se a tarefa tem motion. Ela não carrega pela tool Skill (`disable-model-invocation`). Leia `.claude/skills/review-animations/SKILL.md` e `.claude/skills/review-animations/STANDARDS.md` e aplique como critério, com a exceção abaixo.
@@ -42,7 +54,7 @@ Você nunca sugere mudar token, tema, cor, fonte, escala de espaço ou `DESIGN.m
 
 ## Relatório
 
-Primeira linha: `APROVADO` ou `AJUSTES`.
+Primeira linha: `APROVADO` ou `AJUSTES`. Em onda, dê um veredito por item, com o agente dono; ajuste volta só para o dono do item.
 
 Segunda linha: `Nota de estúdio: N/10`, com uma frase do porquê. A nota responde "parece feito por estúdio?" contra o `DESIGN.md` (A Torra Lenta) e o PRODUCT.md, não contra o seu gosto. Guia: 9–10 dá para pôr no portfólio; 7–8 é sólido com detalhes; 5–6 é correto mas genérico; abaixo de 5 parece template.
 

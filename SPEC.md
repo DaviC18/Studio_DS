@@ -306,7 +306,7 @@ O revisor nunca corrige sozinho: devolve a lista de erros ao agente da tarefa, e
 | Revisor             | branch + seção 10       | relatório passa/falha com prints (screenshots salvos fora do repo, em pasta temporária, com o caminho citado no relatório) | corrigir o código da tarefa             |
 | Crítico             | entrega visual + `DESIGN.md` + `PRODUCT.md` | relatório APROVADO/AJUSTES com itens, prints (fora do repo) e nota 0–10 de "parece feito por estúdio" | corrigir código; sugerir mudar token ou tema (vira pergunta ao diretor) |
 
-**No Claude Code:** o orquestrador é a sessão principal, guiada pelo comando `/orquestrar` (`.claude/commands/orquestrar.md`), porque os subagentes do projeto não têm a ferramenta `Agent` e não chamam outros agentes. Os outros papéis viram subagentes com seu arquivo em `.claude/agents/` (`fundacao`, `secao`, `motion`, `revisor`, `critico`), e cada executor trabalha em uma branch ou worktree própria para não pisar no código do outro.
+**No Claude Code:** o orquestrador é a sessão principal, guiada pelo comando `/orquestrar` (`.claude/commands/orquestrar.md`), porque os subagentes do projeto não têm a ferramenta `Agent` e não chamam outros agentes. Os outros papéis viram subagentes com seu arquivo em `.claude/agents/` (`fundacao`, `secao`, `motion`, `revisor`, `critico`), e os executores trabalham no mesmo working tree, em ondas paralelas, cada um com arquivos exclusivos (ver "Execução em ondas").
 
 **Dono de cada arquivo** (o revisor reprova edição fora da coluna do autor):
 
@@ -319,6 +319,24 @@ O revisor nunca corrige sozinho: devolve a lista de erros ao agente da tarefa, e
 | `critico`  | nada                                                                                                                                         |
 
 O orquestrador não edita código. O resto (`vite.config.ts`, `index.html`, `catalogo/*.html`, `src/main.tsx`, `src/entry-server.tsx`, `src/Site.tsx`, `scripts/`, docs, `DESIGN.md`, `PRODUCT.md`, `.impeccable/` e `.claude/`) fica com o diretor. `src/Site.tsx`, `src/main.tsx` e `src/entry-server.tsx` são do diretor por decisão da rodada 1; a `secao` passa as seções como filhos de `<Site>` em `src/App.tsx`.
+
+**Execução em ondas** (site Golden Grains; regras completas em `.claude/commands/orquestrar.md`):
+
+| Onda | Conteúdo                                                                                    | Paralelismo                              |
+| ---- | ------------------------------------------------------------------------------------------- | ---------------------------------------- |
+| A    | rodada 2 (assets) + rodada 3 (componentes novos, uma `fundacao` por componente)            | todos juntos; assets param para aprovação |
+| B    | hero + nav                                                                                  | serializa o que divide arquivo           |
+| C    | seções 2 a 8, uma `secao` por seção                                                          | no máximo 4 agentes por vez              |
+| D    | revisão final (rodada 7)                                                                    | um dono por arquivo                      |
+
+1. Dono exclusivo por arquivo durante a onda: cada agente só escreve nos arquivos da própria tarefa.
+2. Arquivos compartilhados (`src/App.tsx`, `src/Site.tsx`, `src/components/ds/index.ts`, o registro do catálogo em `src/catalog/ComponentsSection.tsx`, `SPEC.md`, `package.json` e o lockfile) não são tocados pelos executores. Cada um lista o que precisa entrar neles, e a sessão principal integra no fim da onda. É a única edição de código do orquestrador.
+3. Demos do catálogo em arquivos separados, `src/catalog/demos/<Nome>.tsx`, para dois agentes não editarem o mesmo arquivo.
+4. Executores em paralelo rodam só `npx tsc -p tsconfig.app.json --noEmit --incremental false` e `npm run lint`, nunca `npm run build`, porque o `dist/` é compartilhado. Build, Lighthouse, revisor e crítico rodam uma vez, depois da integração da onda.
+5. Revisão por onda: revisor primeiro, crítico depois, sobre o mesmo build. Reprovação volta só para o agente dono do item; o limite de 2 voltas vale por item.
+6. Se dois agentes precisarem do mesmo arquivo, o orquestrador serializa essas tarefas em vez de paralelizar.
+
+Cada onda fecha com PASSA, APROVADO (quando visual) e um commit do diretor. As ondas agrupam as rodadas do §8 da `Spec_Golden_Grains.md` sem mudar o conteúdo delas.
 
 **Estética travada.** `DESIGN.md` (gerado do código pela `impeccable document`; North Star "A Torra Lenta") e `PRODUCT.md` (da `Spec_Golden_Grains.md`) são o critério de direção de arte. O código vence o `DESIGN.md`: se divergirem, regenera-se o arquivo. Mudar token, tema ou um desses arquivos é decisão do diretor.
 
