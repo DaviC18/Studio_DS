@@ -189,10 +189,37 @@
     --portal-radius: var(--radius-base);
     --portal-zoom: 1.04;
 
+    /* Componente: Nav */
+    --nav-height: var(--spacing-16); /* 64px fixos: a seção abaixo reserva este espaço */
+    --nav-bg: var(--color-bg);
+    --nav-ink: var(--color-ink);
+    --nav-menu-bg: var(--color-bg);
+    --nav-link-line-hover: var(--color-accent);
+
+    /* Componente: HorizontalGallery. Largura do item = N colunas do grid
+     * (--gallery-item-span), em % da faixa sem a margem lateral: 3 de 4 no
+     * mobile (a próxima aparece na borda), 2 de 4 a partir de 640px, 4 de 12
+     * a partir de 1024px. */
+    --gallery-item-span: 3;
+    --gallery-item-width: calc(
+      (100% - var(--grid-gutter) * (var(--grid-columns) - 1)) / var(--grid-columns) *
+        var(--gallery-item-span) + var(--grid-gutter) * (var(--gallery-item-span) - 1)
+    );
+
+    /* Componente: CollectionGrid */
+    --collection-radius: var(--radius-base);
+    --collection-placeholder: var(--color-surface);
+    --collection-zoom: 1.04;
+
+    @variant sm {
+      --gallery-item-span: 2;
+    }
+
     @variant lg {
       --grid-columns: 12;
       --grid-gutter: var(--spacing-6);
       --motion-scale: 1;
+      --gallery-item-span: 4;
     }
 
     /* Reduced-motion (SPEC §5.4): sem deslocamento; os presets trocam tudo

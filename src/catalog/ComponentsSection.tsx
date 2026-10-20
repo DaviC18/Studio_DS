@@ -10,6 +10,11 @@ import {
   Stack,
   StatCounter,
 } from "../components/ds";
+import { CollectionGridDemo } from "./demos/CollectionGrid";
+import { FooterDemo } from "./demos/Footer";
+import { HorizontalGalleryDemo } from "./demos/HorizontalGallery";
+import { LogoWallDemo } from "./demos/LogoWall";
+import { NavDemo } from "./demos/Nav";
 import { DocEntry, Variant } from "./DocEntry";
 import { IMAGE, PORTAL, VIDEO } from "./media";
 
@@ -64,6 +69,8 @@ export function ComponentsSection() {
             </Stack>
           </Variant>
         </DocEntry>
+
+        <NavDemo />
 
         <DocEntry
           name="HeroTitle"
@@ -125,6 +132,8 @@ export function ComponentsSection() {
           </Container>
         </DocEntry>
 
+        <HorizontalGalleryDemo />
+
         <DocEntry
           name="PortalCard"
           use="link grande para outra seção ou página, com imagem que troca no hover, foco e toque."
@@ -172,6 +181,8 @@ export function ComponentsSection() {
           </Variant>
         </DocEntry>
 
+        <CollectionGridDemo />
+
         <DocEntry
           name="StatCounter"
           use="número que prova algo (anos, clientes, volume), com legenda curta embaixo; conta ao entrar na viewport."
@@ -199,6 +210,10 @@ export function ComponentsSection() {
             <StatCounter size="display" value={45000} suffix="+" label="xícaras servidas por ano" />
           </Variant>
         </DocEntry>
+
+        <LogoWallDemo />
+
+        <FooterDemo />
 
         <DocEntry
           name="Section · Container · Stack"
