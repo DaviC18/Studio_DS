@@ -1,7 +1,31 @@
 {
   "permissions": {
-    "deny": [
+    "allow": [
       "Skill(impeccable)",
+      "Skill(impeccable *)"
+    ],
+    "deny": [
+      "Skill(args:bolder*)",
+      "Skill(args:colorize*)",
+      "Skill(args:overdrive*)",
+      "Skill(args:delight*)",
+      "Skill(args:animate*)",
+      "Skill(args:typeset*)",
+      "Skill(args:layout*)",
+      "Skill(args:quieter*)",
+      "Skill(args:distill*)",
+      "Skill(args:onboard*)",
+      "Skill(args:adapt*)",
+      "Skill(args:optimize*)",
+      "Skill(args:shape*)",
+      "Skill(args:craft*)",
+      "Skill(args:init*)",
+      "Skill(args:teach*)",
+      "Skill(args:extract*)",
+      "Skill(args:live*)",
+      "Skill(args:generate*)",
+      "Skill(args:hooks*)",
+      "Skill(args:doctor*)",
       "Agent(impeccable-asset-producer)",
       "Agent(impeccable-documenter)",
       "Agent(impeccable-finish-reviewer)",
@@ -9,6 +33,19 @@
       "Agent(caveman:cavecrew-builder)",
       "Agent(caveman:cavecrew-investigator)",
       "Agent(caveman:cavecrew-reviewer)"
+    ]
+  },
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Skill",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/impeccable-guard.mjs"
+          }
+        ]
+      }
     ]
   }
 }

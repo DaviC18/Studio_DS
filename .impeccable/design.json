@@ -1,0 +1,290 @@
+{
+  "schemaVersion": 2,
+  "generatedAt": "2026-10-20T18:31:09+00:00",
+  "title": "Design System: Golden Grains",
+  "extensions": {
+    "colorMeta": {
+      "espresso": {
+        "role": "neutral",
+        "displayName": "Espresso",
+        "canonical": "#1c1411",
+        "tonalRamp": [
+          "#110907",
+          "#2b2320",
+          "#49403c",
+          "#695f5b",
+          "#8a807c",
+          "#aea29e",
+          "#d2c6c2",
+          "#f8ece7"
+        ]
+      },
+      "torra": {
+        "role": "neutral",
+        "displayName": "Torra",
+        "canonical": "#271c17",
+        "tonalRamp": [
+          "#120905",
+          "#2d221d",
+          "#4b3f39",
+          "#6b5e58",
+          "#8d7f79",
+          "#b0a29b",
+          "#d5c5bf",
+          "#fbebe4"
+        ]
+      },
+      "crema": {
+        "role": "neutral",
+        "displayName": "Crema",
+        "canonical": "#f0e6d8",
+        "tonalRamp": [
+          "#100a03",
+          "#2b2419",
+          "#494135",
+          "#686054",
+          "#8a8174",
+          "#ada496",
+          "#d1c8ba",
+          "#f7eddf"
+        ]
+      },
+      "juta": {
+        "role": "neutral",
+        "displayName": "Juta",
+        "canonical": "#b3a291",
+        "tonalRamp": [
+          "#140800",
+          "#2f2214",
+          "#4d3f30",
+          "#6e5e4f",
+          "#8f7f6f",
+          "#b3a291",
+          "#d7c6b4",
+          "#fdebd9"
+        ]
+      },
+      "cobre": {
+        "role": "primary",
+        "displayName": "Cobre",
+        "canonical": "#c8824f",
+        "tonalRamp": [
+          "#280000",
+          "#490c00",
+          "#6c2e00",
+          "#8f4e16",
+          "#b46f3c",
+          "#da925f",
+          "#ffb682",
+          "#ffdca7"
+        ]
+      },
+      "casca": {
+        "role": "neutral",
+        "displayName": "Casca",
+        "canonical": "#3e2f27",
+        "tonalRamp": [
+          "#140803",
+          "#30211a",
+          "#4e3e36",
+          "#6e5d54",
+          "#907e75",
+          "#b3a197",
+          "#d8c5bb",
+          "#feeadf"
+        ]
+      }
+    },
+    "typographyMeta": {
+      "display": {
+        "displayName": "Display",
+        "purpose": "h1 do hero, frase do footer, StatCounter display."
+      },
+      "headline": {
+        "displayName": "Headline",
+        "purpose": "h2 de seção e números."
+      },
+      "title": {
+        "displayName": "Title",
+        "purpose": "h3 e títulos de card."
+      },
+      "body": {
+        "displayName": "Body",
+        "purpose": "Parágrafos e botões; medida 68ch."
+      },
+      "label": {
+        "displayName": "Label",
+        "purpose": "Microcopy e legendas."
+      }
+    },
+    "shadows": [],
+    "motion": [
+      {
+        "name": "ease-out",
+        "value": "cubic-bezier(0.16, 1, 0.3, 1)",
+        "purpose": "Entradas e revelações de texto e imagem."
+      },
+      {
+        "name": "ease-in-out",
+        "value": "cubic-bezier(0.65, 0, 0.35, 1)",
+        "purpose": "Transições de página, elementos que trocam de lugar."
+      },
+      {
+        "name": "ease-snap",
+        "value": "cubic-bezier(0.7, 0, 0.2, 1)",
+        "purpose": "Hover, clique, micro-interação."
+      },
+      {
+        "name": "dur-fast",
+        "value": "200ms",
+        "purpose": "Hover, foco, fade de reduced-motion."
+      },
+      {
+        "name": "dur-base",
+        "value": "500ms",
+        "purpose": "Revelação de componente, troca de imagem do PortalCard."
+      },
+      {
+        "name": "dur-slow",
+        "value": "900ms",
+        "purpose": "Títulos grandes, imagens, RevealText, StatCounter."
+      },
+      {
+        "name": "dur-scene",
+        "value": "1600ms",
+        "purpose": "Entrada do hero (tema torrefacao, topo da faixa 1200–1600ms)."
+      },
+      {
+        "name": "stagger",
+        "value": "60ms",
+        "purpose": "Intervalo entre linhas e itens."
+      },
+      {
+        "name": "motion-scale",
+        "value": "0.7 abaixo de 1024px; 1 acima",
+        "purpose": "Corte de ~30% em durações e distâncias no mobile."
+      },
+      {
+        "name": "reveal-distance",
+        "value": "24px × motion-scale; 0 em reduced-motion",
+        "purpose": "Subida da revelação simples."
+      }
+    ],
+    "breakpoints": [
+      {
+        "name": "sm",
+        "value": "640px"
+      },
+      {
+        "name": "lg",
+        "value": "1024px"
+      },
+      {
+        "name": "xl",
+        "value": "1440px"
+      }
+    ]
+  },
+  "components": [
+    {
+      "name": "Primary Button",
+      "kind": "button",
+      "refersTo": "button-primary",
+      "description": "CTA principal (Assine o clube, link wa.me). Camada Crema sobe no hover e no foco.",
+      "html": "<a class=\"ds-btn-primary\" href=\"#\">Assine o clube</a>",
+      "css": ".ds-btn-primary{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 24px;border-radius:var(--radius-base,8px);font-family:var(--font-text);font-size:var(--text-body);font-weight:500;line-height:1.2;position:relative;overflow:clip;isolation:isolate;text-decoration:none;border:0;cursor:pointer;background:var(--color-accent);color:var(--color-bg);}.ds-btn-primary::before{content:'';position:absolute;inset:0;z-index:-1;background:var(--color-ink);transform:translateY(100%);transition:transform var(--dur-fast,200ms) var(--ease-snap,cubic-bezier(0.7,0,0.2,1));}.ds-btn-primary:hover::before,.ds-btn-primary:focus-visible::before{transform:translateY(0);}.ds-btn-primary:focus-visible{outline:2px solid var(--color-ink);outline-offset:4px;}"
+    },
+    {
+      "name": "Ghost Button",
+      "kind": "button",
+      "refersTo": "button-ghost",
+      "description": "CTA secundário (Conheça os cafés). Borda Juta, camada Torra no hover.",
+      "html": "<a class=\"ds-btn-ghost\" href=\"#\">Conheça os cafés</a>",
+      "css": ".ds-btn-ghost{display:inline-flex;align-items:center;justify-content:center;min-height:44px;padding:8px 24px;border-radius:var(--radius-base,8px);font-family:var(--font-text);font-size:var(--text-body);font-weight:500;line-height:1.2;position:relative;overflow:clip;isolation:isolate;text-decoration:none;border:0;cursor:pointer;background:transparent;color:var(--color-ink);border:1px solid var(--color-ink-muted);}.ds-btn-ghost::before{content:'';position:absolute;inset:0;z-index:-1;background:var(--color-surface);transform:translateY(100%);transition:transform var(--dur-fast,200ms) var(--ease-snap,cubic-bezier(0.7,0,0.2,1));}.ds-btn-ghost:hover::before,.ds-btn-ghost:focus-visible::before{transform:translateY(0);}.ds-btn-ghost:focus-visible{outline:2px solid var(--color-ink);outline-offset:4px;}"
+    },
+    {
+      "name": "Link Button",
+      "kind": "button",
+      "refersTo": "button-link",
+      "description": "Link de texto com linha Juta; linha Cobre cresce da esquerda no hover.",
+      "html": "<a class=\"ds-btn-link\" href=\"#\">Instagram</a>",
+      "css": ".ds-btn-link{display:inline-flex;align-items:center;min-height:44px;font-family:var(--font-text);font-size:var(--text-body);font-weight:500;color:var(--color-ink);text-decoration:none;background:linear-gradient(var(--color-accent),var(--color-accent)) left calc(100% - 8px)/0 1px no-repeat,linear-gradient(var(--color-ink-muted),var(--color-ink-muted)) left calc(100% - 8px)/100% 1px no-repeat;transition:background-size var(--dur-fast,200ms) var(--ease-snap,cubic-bezier(0.7,0,0.2,1));}.ds-btn-link:hover,.ds-btn-link:focus-visible{background-size:100% 1px,100% 1px;}.ds-btn-link:focus-visible{outline:2px solid var(--color-ink);outline-offset:4px;}"
+    },
+    {
+      "name": "Portal Card",
+      "kind": "card",
+      "refersTo": "portal-card",
+      "description": "Card-link grande: imagem em proporção fixa, zoom 1.04 e troca de imagem no hover/foco/centro da tela.",
+      "html": "<a class=\"ds-portal\" href=\"#\"><span class=\"ds-portal-media\"></span><span class=\"ds-portal-title\">Os cafés do mês</span><span class=\"ds-portal-desc\">Seis lotes, torrados nesta semana.</span></a>",
+      "css": ".ds-portal{display:block;color:var(--color-ink);text-decoration:none;border-radius:var(--radius-base,8px);}.ds-portal-media{display:block;aspect-ratio:4/5;border-radius:var(--radius-base,8px);background:var(--color-surface);transition:transform var(--dur-base,500ms) var(--ease-out,cubic-bezier(0.16,1,0.3,1));}.ds-portal:hover .ds-portal-media,.ds-portal:focus-visible .ds-portal-media{transform:scale(1.04);}.ds-portal-title{display:block;margin-top:16px;font-family:var(--font-display);font-size:var(--text-h3);font-weight:600;line-height:1;}.ds-portal-desc{display:block;margin-top:8px;font-family:var(--font-text);font-size:var(--text-body);color:var(--color-ink-muted);}.ds-portal:focus-visible{outline:2px solid var(--color-ink);outline-offset:4px;}"
+    },
+    {
+      "name": "Media Frame",
+      "kind": "custom",
+      "refersTo": "media-frame",
+      "description": "Mídia em proporção fixa com legenda; máscara abre com zoom 1.1 para 1.",
+      "html": "<figure class=\"ds-media\"><span class=\"ds-media-box\"></span><figcaption class=\"ds-media-cap\">Sítio Pedra Alta · 1.280 m</figcaption></figure>",
+      "css": ".ds-media{margin:0;}.ds-media-box{display:block;aspect-ratio:16/9;border-radius:var(--radius-base,8px);background:var(--color-surface);}.ds-media-cap{margin-top:8px;font-family:var(--font-text);font-size:var(--text-micro);font-weight:500;color:var(--color-ink-muted);}"
+    }
+  ],
+  "narrative": {
+    "northStar": "A Torra Lenta",
+    "overview": "O sistema inteiro sai de uma frase: cada grão no seu tempo. A página é escura como café torrado, com um único calor, o cobre, que aparece pouco e por isso pesa. Nada entra pelos lados: as revelações sobem de baixo, devagar, como calor que sobe do tambor, e a cena mais longa usa o topo da faixa permitida (1600ms). A precisão é artesanal, não rústica: tipografia de cartaz condensada, texto de livro, grid exato e números com casas fixas.\n\nA densidade é baixa. Cada seção tem uma ideia e uma interação forte, e o resto é revelação simples (fade com 24px de subida). O peso visual vem da tipografia gigante e da fotografia de luz quente e baixa, nunca de ornamento, sombra ou gradiente. Os componentes são contidos: o gesto é pequeno e exato e não chama atenção para si.\n\nRejeições confirmadas na spec do site: nada de rústico de fazendinha, gourmet pretensioso ou genérico; nada de foto de xícara em mesa de madeira com fonte manuscrita; nada de grid de e-commerce com selo de desconto.",
+    "keyCharacteristics": [
+      "Fundo escuro quente (Espresso), uma superfície alternada (Torra) e texto creme.",
+      "Um só acento, o Cobre, em no máximo 3 usos por tela.",
+      "Display condensado gigante (até 200px) contra texto serifado de leitura.",
+      "Plano: sem sombra; a profundidade vem do tom e da fotografia.",
+      "Movimento só de baixo para cima, lento, em `transform` e `opacity`."
+    ],
+    "rules": [
+      {
+        "name": "The Brasa Única Rule",
+        "body": "O Cobre aparece em no máximo 3 usos por tela, reservado a CTA, palavra de destaque e hover. Se uma tela pede um quarto, um deles sai.",
+        "section": "colors"
+      },
+      {
+        "name": "The Brand Stays Home Rule",
+        "body": "Componentes só consomem `--color-*` ou tokens de componente (`--button-*`, `--media-*`, `--portal-*`). `--brand-*` existe só no arquivo de tema, e cor crua fora dos temas reprova no lint.",
+        "section": "colors"
+      },
+      {
+        "name": "The Papel Completo Rule",
+        "body": "Texto usa o papel inteiro (`type-display`, `type-h2`, `type-h3`, `type-body`, `type-micro`): família, tamanho, entrelinha e peso juntos. Não existe tamanho de fonte avulso.",
+        "section": "typography"
+      },
+      {
+        "name": "The Máscara com Folga Rule",
+        "body": "Linha revelada por máscara tem folga de 0,25em em cima, 0,2em embaixo e 0,1em nas laterais, para acento (Á É Ã) e cedilha não serem cortados com entrelinha abaixo de 1.",
+        "section": "typography"
+      },
+      {
+        "name": "The Seção Manda Rule",
+        "body": "Nunca uma `div` com margem avulsa entre componentes: o espaço vem de `Section`, `Container` ou `Stack`.",
+        "section": "layout"
+      },
+      {
+        "name": "The Sem Fumaça Falsa Rule",
+        "body": "Nada de `box-shadow`, brilho ou gradiente decorativo. Se algo precisa se destacar, use tom, tamanho ou o Cobre.",
+        "section": "elevation"
+      }
+    ],
+    "dos": [
+      "**Do** revelar de baixo para cima: fade com 24px de subida, `--ease-out`, disparo em `top 85%`, uma vez.",
+      "**Do** uma só interação de destaque por seção; o resto é revelação simples.",
+      "**Do** animar só `transform` e `opacity`, nas curvas `--ease-out`, `--ease-in-out` e `--ease-snap` e nas durações 200, 500, 900 e 1200–1600ms.",
+      "**Do** manter tudo legível sem JS: o HTML pré-renderizado já traz o estado final.",
+      "**Do** dar a hover, foco e centro da tela (toque) o mesmo estado ativo.",
+      "**Do** usar fotografia de luz quente e baixa, que casa com o fundo escuro."
+    ],
+    "donts": [
+      "**Don't** fazer nada entrar pelos lados: o calor sobe, não desliza.",
+      "**Don't** usar o Cobre mais de 3 vezes por tela, nem em texto corrido.",
+      "**Don't** usar sombra, brilho, gradiente ou texto em gradiente.",
+      "**Don't** usar foto de estúdio com fundo branco, xícara em mesa de madeira ou fonte manuscrita.",
+      "**Don't** usar logotipo de marca real, rosto em destaque ou embalagem com marca visível nos assets.",
+      "**Don't** criar token, tamanho, cor ou espaço fora da escala. Se uma seção precisa de token novo, é pergunta para o diretor, não ajuste local.",
+      "**Don't** usar scroll-jacking, parallax ou scrub com reduced-motion."
+    ]
+  }
+}
