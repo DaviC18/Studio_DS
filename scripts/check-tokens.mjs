@@ -14,8 +14,8 @@ const ROOT = new URL("..", import.meta.url).pathname;
 const SRC = join(ROOT, "src");
 const BASE_CSS = join(SRC, "styles/base.css");
 const THEMES = join(SRC, "styles/themes/");
-// HTML da raiz também vai para o cliente (meta theme-color, estilo inline).
-const ROOT_FILES = ["index.html", "stress.html"].map((f) => join(ROOT, f));
+// Os HTML de entrada (site e catálogo) também vão para o cliente (meta theme-color, estilo inline).
+const ROOT_FILES = ["index.html", "catalogo/index.html", "catalogo/stress.html"].map((f) => join(ROOT, f));
 
 // --- Espaço ---------------------------------------------------------------
 

@@ -4,7 +4,7 @@ import App, { type Page } from './App.tsx'
 import { syncThemeColor } from './lib/theme-color'
 
 const root = document.getElementById('root')!
-const page = (root.dataset.page ?? 'catalog') as Page
+const page = (root.dataset.page ?? 'site') as Page
 
 syncThemeColor()
 

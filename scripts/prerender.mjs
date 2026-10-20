@@ -12,8 +12,9 @@ const SSR = join(ROOT, "dist-ssr");
 const { render } = await import(join(SSR, "entry-server.js"));
 
 for (const [file, page] of [
-  ["index.html", "catalog"],
-  ["stress.html", "stress"],
+  ["index.html", "site"],
+  ["catalogo/index.html", "catalog"],
+  ["catalogo/stress.html", "stress"],
 ]) {
   const path = join(DIST, file);
   const html = readFileSync(path, "utf8");

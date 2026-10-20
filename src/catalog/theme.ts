@@ -1,5 +1,5 @@
 import { useSyncExternalStore } from "react";
-import { SITE_THEME } from "../../site.config";
+import { SITE } from "../../site.config";
 import { syncThemeColor } from "../lib/theme-color";
 import { THEMES, type ThemeName } from "../styles/themes";
 import { THEME_STORAGE_KEY } from "./theme-boot";
@@ -15,7 +15,7 @@ function isTheme(value: string | null | undefined): value is ThemeName {
 
 function currentTheme(): ThemeName {
   const t = document.documentElement.dataset.theme;
-  return isTheme(t) ? t : SITE_THEME;
+  return isTheme(t) ? t : SITE.theme;
 }
 
 function subscribe(listener: () => void) {
@@ -26,11 +26,11 @@ function subscribe(listener: () => void) {
 }
 
 /**
- * Tema aplicado. No servidor e na hidratação vale SITE_THEME (o mesmo HTML do
+ * Tema aplicado. No servidor e na hidratação vale SITE.theme (o mesmo HTML do
  * build); logo depois o React re-renderiza com o tema do <html>, sem mismatch.
  */
 export function useTheme(): ThemeName {
-  return useSyncExternalStore(subscribe, currentTheme, () => SITE_THEME);
+  return useSyncExternalStore(subscribe, currentTheme, () => SITE.theme);
 }
 
 export function applyTheme(theme: ThemeName) {

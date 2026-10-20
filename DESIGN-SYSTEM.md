@@ -31,7 +31,7 @@ O design system tem duas camadas. `src/styles/base.css` é estrutura e não muda
 
 6. **Registre o tema** em `src/styles/themes/index.ts` (`id`, `label`, `heroFont` = o woff2 latin da fonte display) e importe o CSS em `src/index.css`.
 
-7. **Ative o tema** em `site.config.ts`: `SITE_THEME = "<cliente>"`. O build aplica o `data-theme` e faz o preload da fonte do hero. Num site de cliente, importe só o tema dele no `index.css`.
+7. **Ative o tema** em `site.config.ts`: `SITE.theme = "<cliente>"`. O build aplica o `data-theme` e faz o preload da fonte do hero. Num site de cliente, importe só o tema dele no `index.css`.
 
 8. **Rode o stress test.** `npm run build && npm run preview`, escolha o tema no catálogo e confira:
    - o status do stress test em 375px diz "sem scroll horizontal". Se a palavra mais longa do hero não couber, baixe o mínimo de `--text-display` ou `--text-h2` no tema (SPEC §4);

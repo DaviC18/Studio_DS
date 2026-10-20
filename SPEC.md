@@ -72,7 +72,7 @@ Os tokens são a única fonte de verdade visual. Nenhum agente usa cor, tamanho 
 - Duas camadas. `src/styles/base.css`: estrutura igual para todo cliente (escala de espaço, grid, breakpoints, tokens de motion, reset, foco, tokens de componente). `src/styles/themes/[tema].css`: só identidade (cores, fontes, tamanhos display/h2/h3, raio, `--theme-dur-scene` opcional). Trocar de cliente = trocar o arquivo de tema.
 - Três níveis: marca `--brand-*` (só no tema) → semântico `--color-*`, `--font-*`, `--text-*`, `--radius-base` (tema preenche, componentes consomem) → componente `--button-*`, `--media-*`, `--portal-*`, `--focus-*`, `--touch-target` (no base, derivados do semântico). Componente nunca usa token de marca.
 - Tudo ligado ao Tailwind v4 por `@theme`, que começa com `--*: initial`: só existe utilitário para token. O contrato do tema é um `@theme reference` no base.
-- Tema ativo do site: `site.config.ts` (único lugar). Dele saem o `data-theme` do `<html>` e o preload da fonte do hero.
+- Configuração do site: `site.config.ts` (único lugar), `SITE = { theme, mode, indexable }`. Dele saem o `data-theme` do `<html>`, o preload da fonte do hero, o script de troca de tema (só no catálogo; no site, só fora de `mode: "production"`), o `noindex` e o `robots.txt`.
 - Fontes: auto-hospedadas com `@fontsource-variable` (sem CDN), só subsets latin e latin-ext, `font-display: swap`, preload só da display do hero. Cada fonte tem um fallback local com `size-adjust` medido, para a troca não mudar quebras de linha (CLS).
 
 **Cor** (regra do acento único: o acento aparece em no máximo 3 usos por tela)
@@ -252,13 +252,13 @@ Stack padrão do estúdio; troque uma camada só com motivo escrito na linha "Ex
 | Hospedagem        | Vercel                               | Netlify                                     |
 | Analytics         | Vercel Analytics ou Plausible        | GA4, se o cliente exigir                    |
 
-**Estrutura de pastas (Vite):** `src/components/ds/` design system (e `ds/layout/` com Section, Container, Stack), `src/components/sections/` seções, `src/lib/motion/` hooks, presets e `config.ts`, `src/styles/base.css` estrutura, `src/styles/themes/[tema].css` identidade (registrados em `themes/index.ts`), `site.config.ts` tema ativo, `src/catalog/` catálogo do DS, `src/App.tsx` árvore da página (igual no servidor e no cliente), `src/entry-server.tsx` render para o pré-render, `scripts/` checks e pré-render, `public/assets/` mídia otimizada. Uma página por HTML: `index.html` (catálogo) e `stress.html` (stress test em 375px, aberto no iframe do catálogo).
+**Estrutura de pastas (Vite):** `src/components/ds/` design system (e `ds/layout/` com Section, Container, Stack), `src/components/sections/` seções, `src/lib/motion/` hooks, presets e `config.ts`, `src/styles/base.css` estrutura, `src/styles/themes/[tema].css` identidade (registrados em `themes/index.ts`), `site.config.ts` configuração do site, `src/Site.tsx` casca da página do site (link de pular + `<main id="conteudo">`), `src/catalog/` catálogo do DS, `src/App.tsx` árvore da página e troca por `data-page` (igual no servidor e no cliente), `src/entry-server.tsx` render para o pré-render, `scripts/` checks e pré-render, `public/assets/` mídia otimizada. Uma página por HTML: `index.html` (site, na raiz), `catalogo/index.html` (catálogo do DS, em `/catalogo/`) e `catalogo/stress.html` (stress test em 375px, aberto no iframe do catálogo). O build gera os três.
 
 **Render (Vite):** o build pré-renderiza cada HTML com `renderToString` (`scripts/prerender.mjs`) e o cliente hidrata com `hydrateRoot`; em dev o `#root` chega vazio e o React renderiza do zero. Sem hydration mismatch: o primeiro render do cliente tem que ser igual ao do servidor. Valor que só o browser sabe (tema escolhido, estilo computado, medida) entra por `useSyncExternalStore` com snapshot de servidor (`useTheme`, `useHydrated`), nunca lido direto no render. O tema escolhido no catálogo é aplicado no `<html>` por um script inline no `<head>`, antes do paint. O JS de entrada só hidrata, então é buscado depois do primeiro paint e não disputa banda com HTML, CSS e fontes.
 
 **Checks automáticos:** `npm run lint` = eslint + `scripts/check-tokens.mjs` (falha em espaço fora da escala, em cor arbitrária em classe como `text-[#…]` ou `bg-[rgb(…)]`, e em hex/rgb/hsl/oklch fora de `src/styles/themes/` e das definições de token do `base.css`). `npm run build` = tsc + vite (cliente) + vite `--ssr` + `scripts/prerender.mjs` + `scripts/check-bundle.mjs` (falha com JS inicial acima de 250 kB gzip e mostra o valor).
 
-**Exceções deste projeto:** Framework → Vite + React + TypeScript com pré-render no build (sem Next.js), porque o site de teste é single page. O catálogo é ferramenta interna: `robots.txt` com `Disallow: /` e `<meta name="robots" content="noindex">`. Tailwind v4 via `@tailwindcss/vite`, com os tokens ligados por `@theme`.
+**Exceções deste projeto:** Framework → Vite + React + TypeScript com pré-render no build (sem Next.js), porque o site de teste é single page. O catálogo é ferramenta interna: `<meta name="robots" content="noindex">` no catálogo e no stress. O `robots.txt` não bloqueia o catálogo, para o robô conseguir ler o `noindex`; com `indexable: false`, ele vira `Disallow: /` e o site também leva `noindex`. Tailwind v4 via `@tailwindcss/vite`, com os tokens ligados por `@theme`.
 
 ## 10. Critérios de aceite
 
@@ -315,7 +315,7 @@ O revisor nunca corrige sozinho: devolve a lista de erros ao agente da tarefa, e
 | `motion`   | `src/lib/motion/` e as partes de motion de `src/components/sections/` que o orquestrador indicar. Mudança em `src/components/ds/` vira pedido à `fundacao` |
 | `revisor`  | nada                                                                                                                                         |
 
-O orquestrador não edita código. O resto (`vite.config.ts`, `index.html`, `stress.html`, `scripts/`, docs e `.claude/`) fica com o diretor.
+O orquestrador não edita código. O resto (`vite.config.ts`, `index.html`, `catalogo/*.html`, `src/main.tsx`, `src/entry-server.tsx`, `src/Site.tsx`, `scripts/`, docs e `.claude/`) fica com o diretor.
 
 ## 12. Checklist de entrega
 

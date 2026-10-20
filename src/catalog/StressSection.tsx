@@ -17,7 +17,7 @@ export function StressSection({ theme }: { theme: ThemeName }) {
         </Stack>
         <iframe
           title="Stress test do design system em 375px"
-          src={`/stress.html?theme=${theme}`}
+          src={`/catalogo/stress.html?theme=${theme}`}
           loading="lazy"
           className="catalog-device"
         />

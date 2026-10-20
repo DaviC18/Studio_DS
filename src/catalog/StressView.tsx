@@ -17,7 +17,7 @@ const SIZES = ["type-display", "type-h2", "type-h3", "type-body", "type-micro", 
 const LONG =
   "Torramos em lotes pequenos, sempre de manhã, e anotamos cada curva de temperatura. O café sai da torra, descansa dois dias e só depois vai para a xícara. ";
 
-/** Página aberta dentro do iframe de 375px (stress.html). */
+/** Página aberta dentro do iframe de 375px (catalogo/stress.html). */
 export function StressView() {
   const [overflow, setOverflow] = useState<boolean | null>(null);
 

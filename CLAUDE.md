@@ -6,7 +6,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 Single-page "cinematic" studio site built from a reusable design system. `SPEC.md` (Portuguese) is the source of truth: read it before any task. Its golden rule: if something is not in the spec, do not invent it — record it as an open question.
 
-Current state: the project is only the studio design system; the single page is its catalog (`src/catalog/`; `stress.html` renders the 375px stress test). Both HTML pages are prerendered at build (`renderToString` → `scripts/prerender.mjs`) and hydrated with `hydrateRoot`: never read browser-only values (theme, computed styles) during render — use `useTheme`/`useHydrated` (`useSyncExternalStore` with a server snapshot). Hero entrance is CSS only (`HeroTitle play="load"`); GSAP is for below-the-fold scroll motion (SPEC §5.10–11). No tests or test runner exist yet; checks are `npm run lint` and `npm run build`.
+Current state: the root (`index.html`, `data-page="site"`) is the Golden Grains test site (`Spec do site — Golden Grains.md`), an empty shell (`src/Site.tsx`: skip link + `<main id="conteudo">`) until sections land; `src/App.tsx` switches page by `data-page`. The design system catalog lives at `/catalogo/` (`catalogo/index.html`, `src/catalog/`) and `catalogo/stress.html` renders the 375px stress test, both `noindex`. All three HTML pages are prerendered at build (`renderToString` → `scripts/prerender.mjs`) and hydrated with `hydrateRoot`: never read browser-only values (theme, computed styles) during render — use `useTheme`/`useHydrated` (`useSyncExternalStore` with a server snapshot). Hero entrance is CSS only (`HeroTitle play="load"`); GSAP is for below-the-fold scroll motion (SPEC §5.10–11). No tests or test runner exist yet; checks are `npm run lint` and `npm run build`.
 
 ## Commands
 
@@ -21,7 +21,7 @@ npm run preview   # serve the production build
 
 Vite + React 19 + TypeScript (strict unused locals/params, `verbatimModuleSyntax`, `erasableSyntaxOnly` — use `import type`, no enums/namespaces). Tailwind v4 via `@tailwindcss/vite`, tokens bound through `@theme`. Lenis for smooth scroll, GSAP + ScrollTrigger for scroll animation. Deploy target: Vercel.
 
-Fonts are self-hosted with `@fontsource-variable/*` (no Google CDN), declared by `@font-face` in the theme file (latin + latin-ext only), each with a `size-adjust` local fallback against CLS. The active site theme lives only in `site.config.ts`; `vite.config.ts` derives `<html data-theme>` and the hero font preload from it (`heroFont` in `src/styles/themes/index.ts`). New client theme: follow `DESIGN-SYSTEM.md`. Last review: `REVIEW.md`.
+Fonts are self-hosted with `@fontsource-variable/*` (no Google CDN), declared by `@font-face` in the theme file (latin + latin-ext only), each with a `size-adjust` local fallback against CLS. Site config lives only in `site.config.ts` (`SITE = { theme, mode, indexable }`); `vite.config.ts` derives from it `<html data-theme>`, the hero font preload (`heroFont` in `src/styles/themes/index.ts`), the catalog theme-boot script (catalog pages always; site only when `mode` is not `"production"`), `noindex` (catalog always; site when `indexable` is false) and `robots.txt` (`Allow: /`, or `Disallow: /` when not indexable). New client theme: follow `DESIGN-SYSTEM.md`. Last review: `REVIEW.md`.
 
 ## Intended structure (SPEC §9)
 
