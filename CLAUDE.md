@@ -13,7 +13,7 @@ Current state: the project is only the studio design system; the single page is 
 ```bash
 npm run dev       # Vite dev server with HMR
 npm run build     # tsc -b, vite build, SSR build + prerender, JS budget check
-npm run lint      # eslint .
+npm run lint      # eslint . + scripts/check-tokens.mjs (spacing scale, raw colors)
 npm run preview   # serve the production build
 ```
 
@@ -41,7 +41,9 @@ Fonts are self-hosted with `@fontsource-variable/*` (no Google CDN), declared by
 | ---- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
 | px   | 0   | 4   | 8   | 16  | 24  | 32  | 48  | 64  | 96  | 128 | 192 |
 
-Anything else (`p-5`, `gap-3`, `p-[13px]`) generates no CSS and fails silently in the browser, so `npm run lint` runs `scripts/check-spacing.mjs`, which fails on it. For a component token use `p-(--token)`.
+Anything else (`p-5`, `gap-3`, `p-[13px]`) generates no CSS and fails silently in the browser, so `npm run lint` runs `scripts/check-tokens.mjs`, which fails on it. For a component token use `p-(--token)`.
+
+The same check fails on raw color: arbitrary color in a class (`text-[#fff]`, `bg-[rgb(…)]`) and any hex/rgb/hsl/oklch literal outside `src/styles/themes/` and the token definitions (`--name: value`) in `base.css`. Use `--color-*` tokens.
 
 ## ⚠ Layout: space between components belongs to the section
 
@@ -61,9 +63,13 @@ Espaço ENTRE componentes é responsabilidade da seção, sempre via `Stack`/`Co
 - `prefers-reduced-motion`: disable parallax, scroll-scrub and rotating 3D; keep short fades only.
 - Mobile first; on mobile cut motion distances/durations ~30% and avoid hover-dependent effects.
 - No placeholders or unlicensed assets in production; every asset goes through the inventory in SPEC §6.
-- New ds components need registering; a component enters the shared library only after use in 2 projects.
+- New ds components need registering in the catalog. The SPEC §8 table components are the studio base and enter directly; the 2-projects rule applies only to components outside that table.
 - Acceptance (SPEC §10, mobile): LCP ≤ 2.5s, INP ≤ 200ms, CLS ≤ 0.1, Lighthouse perf ≥ 85, initial JS ≤ 250KB gzip, 3D/Rive lazy-loaded when visible, AA contrast, visible focus, one `h1`, works 375–1920px.
 
 ## Agent workflow (SPEC §11)
 
-Roles: Orchestrator, Foundation (tokens + ds components + motion presets; runs first), Section (one per section), Motion & 3D, Reviewer. Sections and Motion start only after Foundation lands. Reviewer reports pass/fail and never fixes code itself. Each executor works in its own branch or worktree; role definitions go in `.claude/agents/`.
+Roles: Orchestrator, Foundation (`base.css` + `themes/` + ds components + motion presets; runs first), Section (one per section), Motion & 3D, Reviewer. Sections and Motion start only after Foundation lands. Reviewer reports pass/fail and never fixes code itself. Each executor works in its own branch or worktree.
+
+- Orchestrator = the main session, driven by `/orquestrar` (`.claude/commands/orquestrar.md`); it never edits code. Max 2 return loops per task; a third review means stop and ask the director.
+- Executors and reviewer = subagents in `.claude/agents/`: `fundacao`, `secao`, `motion`, `revisor`. None has the `Agent` tool.
+- File owners (SPEC §11 table): `fundacao` = `src/styles/`, `src/components/ds/`, `src/lib/`, `src/catalog/`, `src/index.css`, `site.config.ts`, `package.json`, `public/assets/`; `secao` = `src/components/sections/<Nome>.tsx` and `src/App.tsx` (only importing and ordering sections); `motion` = `src/lib/motion/` and motion parts of sections, asks `fundacao` for `ds/` changes; `revisor` = nothing (screenshots go to a temp dir outside the repo).

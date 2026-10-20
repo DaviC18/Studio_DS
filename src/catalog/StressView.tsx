@@ -8,6 +8,7 @@ import {
   RevealText,
   Section,
   Stack,
+  StatCounter,
 } from "../components/ds";
 import { IMAGE, PORTAL } from "./media";
 
@@ -71,6 +72,7 @@ export function StressView() {
           <HeroTitle as="p" lines={[""]} />
           <RevealText>{""}</RevealText>
           <PortalCard href="#" title="" image={PORTAL.a} hoverImage={PORTAL.b} titleAs="h2" />
+          <StatCounter value={0} label="" />
         </Container>
       </Section>
 
@@ -89,6 +91,10 @@ export function StressView() {
             titleAs="h2"
           />
           <MediaFrame ratio="portrait" media={IMAGE.tall} caption={LONG} />
+          <StatCounter size="display" value={1250000} prefix="R$ " label={LONG} />
+          <StatCounter value={9999999} suffix=" toneladas" label="valor grande em h2" />
+          <StatCounter value={-1200} prefix="R$ " label="valor negativo (console.error em dev)" />
+          <StatCounter value={1234567.89} decimals={2} prefix="R$ " label="decimais em h2" />
         </Container>
       </Section>
     </main>

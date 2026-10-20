@@ -9,4 +9,5 @@ export {
 export type { MediaRatio } from "./ratio";
 export { PortalCard, type PortalCardProps, type PortalImage } from "./PortalCard";
 export { RevealText, type RevealTextProps } from "./RevealText";
+export { StatCounter, type StatCounterProps } from "./StatCounter";
 export * from "./layout";

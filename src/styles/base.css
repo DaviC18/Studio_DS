@@ -14,7 +14,7 @@
 /* ---------------------------------------------------------------------------
  * Tokens estruturais. `--*: initial` remove todo o tema padrão do Tailwind:
  * só existe utilitário para token desta lista. Valor fora da escala não gera
- * classe; scripts/check-spacing.mjs barra no lint.
+ * classe; scripts/check-tokens.mjs barra no lint.
  * ------------------------------------------------------------------------- */
 @theme {
   --*: initial;

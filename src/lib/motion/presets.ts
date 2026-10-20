@@ -2,7 +2,7 @@
 // gsap.matchMedia) para o cleanup reverter tweens, ScrollTriggers e splits.
 // Com `reduce`, todo preset vira um fade de --dur-fast: sem translate, sem
 // split, sem scrub. O estado final é sempre o elemento visível.
-import { DEFAULT_ONCE, DEFAULT_START, MASK_ZOOM } from "./config";
+import { COUNT_FROM, DEFAULT_ONCE, DEFAULT_START, MASK_ZOOM } from "./config";
 import { gsap, SplitText } from "./gsap";
 import {
   duration,
@@ -139,4 +139,46 @@ export function staggerChildren(container: HTMLElement, opts: RunOptions) {
     stagger: stagger(container),
     scrollTrigger: scrollTrigger(container, opts),
   });
+}
+
+export type CountOptions = PresetOptions & {
+  /** Valor final; é o que o HTML pré-renderizado já mostra. */
+  to: number;
+  /** Formata o valor a cada quadro (inclusive arredondamento/decimais). */
+  format: (n: number) => string;
+};
+
+/** Nó cujo texto conta: o filho [data-count-value] de `el`, ou o próprio `el`. */
+function countTarget(el: HTMLElement): HTMLElement {
+  return el.querySelector<HTMLElement>("[data-count-value]") ?? el;
+}
+
+/**
+ * Conta de COUNT_FROM até `to` ao entrar na viewport (--dur-slow, --ease-out,
+ * × --motion-scale). `el` é o gatilho e o que faz fade no reduce (ex.: prefixo
+ * + número + sufixo); o texto que conta é o filho [data-count-value], ou o
+ * próprio `el`. A largura do valor final deve estar reservada pelo componente.
+ * Só zera quando o JS já rodou (§5.11). Reduce: sem contagem, valor final com
+ * fade de --dur-fast.
+ */
+export function countUp(el: HTMLElement, opts: CountOptions & { reduce: boolean }) {
+  if (opts.reduce) return fade(el, el, opts);
+  const { to, format } = opts;
+  const target = countTarget(el);
+  const state = { n: COUNT_FROM };
+  target.textContent = format(COUNT_FROM);
+  return gsap.to(state, {
+    n: to,
+    duration: duration(opts.duration ?? "slow", el),
+    ease: ease("out"),
+    scrollTrigger: scrollTrigger(el, opts),
+    onUpdate: () => {
+      target.textContent = format(state.n);
+    },
+  });
+}
+
+/** Volta o texto que conta ao valor final (cleanup do countUp). */
+export function countReset(el: HTMLElement, { to, format }: CountOptions) {
+  countTarget(el).textContent = format(to);
 }

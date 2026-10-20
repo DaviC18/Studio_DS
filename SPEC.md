@@ -134,7 +134,8 @@ Movimento também é token: 3 curvas, 4 durações e regras de quando usar cada 
 5. Mobile: reduzir distâncias e durações em cerca de 30% (`--motion-scale` 0.7 abaixo de 1024px); sem efeitos que dependem de hover (hover do Tailwind só existe em `(hover: hover)`; o `PortalCard` ativa no centro da tela no toque).
 6. Transição de página: [tipo, ex.: cortina de cor do acento, 1200ms]. Mesma em todas as páginas. Em single page, vale para a navegação entre âncoras.
 7. Loading inicial: no máximo 1,5s visível, e só se houver asset pesado para carregar.
-8. Disparo dos reveals: `top 85%` (topo do elemento a 85% da viewport), uma vez só (`once`). Zoom inicial do `MediaFrame`: 1.1 → 1. Constantes em `src/lib/motion/config.ts`, único lugar delas.
+8. Disparo dos reveals: `clamp(top 85%)` (topo do elemento a 85% da viewport), uma vez só (`once`). O `clamp()` faz disparar também o elemento perto do fim da página, cujo topo nunca chega a 85%; sem ele, o elemento ficaria escondido para sempre. Zoom inicial do `MediaFrame`: 1.1 → 1. Constantes em `src/lib/motion/config.ts`, único lugar delas.
+   - **Problema conhecido:** em 375px, no catálogo, os reveals disparam 16 a 40px antes da linha de 85%. Acontece igual com e sem `clamp()`. Causa não investigada; provável cálculo de posição do ScrollTrigger numa página longa.
 9. Tokens de motion são estruturais (`src/styles/base.css`) e iguais para todos os clientes. Única exceção: o tema pode sobrescrever `--dur-scene`, via `--theme-dur-scene`, sempre dentro de 1200–1600ms (o base aplica `clamp()`). Sem override, vale 1400ms.
 10. **Hero = CSS, scroll = GSAP.** A entrada do hero (o que aparece na primeira dobra ao carregar) é só CSS: `@keyframes` com `--dur-scene`, `--ease-out` e `--stagger`, que toca no primeiro paint sem esperar o JS (`HeroTitle play="load"`, classe `.hero-in` no `base.css`). GSAP só anima o que vem abaixo da dobra, no scroll. Reduced-motion vale por media query também no CSS (fade de `--dur-fast`).
 11. **Conteúdo visível sem JS.** O HTML é pré-renderizado e nada começa em `opacity: 0` sem um fallback em CSS: a animação CSS do hero termina sozinha, e os presets GSAP só escondem um elemento quando o JS já rodou. Se o JS falhar, tudo fica visível.
@@ -230,8 +231,9 @@ Estes componentes são reutilizados entre clientes; só os tokens mudam. É o at
 - `RevealText`: `by` line | word, `as`, `size` body | h3 | h2, `tone` ink | muted. O leitor de tela lê uma cópia `sr-only`; a parte dividida pelo SplitText fica `aria-hidden`.
 - `MediaFrame`: `ratio` video | portrait | square; mídia `image` (`alt` obrigatório no tipo) ou `video` (`label`, `poster`, `muted`, `playsInline`; `ambient` = loop sem controles, toca só visível, com botão de pausa e parado em reduced-motion). Proporção fixa, então CLS zero. `lazy` por padrão; `priority` = `eager` + `fetchpriority=high` e sem máscara.
 - `PortalCard`: o card inteiro é um link, e o nome vem do texto visível (título + descrição). Imagem troca no hover, no foco por teclado e, sem hover, no centro da tela. Imagens `absolute` dentro da proporção, então sem layout shift. `titleAs` h2 | h3 | h4. Título vazio dá `console.error` em dev.
+- `StatCounter`: `value` (negativo dá `console.error` em dev), `decimals` (padrão 0), `prefix` e `suffix` opcionais sem espaço automático, `label` obrigatório embaixo do número (vazio dá `console.error` em dev), `size` h2 | display (padrão h2). Formato pt-BR com separador de milhar. Conta de 0 ao valor com `--dur-slow` e `--ease-out` ao cruzar o disparo do §5.8, uma vez. O HTML pré-renderizado já traz o valor final (§5.11). Reduced-motion: sem contagem; número, prefixo e sufixo entram juntos com fade de `--dur-fast`. O leitor de tela lê só o valor final (cópia `sr-only`, parte animada `aria-hidden`). `tabular-nums` e largura reservada do valor final, então a contagem não mexe no layout.
 
-Novo componente só entra na biblioteca depois de usado em 2 projetos.
+A regra dos 2 projetos vale só para componente fora da tabela acima: ele só entra na biblioteca depois de usado em 2 projetos. Os componentes da tabela são a base do estúdio e entram direto, registrados no catálogo.
 
 ## 9. Stack técnica
 
@@ -254,7 +256,7 @@ Stack padrão do estúdio; troque uma camada só com motivo escrito na linha "Ex
 
 **Render (Vite):** o build pré-renderiza cada HTML com `renderToString` (`scripts/prerender.mjs`) e o cliente hidrata com `hydrateRoot`; em dev o `#root` chega vazio e o React renderiza do zero. Sem hydration mismatch: o primeiro render do cliente tem que ser igual ao do servidor. Valor que só o browser sabe (tema escolhido, estilo computado, medida) entra por `useSyncExternalStore` com snapshot de servidor (`useTheme`, `useHydrated`), nunca lido direto no render. O tema escolhido no catálogo é aplicado no `<html>` por um script inline no `<head>`, antes do paint. O JS de entrada só hidrata, então é buscado depois do primeiro paint e não disputa banda com HTML, CSS e fontes.
 
-**Checks automáticos:** `npm run lint` = eslint + `scripts/check-spacing.mjs` (falha em espaço fora da escala). `npm run build` = tsc + vite (cliente) + vite `--ssr` + `scripts/prerender.mjs` + `scripts/check-bundle.mjs` (falha com JS inicial acima de 250 kB gzip e mostra o valor).
+**Checks automáticos:** `npm run lint` = eslint + `scripts/check-tokens.mjs` (falha em espaço fora da escala, em cor arbitrária em classe como `text-[#…]` ou `bg-[rgb(…)]`, e em hex/rgb/hsl/oklch fora de `src/styles/themes/` e das definições de token do `base.css`). `npm run build` = tsc + vite (cliente) + vite `--ssr` + `scripts/prerender.mjs` + `scripts/check-bundle.mjs` (falha com JS inicial acima de 250 kB gzip e mostra o valor).
 
 **Exceções deste projeto:** Framework → Vite + React + TypeScript com pré-render no build (sem Next.js), porque o site de teste é single page. O catálogo é ferramenta interna: `robots.txt` com `Disallow: /` e `<meta name="robots" content="noindex">`. Tailwind v4 via `@tailwindcss/vite`, com os tokens ligados por `@theme`.
 
@@ -288,7 +290,7 @@ Fluxo:
 1. **Você (diretor)** fecha as seções 1 a 6 da spec.
 2. **Orquestrador** divide a spec em tarefas.
 3. **Agentes executores:** Fundação (tokens e componentes) → depois, em paralelo, Seções (1 agente por seção) e Motion e 3D (3D, Rive e transições).
-4. **Revisor (QA)** checa os critérios da seção 10. Reprovado: volta ao agente da tarefa.
+4. **Revisor (QA)** checa os critérios da seção 10. Reprovado: volta ao agente da tarefa. No máximo 2 voltas por tarefa; se uma terceira revisão fosse necessária, o orquestrador para e pergunta ao diretor.
 5. **Você** faz a revisão visual em celular real e desktop.
 6. **Deploy na Vercel** com link de preview para o cliente.
 
@@ -296,13 +298,24 @@ O revisor nunca corrige sozinho: devolve a lista de erros ao agente da tarefa, e
 
 | Agente              | Recebe                  | Entrega                                                       | Não pode                                |
 | ------------------- | ----------------------- | ------------------------------------------------------------- | --------------------------------------- |
-| Orquestrador        | `SPEC.md` inteira       | lista de tarefas com dependências e ordem                     | escrever código de seção                |
-| Fundação            | seções 4, 5, 8 e 9      | `tokens.css`, componentes, presets de motion, projeto rodando | criar seção de página                   |
+| Orquestrador        | `SPEC.md` inteira       | lista de tarefas com dependências e ordem                     | editar código                           |
+| Fundação            | seções 4, 5, 8 e 9      | `base.css` + `themes/[tema].css`, componentes, presets de motion, projeto rodando | criar seção de página                   |
 | Seção (1 por seção) | spec + bloco da seção 7 | seção pronta com critérios marcados                           | criar token ou componente sem registrar |
 | Motion e 3D         | seções 5 e 6 + assets   | objeto herói, transições, fallbacks                           | usar asset fora do inventário           |
-| Revisor             | branch + seção 10       | relatório passa/falha com prints                              | corrigir o código da tarefa             |
+| Revisor             | branch + seção 10       | relatório passa/falha com prints (screenshots salvos fora do repo, em pasta temporária, com o caminho citado no relatório) | corrigir o código da tarefa             |
 
-**No Claude Code:** cada papel vira um subagente com seu arquivo em `.claude/agents/`, e cada executor trabalha em uma branch ou worktree própria para não pisar no código do outro.
+**No Claude Code:** o orquestrador é a sessão principal, guiada pelo comando `/orquestrar` (`.claude/commands/orquestrar.md`), porque os subagentes do projeto não têm a ferramenta `Agent` e não chamam outros agentes. Os outros papéis viram subagentes com seu arquivo em `.claude/agents/` (`fundacao`, `secao`, `motion`, `revisor`), e cada executor trabalha em uma branch ou worktree própria para não pisar no código do outro.
+
+**Dono de cada arquivo** (o revisor reprova edição fora da coluna do autor):
+
+| Agente     | Pode editar                                                                                                                                  |
+| ---------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| `fundacao` | `src/styles/`, `src/components/ds/`, `src/lib/`, `src/catalog/`, `src/index.css`, `site.config.ts`, `package.json` (e o lockfile), `public/assets/` |
+| `secao`    | `src/components/sections/<Nome>.tsx`, uma seção por tarefa; `src/App.tsx` só para importar e ordenar seções                                   |
+| `motion`   | `src/lib/motion/` e as partes de motion de `src/components/sections/` que o orquestrador indicar. Mudança em `src/components/ds/` vira pedido à `fundacao` |
+| `revisor`  | nada                                                                                                                                         |
+
+O orquestrador não edita código. O resto (`vite.config.ts`, `index.html`, `stress.html`, `scripts/`, docs e `.claude/`) fica com o diretor.
 
 ## 12. Checklist de entrega
 

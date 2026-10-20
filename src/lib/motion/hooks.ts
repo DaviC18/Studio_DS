@@ -4,11 +4,14 @@
 import type { RefObject } from "react";
 import { gsap, MOTION_QUERIES, useGSAP } from "./gsap";
 import {
+  countReset,
+  countUp,
   mask,
   reveal,
   revealLines,
   revealWords,
   staggerChildren,
+  type CountOptions,
   type PresetOptions,
 } from "./presets";
 
@@ -52,4 +55,36 @@ export function useMask(ref: RefObject<HTMLElement | null>, options: PresetOptio
 
 export function useStagger(ref: RefObject<HTMLElement | null>, options: PresetOptions = {}) {
   useMotionPreset(ref, staggerChildren, options);
+}
+
+/**
+ * Contagem do StatCounter. `ref` é o gatilho e o que faz fade no reduce; o
+ * texto que conta é o filho [data-count-value] (ou o próprio elemento) e vem
+ * do render com o valor final. Ao reverter (unmount, troca de reduced-motion,
+ * novo `to`) ele volta ao valor final, nunca fica preso num passo da contagem.
+ * `format` deve ser estável (função de módulo ou useCallback), senão a
+ * contagem reinicia.
+ */
+export function useCountUp(ref: RefObject<HTMLElement | null>, options: CountOptions) {
+  const { to, format, scroll, start, duration } = options;
+  useGSAP(
+    () => {
+      const el = ref.current;
+      if (!el) return;
+      const mm = gsap.matchMedia();
+      mm.add(MOTION_QUERIES, (context) => {
+        countUp(el, {
+          to,
+          format,
+          scroll,
+          start,
+          duration,
+          reduce: Boolean(context.conditions?.reduce),
+        });
+        return () => countReset(el, { to, format });
+      });
+      return () => mm.revert();
+    },
+    { scope: ref, dependencies: [to, format, scroll, start, duration], revertOnUpdate: true },
+  );
 }

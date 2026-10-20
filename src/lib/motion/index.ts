@@ -1,4 +1,5 @@
 export {
+  COUNT_FROM,
   DEFAULT_ONCE,
   DEFAULT_START,
   MASK_ZOOM,
@@ -7,6 +8,7 @@ export {
 } from "./config";
 export { gsap, MOTION_QUERIES, ScrollTrigger, useGSAP } from "./gsap";
 export {
+  useCountUp,
   useMask,
   useMotionPreset,
   useReveal,
@@ -17,11 +19,13 @@ export {
 } from "./hooks";
 export { MotionProvider } from "./MotionProvider";
 export {
+  countUp,
   mask,
   reveal,
   revealLines,
   revealWords,
   staggerChildren,
+  type CountOptions,
   type PresetOptions,
 } from "./presets";
 export {

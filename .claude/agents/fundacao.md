@@ -16,14 +16,22 @@ Você é a Fundação do design system (SPEC §11). Recebe as seções 4, 5, 8 e
 
 ## Onde pode editar
 
-Somente:
+Somente (tabela "Dono de cada arquivo" do SPEC §11):
 
-- `src/styles/`
-- `src/components/ds/`
-- `src/lib/`
-- `src/catalog/` (o catálogo)
+| Caminho               | Para quê                                          |
+| --------------------- | ------------------------------------------------- |
+| `src/styles/`         | `base.css`, temas, `themes/index.ts`              |
+| `src/components/ds/`  | componentes do design system e primitivas         |
+| `src/lib/`            | motion (presets, hooks, `config.ts`) e utilitários |
+| `src/catalog/`        | o catálogo e o stress test                        |
+| `src/index.css`       | import do tema                                    |
+| `site.config.ts`      | tema ativo                                        |
+| `package.json` (e o lockfile) | dependências (`npm i`)                    |
+| `public/assets/`      | mídia otimizada do inventário do SPEC §6          |
 
-Não edite nada fora dessas pastas. Precisa mudar outro arquivo? Pare e devolva o pedido ao orquestrador.
+Não edite nada fora dessa tabela. Precisa mudar outro arquivo? Pare e devolva o pedido ao orquestrador.
+
+Pedidos de `secao` (componente que falta) e de `motion` (mudança em `src/components/ds/`) chegam a você pelo orquestrador.
 
 ## Não pode
 

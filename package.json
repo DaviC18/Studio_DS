@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build && vite build --ssr src/entry-server.tsx --outDir dist-ssr && node scripts/prerender.mjs && node scripts/check-bundle.mjs",
-    "lint": "eslint . && node scripts/check-spacing.mjs",
+    "lint": "eslint . && node scripts/check-tokens.mjs",
     "preview": "vite preview"
   },
   "dependencies": {

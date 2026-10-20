@@ -8,6 +8,7 @@ import {
   RevealText,
   Section,
   Stack,
+  StatCounter,
 } from "../components/ds";
 import { DocEntry, Variant } from "./DocEntry";
 import { IMAGE, PORTAL, VIDEO } from "./media";
@@ -139,6 +140,34 @@ export function ComponentsSection() {
                 <PortalCard key={t} titleAs="h4" href="#componentes" title={t} ratio="square" image={PORTAL.d} hoverImage={PORTAL.e} />
               ))}
             </Container>
+          </Variant>
+        </DocEntry>
+
+        <DocEntry
+          name="StatCounter"
+          use="número que prova algo (anos, clientes, volume), com legenda curta embaixo; conta ao entrar na viewport."
+          avoid="o número muda em tempo real, é negativo ou é dado de tabela; mais de 4 números lado a lado."
+          snippet={`
+<Container layout="thirds" gap={12}>
+  <StatCounter value={12} suffix=" anos" label="torrando em lotes pequenos" />
+  <StatCounter value={1200} prefix="R$ " label="ticket médio por cliente" />
+  <StatCounter value={98} suffix="%" label="lotes rastreados" />
+</Container>
+<StatCounter value={4.8} decimals={1} suffix=" de 5" label="nota média na degustação" />
+<StatCounter size="display" value={45000} suffix="+" label="xícaras por ano" />`}
+        >
+          <Variant label="h2, com unidade (prefixo, sufixo) e sem unidade · Container thirds">
+            <Container layout="thirds" gap={12}>
+              <StatCounter value={12} suffix=" anos" label="torrando em lotes pequenos" />
+              <StatCounter value={1200} prefix="R$ " label="ticket médio por cliente" />
+              <StatCounter value={340} label="fazendas parceiras" />
+            </Container>
+          </Variant>
+          <Variant label="decimals={1}: vírgula pt-BR, casas fixas durante a contagem">
+            <StatCounter value={4.8} decimals={1} suffix=" de 5" label="nota média na degustação" />
+          </Variant>
+          <Variant label="display">
+            <StatCounter size="display" value={45000} suffix="+" label="xícaras servidas por ano" />
           </Variant>
         </DocEntry>
 

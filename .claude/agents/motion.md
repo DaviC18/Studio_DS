@@ -30,13 +30,22 @@ Você é o agente Motion e 3D (SPEC §11). Recebe as seções 5 e 6 da spec e os
 
 ## Onde pode editar
 
-- `src/lib/motion/`
-- Partes de motion de `src/components/ds/` e `src/components/sections/` que o orquestrador indicar na tarefa.
+Somente (tabela "Dono de cada arquivo" do SPEC §11):
 
-Assets: só os do inventário do SPEC §6. Nunca use asset fora dele.
+| Caminho                    | Para quê                                                        |
+| -------------------------- | --------------------------------------------------------------- |
+| `src/lib/motion/`          | presets, hooks e `config.ts` de motion                          |
+| `src/components/sections/` | só as partes de motion que o orquestrador indicar na tarefa     |
+
+Assets: só os do inventário do SPEC §6. Nunca use asset fora dele. Asset novo em `public/assets/` é da `fundacao`.
+
+## Mudança em `src/components/ds/`
+
+Você não edita `src/components/ds/`. Precisa de mudança num componente (variante, prop, fallback)? Pare e devolva um pedido para a fundação com: componente, mudança, trecho da spec que exige.
 
 ## Não pode
 
+- Editar `src/components/ds/`, `src/styles/` ou qualquer arquivo fora da tabela acima.
 - Criar token ou componente novo sem pedido à fundação.
 - Chamar outros agentes.
 

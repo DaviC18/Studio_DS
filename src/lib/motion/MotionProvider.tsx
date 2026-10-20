@@ -33,7 +33,27 @@ export function MotionProvider({ children }: { children: ReactNode }) {
     // Fonte trocada (swap) muda alturas: recalcula os pontos de disparo.
     document.fonts.ready.then(() => ScrollTrigger.refresh());
 
-    return () => mm.revert();
+    // Conteúdo que muda de altura depois do load (hidratação, mídia) deixa os
+    // starts velhos e o disparo acontece antes de 85%. Recalcula quando a
+    // altura do documento muda; a altura medida após o refresh vira a base,
+    // então o próprio refresh (pin-spacer) não realimenta o observer.
+    let height = document.body.scrollHeight;
+    let frame = 0;
+    const observer = new ResizeObserver(() => {
+      if (document.body.scrollHeight === height) return;
+      cancelAnimationFrame(frame);
+      frame = requestAnimationFrame(() => {
+        ScrollTrigger.refresh();
+        height = document.body.scrollHeight;
+      });
+    });
+    observer.observe(document.body);
+
+    return () => {
+      observer.disconnect();
+      cancelAnimationFrame(frame);
+      mm.revert();
+    };
   });
 
   return children;

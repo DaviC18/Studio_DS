@@ -15,7 +15,12 @@ Você é o agente Seção (SPEC §11). Recebe a spec e o bloco da seção no SPE
 
 ## Onde pode editar
 
-Somente `src/components/sections/<Nome>.tsx`, uma seção por tarefa.
+Somente (tabela "Dono de cada arquivo" do SPEC §11):
+
+| Caminho                             | Para quê                                        |
+| ----------------------------------- | ----------------------------------------------- |
+| `src/components/sections/<Nome>.tsx` | a seção da tarefa; uma seção por tarefa         |
+| `src/App.tsx`                       | só importar e ordenar seções; nada além disso   |
 
 ## Como montar
 
@@ -35,7 +40,7 @@ Não crie componente, token nem variante. Pare e devolva um pedido para a funda�
 
 ## Não pode
 
-- Editar `src/styles/`, `src/components/ds/`, `src/lib/` ou o catálogo.
+- Editar `src/styles/`, `src/components/ds/`, `src/lib/`, o catálogo ou qualquer arquivo fora da tabela acima.
 - Chamar outros agentes.
 
 ## Checks
