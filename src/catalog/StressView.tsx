@@ -14,6 +14,7 @@ import {
   Stack,
   StatCounter,
 } from "../components/ds";
+import { whatsappHref } from "../lib/whatsapp";
 import { NavStress } from "./demos/Nav";
 import { IMAGE, PORTAL } from "./media";
 
@@ -29,6 +30,7 @@ const SIZES = [
 const LONG =
   "Torramos em lotes pequenos, sempre de manhã, e anotamos cada curva de temperatura. O café sai da torra, descansa dois dias e só depois vai para a xícara. ";
 const LOTE = {
+  href: whatsappHref("Quero o lote Boa Vista"),
   name: "Fazenda Boa Vista do Rio Sapucaí Mirim",
   process: "cereja descascado, fermentação anaeróbica",
   notes: "caramelo, castanha",
