@@ -58,10 +58,16 @@ function GalleryItem({ item, ratio }: { item: Item; ratio: MediaRatio }) {
  * scroll-snap, arraste nativo e a lista focável (Tab, depois as setas rolam).
  * É o comportamento no mobile, no tablet e com reduced-motion.
  *
- * Desktop (>= 1024px) sem reduced-motion: o JS liga o scrub. A galeria fica
- * presa por exatamente 1 viewport de scroll (GALLERY_PIN_END) e a faixa anda
- * com o scroll vertical, só por transform; faixa mais longa anda mais rápido,
- * nunca prende mais. Se tudo cabe na tela, não prende.
+ * Desktop (>= 1024px) com janela alta (>= 700px, LAYOUT_QUERIES.tall) e sem
+ * reduced-motion: o JS liga o scrub. A galeria fica presa por exatamente 1
+ * viewport de scroll (GALLERY_PIN_END) e a faixa anda com o scroll vertical,
+ * só por transform; faixa mais longa anda mais rápido, nunca prende mais. Se
+ * tudo cabe na tela, não prende.
+ *
+ * Janela com menos de 700px de altura não prende: o quadro preso não caberia e
+ * a legenda ficaria fora da tela. Nesse caso vale o scroll-snap nativo, igual
+ * ao mobile e ao reduced-motion. O gsap.matchMedia troca de modo sozinho no
+ * resize: mm.revert() desfaz o pin, o data-scrub e o tabindex="-1".
  *
  * Largura total (sangra até a borda da tela): use dentro de <Section> ou de um
  * <Stack>, fora de <Container>. A margem lateral do SPEC §4 já está dentro: a
@@ -99,15 +105,17 @@ export function HorizontalGallery(props: HorizontalGalleryProps) {
     });
   }, [items, label]);
 
-  // Scrub só no desktop sem reduced-motion. Fora disso, nada roda: fica o
-  // scroll nativo do HTML. mm.revert() desfaz tudo ao sair da condição.
+  // Scrub só no desktop com janela alta e sem reduced-motion. Fora disso, nada
+  // roda: fica o scroll nativo do HTML. mm.revert() desfaz tudo ao sair da
+  // condição, inclusive quando o resize baixa a janela abaixo de 700px.
   useGSAP(
     () => {
       const el = pin.current;
       const scroller = track.current;
       if (!el || !scroller) return;
       const mm = gsap.matchMedia();
-      mm.add(`${LAYOUT_QUERIES.desktop} and ${MOTION_QUERIES.full}`, () => {
+      const query = `${LAYOUT_QUERIES.desktop} and ${LAYOUT_QUERIES.tall} and ${MOTION_QUERIES.full}`;
+      mm.add(query, () => {
         const cells = Array.from(scroller.children) as HTMLElement[];
         const last = cells.at(-1);
         if (!last) return;

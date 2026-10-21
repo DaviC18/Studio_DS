@@ -27,6 +27,9 @@ export type FrameVideo = {
   ambient?: boolean;
 };
 
+/** Ponto focal do recorte: o que fica visível quando a proporção corta a mídia. */
+export type MediaFocus = "center" | "top" | "bottom" | "left" | "right";
+
 export type MediaFrameProps = {
   media: FrameImage | FrameVideo;
   ratio: MediaRatio;
@@ -35,12 +38,25 @@ export type MediaFrameProps = {
   priority?: boolean;
   /** Máscara que abre + leve zoom. Padrão: ligado, exceto com priority. */
   reveal?: boolean;
+  /**
+   * Ponto focal do recorte (`object-position`). Vale quando a proporção do
+   * frame corta a mídia — 16:9 dentro de um frame 4:5, por exemplo.
+   * Padrão: "center".
+   */
+  focus?: MediaFocus;
 };
 
 const FILL = "block size-full object-cover";
+const FOCUS: Record<MediaFocus, string> = {
+  center: "object-center",
+  top: "object-top",
+  bottom: "object-bottom",
+  left: "object-left",
+  right: "object-right",
+};
 const NO_TARGET = { current: null };
 
-function Video({ media, priority }: { media: FrameVideo; priority: boolean }) {
+function Video({ media, priority, fill }: { media: FrameVideo; priority: boolean; fill: string }) {
   const ref = useRef<HTMLVideoElement>(null);
   const userPaused = useRef(false);
   const [playing, setPlaying] = useState(false);
@@ -76,7 +92,7 @@ function Video({ media, priority }: { media: FrameVideo; priority: boolean }) {
     <>
       <video
         ref={ref}
-        className={FILL}
+        className={fill}
         poster={media.poster}
         aria-label={media.label}
         muted
@@ -111,8 +127,10 @@ export function MediaFrame({
   caption,
   priority = false,
   reveal = !priority,
+  focus = "center",
 }: MediaFrameProps) {
   const frame = useRef<HTMLDivElement>(null);
+  const fill = cx(FILL, FOCUS[focus]);
   // Estrutura do preset mask: frame (clip) > cortina > mídia.
   useMask(reveal ? frame : NO_TARGET);
 
@@ -128,7 +146,7 @@ export function MediaFrame({
         <div className="size-full">
           {media.kind === "image" ? (
             <img
-              className={FILL}
+              className={fill}
               src={media.src}
               srcSet={media.srcSet}
               sizes={media.sizes}
@@ -140,7 +158,7 @@ export function MediaFrame({
               decoding="async"
             />
           ) : (
-            <Video media={media} priority={priority} />
+            <Video media={media} priority={priority} fill={fill} />
           )}
         </div>
       </div>

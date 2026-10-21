@@ -160,9 +160,9 @@ function Marquee({ label, children }: { label: string; children: ReactNode }) {
   // Rótulo e toggle refletem só a pausa explícita. Hover e foco pausam sem
   // trocar o rótulo, que fica estável sob o cursor: chegar ao botão já para a
   // faixa, e um acionamento de "Pausar" garante a pausa permanente (WCAG
-  // 2.2.2), que continua depois que o mouse ou o foco saem. "Reproduzir"
-  // limpa as pausas de hover e foco, então a faixa volta a andar na hora;
-  // elas valem de novo na próxima entrada.
+  // 2.2.2), que continua depois que o mouse ou o foco saem. "Continuar" limpa
+  // as pausas de hover e foco, então a faixa volta a andar na hora; elas valem
+  // de novo na próxima entrada.
   const toggle = () => {
     if (!userPaused) return setUserPaused(true);
     setUserPaused(false);
@@ -203,11 +203,9 @@ function Marquee({ label, children }: { label: string; children: ReactNode }) {
             {/* Os dois rótulos ocupam a mesma célula: a largura é a do maior,
                 então a troca não mexe no layout. Só o visível dá o nome. */}
             <span className="grid">
-              <span className="col-start-1 row-start-1">
-                {userPaused ? "Reproduzir" : "Pausar"}
-              </span>
+              <span className="col-start-1 row-start-1">{userPaused ? "Continuar" : "Pausar"}</span>
               <span aria-hidden="true" className="invisible col-start-1 row-start-1">
-                {userPaused ? "Pausar" : "Reproduzir"}
+                {userPaused ? "Pausar" : "Continuar"}
               </span>
             </span>
           </Button>

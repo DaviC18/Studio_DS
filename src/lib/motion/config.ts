@@ -16,11 +16,17 @@ export const MASK_ZOOM = 1.1;
  * Media queries de layout para gsap.matchMedia(), somadas às de
  * MOTION_QUERIES (reduced-motion). `desktop` = breakpoint lg do base.css
  * (64rem = 1024px), o mesmo em que --motion-scale volta a 1. `noHover` =
- * toque, onde o estado ativo vem do centro da tela (SPEC §5.5).
+ * toque, onde o estado ativo vem do centro da tela (SPEC §5.5). `tall` =
+ * janela com altura suficiente para prender uma cena sem cortar nada: abaixo
+ * de 43.75rem (700px) o conteúdo preso não cabe (a legenda da
+ * HorizontalGallery sai da tela), então o pin não entra e vale o
+ * comportamento nativo. Combine com `desktop` no mesmo `mm.add`: o
+ * gsap.matchMedia troca de modo sozinho no resize.
  */
 export const LAYOUT_QUERIES = {
   desktop: "(min-width: 64rem)",
   noHover: "(hover: none)",
+  tall: "(min-height: 43.75rem)",
 };
 
 /**
@@ -74,7 +80,8 @@ export function galleryPinStart(bar: number, viewport: number, height: number): 
 /**
  * HorizontalGallery: `scrub` do ScrollTrigger. `true` = colado ao scroll, sem
  * suavização extra, porque o Lenis já suaviza a rolagem; somar as duas daria
- * atraso. Só vale em LAYOUT_QUERIES.desktop + MOTION_QUERIES.full.
+ * atraso. Só vale em LAYOUT_QUERIES.desktop + LAYOUT_QUERIES.tall +
+ * MOTION_QUERIES.full.
  */
 export const GALLERY_SCRUB = true;
 

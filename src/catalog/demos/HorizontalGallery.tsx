@@ -49,7 +49,7 @@ export function HorizontalGalleryDemo() {
   { image, quote: "A consistência de torra é rara.", cite: "Marina, Café do Largo" },
 ]} />`}
     >
-      <Variant label="com legenda, 4:5 · desktop sem reduced-motion: scrub, prende 1 viewport · resto: scroll-snap nativo, Tab + setas · no catálogo fica dentro de um Container: alinha ao grid, sem sangrar">
+      <Variant label="com legenda, 4:5 · desktop com janela de 700px ou mais de altura e sem reduced-motion: scrub, prende 1 viewport · janela mais baixa, mobile e reduced-motion: scroll-snap nativo, Tab + setas (sem pin, a legenda não sai da tela) · no catálogo fica dentro de um Container: alinha ao grid, sem sangrar">
         <HorizontalGallery label="Galeria das fazendas (exemplo)" items={CAPTIONS} />
       </Variant>
       <Variant label="com citação, 16:9">

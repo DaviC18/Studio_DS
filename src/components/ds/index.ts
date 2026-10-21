@@ -21,8 +21,14 @@ export {
   type HorizontalGalleryProps,
 } from "./HorizontalGallery";
 export { LogoWall, type LogoImage, type LogoWallMode, type LogoWallProps } from "./LogoWall";
-export { MediaFrame, type FrameImage, type FrameVideo, type MediaFrameProps } from "./MediaFrame";
-export { Nav, type NavLink, type NavProps } from "./Nav";
+export {
+  MediaFrame,
+  type FrameImage,
+  type FrameVideo,
+  type MediaFocus,
+  type MediaFrameProps,
+} from "./MediaFrame";
+export { Nav, type NavCta, type NavLink, type NavProps } from "./Nav";
 export type { MediaRatio } from "./ratio";
 export { PortalCard, type PortalCardProps, type PortalImage } from "./PortalCard";
 export { RevealText, type RevealTextProps } from "./RevealText";

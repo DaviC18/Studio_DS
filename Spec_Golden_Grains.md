@@ -30,12 +30,14 @@ A ação principal é assinar o clube pelo WhatsApp. É um link nativo `wa.me`, 
 | Dispositivo dominante | mobile primeiro (assumido: \~80% vindo do Instagram) |
 | Ação principal | "Assine o clube": abre o WhatsApp com mensagem pronta |
 | Ações secundárias | ver os cafés do mês; seguir no Instagram |
-| Onde o CTA aparece | Nav (fixo), Hero, seção Clube e Footer |
+| Onde o CTA aparece | Nav (fixo, sempre na barra), Hero, seção Clube e Footer |
 | Métrica de sucesso | cliques no CTA do WhatsApp / visitas |
 | Conteúdo | textos desta spec (finais, sem lorem ipsum); fotos e vídeo de bancos com licença comercial (§5) |
 | Idiomas | pt-BR |
 
-**Mensagem pronta do WhatsApp:** "Olá! Quero assinar o Clube Golden Grains." O número fica em `site.config.ts` como placeholder e é o único dado fictício que precisa ser trocado num cliente real.
+**Copy do CTA:** "Assine o clube" por extenso. Abaixo de 640px, o CTA do `Nav` usa o rótulo curto "Assinar", para caber na barra em 375px junto do wordmark e do botão do menu; o nome acessível é o mesmo texto visível (WCAG 2.5.3).
+
+**Mensagem pronta do WhatsApp:** "Olá! Quero assinar o Clube Golden Grains." Cada lote da seção Cafés abre o mesmo WhatsApp com a mensagem "Quero o lote <nome>", então o item do `CollectionGrid` é um link e não um card sem destino. O número fica em `site.config.ts` como placeholder e é o único dado fictício que precisa ser trocado num cliente real.
 
 ## 3. Arquitetura narrativa
 
@@ -70,21 +72,31 @@ O objeto herói é o **vídeo da torra**: grãos girando no tambor do torrador, 
 | Campo | Decisão |
 | --- | --- |
 | Objeto herói | vídeo de 6 a 10s, loop, sem áudio: grãos no tambor do torrador |
-| Formato | WebM + MP4, 1280px, ≤ 3MB, com poster em AVIF/WebP |
+| Formato | WebM + MP4 (cada um até 3,5MB; o navegador baixa só um), sem áudio, com poster WebP |
 | Fallback | poster estático em reduced-motion e enquanto o vídeo carrega |
 | Fonte | bancos com licença comercial gratuita: Pexels (vídeo) e Unsplash (fotos) |
 
 **Inventário** (a fundação busca, otimiza e registra; você aprova as escolhas antes de entrar nas seções)
 
-| Asset | Seção | Busca sugerida | Formato | Licença | Status |
-| --- | --- | --- | --- | --- | --- |
-| vídeo da torra | 1 | "coffee roasting machine beans" | WebM + MP4 | Pexels License | pendente |
-| 5 fotos de fazenda e colheita | 3 | "coffee farm mountains", "coffee cherries harvest" | AVIF/WebP 1600px | Unsplash License | pendente |
-| 2 fotos para portais | 4 | "coffee beans close up", "pour over coffee" | AVIF/WebP 1600px | Unsplash License | pendente |
-| 12 fotos de lote (6 grão + 6 xícara) | 5 | "roasted coffee beans", "espresso cup top view" | AVIF/WebP 1000px | Unsplash License | pendente |
-| 1 foto do clube | 6 | "coffee bag package" | AVIF/WebP 1600px | Unsplash License | pendente |
+**Origem das imagens:** geradas por IA no Google Flow, não mais bancos de imagem. A busca na Pexels e na Unsplash foi cancelada pelo diretor: as duas exigem chave de API para busca automatizada. Os arquivos ficam em `public/assets/images/` com os nomes atuais, referenciados com as maiúsculas exatas; o original de cada um que passava de 400KB foi para `assets-src/images/`, fora do build. Não há arquivo derivado por slot: o recorte 4:5 da Origem é feito no `MediaFrame`, pela prop `focus`.
 
-- Registrar no `SPEC.md` §6 a URL de origem e o autor de cada arquivo.
+| Asset | Seção | Arquivo | Origem | Status |
+| --- | --- | --- | --- | --- |
+| vídeo do hero | 1 | `public/assets/video/hero_coffee.webm` + MP4 de fallback | IA · Google Flow | ok |
+| poster do hero | 1 | `public/assets/images/mediaframe.webp` | IA · Google Flow | ok |
+| origem 1 · Pedra Alta | 3 | `Coffee_plants.webp` | IA · Google Flow | ok |
+| origem 2 · Boa Vista do Rio | 3 | — | — | pendente |
+| origem 3 · café verde | 3 | `Stacked_jute_sacks.webp` | IA · Google Flow | ok |
+| origem 4 · prova de xícara | 3 | `Coffee_roastery_cupping.webp` | IA · Google Flow | ok |
+| origem 5 · doze minutos de torra | 3 | `Coffee_beans_pouring.webp` | IA · Google Flow | ok |
+| portal "Os cafés do mês" | 4 | — | — | pendente |
+| portal "O clube" | 4 | `Barista.webp` | IA · Google Flow | ok |
+| 12 fotos de lote (6 grão + 6 xícara) | 5 | — | — | pendente |
+| pacote do Clube | 6 | — | — | pendente |
+| footer · torra aberta | 8 | `Roaster_in_coffee.webp` | IA · Google Flow | ok |
+
+- Registrar no `SPEC.md` §6 a origem de cada arquivo: "gerada por IA · Google Flow".
+- Imagem gerada por IA entra com a mesma régua das outras: nada de texto, etiqueta ou logo legível na imagem. O crítico confere com zoom e lista o que encontrar.
 - Nenhum asset tem logotipo de marca real, rosto em destaque ou embalagem com marca visível.
 - As fotos devem ter luz quente e baixa, para casar com o tema escuro. Foto de estúdio com fundo branco não entra.
 
@@ -102,7 +114,7 @@ Cada bloco é a unidade de trabalho de um agente `secao`. Todos herdam os crité
   - CTA primário: "Assine o clube" (WhatsApp). CTA ghost: "Conheça os cafés" (`#cafes`)
 - **Layout desktop:** título grande à esquerda, vídeo da torra em `MediaFrame` 4:5 à direita (`main-aside`), CTAs abaixo do título.
 - **Layout mobile:** microcopy, título, CTAs e depois o vídeo. Os CTAs precisam aparecer sem rolar em 375 × 667.
-- **Componentes:** Section, Container, Stack, HeroTitle (`play="load"`), RevealText, Button, MediaFrame (vídeo `ambient`, `priority`).
+- **Componentes:** Section, Container, Stack, HeroTitle (`play="load"`), RevealText, Button, MediaFrame (vídeo `ambient`, **sem** `priority` e com `reveal={false}`). `priority` ligaria `preload="auto"` no vídeo, que disputaria o LCP com o título (SPEC §5.7b: `preload="none"` e entrada depois da hidratação); sem `priority`, o padrão de `reveal` é `true`, e a máscara GSAP no hero contraria "hero = CSS, scroll = GSAP", então o frame desliga o reveal.
 - **Interação de destaque:** entrada do título em CSS, linha a linha, `--dur-scene`; o vídeo entra com fade depois.
 - **Critério específico:** o LCP é o título, não o vídeo; LCP ≤ 2,5s no mobile.
 
@@ -121,7 +133,14 @@ Cada bloco é a unidade de trabalho de um agente `secao`. Todos herdam os crité
 - **Objetivo:** provar a origem com lugares e números, sem texto institucional.
 - **Conteúdo:**
   - h2: "De onde vem"
-  - Galeria (5 fotos) com legendas no formato local · altitude: "Sítio Pedra Alta · 1.280 m", "Fazenda Boa Vista do Rio · 1.150 m", "Sítio Três Nascentes · 1.320 m", "Colheita seletiva, maio", "Terreiro suspenso, junho" (nomes fictícios)
+  - Galeria (5 fotos): **a jornada do grão**, da encosta à xícara. Legendas na ordem:
+    1. "Sítio Pedra Alta · 1.280 m" (lugar · altitude)
+    2. "Fazenda Boa Vista do Rio · 1.150 m" (lugar · altitude)
+    3. "Café verde, da fazenda à torra"
+    4. "Prova de xícara, toda semana"
+    5. "Doze minutos de torra"
+
+    Os nomes de sítio e fazenda são fictícios. A legenda deixou de ser só "local · altitude": os três últimos passos nomeiam a etapa, não o lugar. As imagens 16:9 entram no frame 4:5 com o ponto focal escolhido pela prop `focus` do `MediaFrame`.
   - StatCounter × 4: 12 produtores parceiros · 1.250 m de altitude média · 86,5 pontos SCA em média (`decimals=1`) · 7 dias da torra ao envio
 - **Layout desktop:** h2 à esquerda, galeria horizontal ocupando a largura toda e números em 4 colunas abaixo.
 - **Layout mobile:** galeria com arraste nativo (scroll-snap), sem scrub; números em 2 × 2.
@@ -186,12 +205,12 @@ Cada bloco é a unidade de trabalho de um agente `secao`. Todos herdam os crité
 
 - **Objetivo:** última impressão e último CTA.
 - **Conteúdo:**
-  - Frase gigante (display): "Café bom não tem pressa."
+  - Frase gigante (display), em 3 linhas: "Café bom" / "não tem" / "pressa."
   - CTA: "Assine o clube" (WhatsApp)
   - Endereço (fictício): "Rua das Brasas, 214 · Santa Rita do Sapucaí, MG". Horário da torra aberta: "sábados, 9h às 13h"
   - Links: Instagram, WhatsApp
   - Linha final: "© 2026 Golden Grains · Site conceitual · marca fictícia"
-- **Componentes:** Footer (**novo**), HeroTitle (`as="p"`, `play="scroll"`), Button, MediaFrame (poster do vídeo do hero).
+- **Componentes:** Footer (**novo**), HeroTitle (`as="p"`, `play="scroll"`), Button, MediaFrame (foto do torrador, 4:5, convite da torra aberta aos sábados; substitui o poster do vídeo do hero).
 - **Interação de destaque:** a frase revela linha a linha quando o footer entra; precisa disparar mesmo sendo o fim da página (`clamp`).
 - **Critério específico:** em 375px, a frase cabe sem scroll horizontal.
 
@@ -201,8 +220,8 @@ A fundação cria 5 componentes antes de qualquer seção. Todos já estão na l
 
 | Componente | Usado em | Requisitos além do SPEC §8 |
 | --- | --- | --- |
-| `Nav` | todas | fixo; wordmark "Golden Grains" em texto + CTA; menu fullscreen no mobile com foco preso e Esc para fechar; esconde ao rolar para baixo e volta ao rolar para cima |
-| `HorizontalGallery` | 3 | scrub só no desktop sem reduced-motion; no resto, scroll-snap nativo e teclado; prende no máximo 1 viewport |
+| `Nav` | todas | fixo; wordmark "Golden Grains" em texto + CTA **sempre na barra** (abaixo de 640px com o rótulo curto "Assinar", para caber em 375px); menu fullscreen no mobile com foco preso e Esc para fechar, sem repetir o CTA; esconde ao rolar para baixo e volta ao rolar para cima |
+| `HorizontalGallery` | 3 | scrub só no desktop (≥ 1024px) com janela de pelo menos 700px de altura e sem reduced-motion; no resto, scroll-snap nativo e teclado; prende no máximo 1 viewport, centrado abaixo do `--nav-height` |
 | `CollectionGrid` | 5 | 2 imagens por item sem layout shift; troca no hover, no foco e no centro da tela (toque); texto fora da imagem |
 | `LogoWall` | 7 | variantes `text` e `image`; marquee com botão de pausa; lista lida uma vez pelo leitor de tela |
 | `Footer` | 8 | frase display, CTA, colunas de contato e links; dispara a revelação mesmo no fim da página |

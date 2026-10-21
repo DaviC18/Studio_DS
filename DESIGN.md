@@ -93,7 +93,7 @@ components:
 
 **Creative North Star: "A Torra Lenta"**
 
-O sistema inteiro sai de uma frase: cada grão no seu tempo. A página é escura como café torrado, com um único calor, o cobre, que aparece pouco e por isso pesa. Nada entra pelos lados: as revelações sobem de baixo, devagar, como calor que sobe do tambor, e a cena mais longa usa o topo da faixa permitida (1600ms). A precisão é artesanal, não rústica: tipografia de cartaz condensada, texto de livro, grid exato e números com casas fixas.
+O sistema inteiro sai de uma frase: cada grão no seu tempo. A página é escura como café torrado, com um único calor, o cobre, que aparece pouco e por isso pesa. Nada **entra** pelos lados: as revelações sobem de baixo, devagar, como calor que sobe do tambor, e a cena mais longa usa o topo da faixa permitida (1600ms). A regra vale para entrada e revelação; movimento ambiente contínuo, que não revela nada, é exceção (ver a regra do Marquee). A precisão é artesanal, não rústica: tipografia de cartaz condensada, texto de livro, grid exato e números com casas fixas.
 
 A densidade é baixa. Cada seção tem uma ideia e uma interação forte, e o resto é revelação simples (fade com 24px de subida). O peso visual vem da tipografia gigante e da fotografia de luz quente e baixa, nunca de ornamento, sombra ou gradiente. Os componentes são contidos: o gesto é pequeno e exato e não chama atenção para si.
 
@@ -161,6 +161,8 @@ Plano por princípio. Não há sombra em nenhum componente. A profundidade vem d
 
 **The Sem Fumaça Falsa Rule.** Nada de `box-shadow`, brilho ou gradiente decorativo. Se algo precisa se destacar, use tom, tamanho ou o Cobre.
 
+**The Marquee é Ambiente Rule.** O "nada entra pelos lados" governa entrada e revelação: o que aparece, aparece subindo. O marquee do `LogoWall` é a única exceção, porque não revela nada: é movimento ambiente contínuo, lento (40 px/s no desktop, ~28 no mobile), linear e sem começo nem fim visível, que pausa no hover, no foco e com reduced-motion. Movimento lateral novo que **revele** conteúdo continua proibido.
+
 ## Shapes
 
 Cantos levemente arredondados de 8px (`--radius-base`), iguais em botão, mídia e card. A borda é de 1px e só no botão ghost. A forma recorrente é a máscara retangular: título e mídia se revelam por recorte (`clip-path`), não por fade lateral.
@@ -172,6 +174,8 @@ Precisos e contidos: o gesto é a camada que sobe, nada mais.
 - **Shape:** cantos de 8px; altura mínima de 44px; padding de 8px por 24px.
 - **Primary:** fundo Cobre e texto Espresso. É o CTA "Assine o clube" (link `wa.me`, funciona sem JS).
 - **Hover / Focus:** uma camada Crema sobe de baixo (`translate-y`) em 200ms com `--ease-snap`. Foco por teclado dá o mesmo estado e o anel Crema de 2px com offset de 4px. Sem transição em reduced-motion.
+
+**The Imagem Lenta, Texto Seco Rule.** Numa troca de estado que move imagem e texto juntos (`PortalCard`, `CollectionGrid`), a imagem faz crossfade em `--dur-base` (500ms, `--ease-out`): é a matéria pesada da página e atravessa o limite de 300ms de propósito, como linguagem da marca. O que é texto ou cor no mesmo gesto (a pontuação que vira Cobre, um rótulo) vai em `--dur-fast` (200ms, `--ease-snap`). A imagem assenta, a informação responde na hora.
 - **Ghost:** borda de 1px Juta e texto Crema; no hover sobe uma camada Torra.
 - **Link:** texto Crema com linha Juta embaixo; no hover, uma linha Cobre cresce da esquerda (`scale-x`).
 - **Disabled:** opacidade 0,45 e `disabled` real.
@@ -200,7 +204,7 @@ Número que conta de 0 ao valor ao entrar na viewport (`--dur-slow`, `--ease-out
 - **Do** usar fotografia de luz quente e baixa, que casa com o fundo escuro.
 
 ### Don't:
-- **Don't** fazer nada entrar pelos lados: o calor sobe, não desliza.
+- **Don't** fazer nada entrar pelos lados: o calor sobe, não desliza. Única exceção: o marquee do `LogoWall` (ver a regra do Marquee).
 - **Don't** usar o Cobre mais de 3 vezes por tela, nem em texto corrido.
 - **Don't** usar sombra, brilho, gradiente ou texto em gradiente.
 - **Don't** usar foto de estúdio com fundo branco, xícara em mesa de madeira ou fonte manuscrita.

@@ -134,6 +134,7 @@ Movimento também é token: 3 curvas, 4 durações e regras de quando usar cada 
 5. Mobile: reduzir distâncias e durações em cerca de 30% (`--motion-scale` 0.7 abaixo de 1024px); sem efeitos que dependem de hover (hover do Tailwind só existe em `(hover: hover)`; o `PortalCard` ativa no centro da tela no toque).
 6. Transição de página: [tipo, ex.: cortina de cor do acento, 1200ms]. Mesma em todas as páginas. Em single page, vale para a navegação entre âncoras.
 7. Loading inicial: no máximo 1,5s visível, e só se houver asset pesado para carregar.
+7b. Vídeo do hero: até 3,5MB **por formato**, não a soma. O navegador escolhe um `<source>` e baixa só ele, então WebM e MP4 são caminhos alternativos, nunca somados. Sem faixa de áudio (nem silenciosa). O vídeo não disputa o LCP com o título: `preload="none"` e entrada depois da hidratação.
 8. Disparo dos reveals: `clamp(top 85%)` (topo do elemento a 85% da viewport), uma vez só (`once`). O `clamp()` faz disparar também o elemento perto do fim da página, cujo topo nunca chega a 85%; sem ele, o elemento ficaria escondido para sempre. Zoom inicial do `MediaFrame`: 1.1 → 1. Constantes em `src/lib/motion/config.ts`, único lugar delas.
    - **Problema conhecido:** em 375px, no catálogo, os reveals disparam 16 a 40px antes da linha de 85%. Acontece igual com e sem `clamp()`. Causa não investigada; provável cálculo de posição do ScrollTrigger numa página longa.
 9. Tokens de motion são estruturais (`src/styles/base.css`) e iguais para todos os clientes. Única exceção: o tema pode sobrescrever `--dur-scene`, via `--theme-dur-scene`, sempre dentro de 1200–1600ms (o base aplica `clamp()`). Sem override, vale 1400ms.
@@ -149,22 +150,32 @@ Todo projeto tem um objeto herói: o elemento que vira a identidade do site e re
 | Objeto herói    | [produto, logo em 3D, personagem, vídeo, tipografia cinética]                  |
 | Formato técnico | [GLB/Three.js, Rive (.riv), vídeo WebM/MP4, SVG animado, sequência de imagens] |
 | Quem produz     | [cliente, freelancer 3D/Rive, banco de imagens, você]                          |
-| Peso máximo     | GLB ≤ 2MB com Draco, .riv ≤ 300KB, vídeo hero ≤ 3MB                            |
+| Peso máximo     | GLB ≤ 2MB com Draco, .riv ≤ 300KB, vídeo do hero ≤ 3,5MB **por formato**       |
 | Fallback        | [imagem estática para mobile fraco e reduced-motion]                           |
 
 **Inventário de assets** (um por linha; nenhum agente usa placeholder em produção)
 
 | Asset                                                                                     | Seção          | Formato                                | Origem                                         | Licença    | Status                                         |
 | ----------------------------------------------------------------------------------------- | -------------- | -------------------------------------- | ---------------------------------------------- | ---------- | ---------------------------------------------- |
-| [foto hero]                                                                               | 1              | WebP/AVIF 2400px                       | [cliente]                                      | [própria]  | [pendente]                                     |
-| [vídeo de fundo]                                                                          | 3              | WebM + MP4, sem áudio                  | [freelancer]                                   | [contrato] | [pendente]                                     |
-| [fontes]                                                                                  | todas          | WOFF2                                  | [Google Fonts / licença comprada]              | [tipo]     | [pendente]                                     |
 | Big Shoulders Display (tema torrefacao)                                                   | todas          | WOFF2 variável, `@fontsource-variable` | Google Fonts                                   | OFL        | ok                                             |
 | Literata (tema torrefacao)                                                                | todas          | WOFF2 variável, `@fontsource-variable` | Google Fonts                                   | OFL        | ok                                             |
 | Inter Tight (tema neutro)                                                                 | todas          | WOFF2 variável, `@fontsource-variable` | Google Fonts                                   | OFL        | ok                                             |
 | Mídia abstrata do catálogo (`public/assets/catalog/`: 6 WebP, 1 vídeo WebM+MP4, 1 poster) | catálogo do DS | WebP, WebM + MP4 sem áudio             | gerada por `scripts/generate-catalog-media.py` | própria    | ok (só catálogo, não vai para site de cliente) |
+| `public/assets/video/hero_coffee.webm` | 1 | WebM VP9 1920×1080, 240 quadros, 4,06 s, sem áudio, 3,20 MB | gerada por IA · Google Flow | própria | ok |
+| `public/assets/video/hero_coffee.mp4` | 1 | MP4 H.264 high@4.2 1920×1080, 240 quadros, 4,00 s, sem áudio, faststart, 2,70 MB | gerada por IA · Google Flow | própria | ok |
+| `public/assets/images/mediaframe.webp` | 1 | WebP 589×335, 19 KB — poster do vídeo do hero e fallback em reduced-motion | gerada por IA · Google Flow | própria | **a trocar** (ver questão aberta: poster 864×1080 tirado do próprio vídeo) |
+| `public/assets/images/Barista.webp` | 4 (portal "O clube") | WebP q82 1376×768, 76 KB | gerada por IA · Google Flow | própria | ok |
+| `public/assets/images/Coffee_beans_pouring.webp` | 3 (origem 5) | WebP q82 1376×768, 122 KB | gerada por IA · Google Flow | própria | ok |
+| `public/assets/images/Coffee_plants.webp` | 3 (origem 1) | WebP q82 1376×768, 165 KB | gerada por IA · Google Flow | própria | ok |
+| `public/assets/images/Coffee_roastery_cupping.webp` | 3 (origem 4) | WebP q82 1376×768, 88 KB | gerada por IA · Google Flow | própria | ok |
+| `public/assets/images/Roaster_in_coffee.webp` | 8 (footer) | WebP q82 1376×768, 102 KB | gerada por IA · Google Flow | própria | ok |
+| `public/assets/images/Stacked_jute_sacks.webp` | 3 (origem 3) | WebP q82 1376×768, 157 KB | gerada por IA · Google Flow | própria | ok |
+| foto 2 da Origem ("Fazenda Boa Vista do Rio") | 3 | WebP ≤1600px | gerada por IA · Google Flow | própria | pendente |
+| foto do portal "Os cafés do mês" | 4 | WebP ≤1600px | gerada por IA · Google Flow | própria | pendente |
+| 12 fotos de lote (6 grão + 6 xícara) | 5 | WebP ≤1000px | gerada por IA · Google Flow | própria | pendente |
+| foto do pacote do Clube | 6 | WebP ≤1600px | gerada por IA · Google Flow | própria | pendente |
 
-Regra: todo asset tem licença registrada. Nada de imagem, fonte ou modelo 3D de terceiros sem direito de uso comercial.
+Regra: todo asset tem licença registrada. Nada de imagem, fonte ou modelo 3D de terceiros sem direito de uso comercial. Imagem gerada por IA entra com a mesma régua: sem texto, etiqueta ou logo legível na imagem, conferido com zoom na revisão. Os originais e as versões sem perdas ficam em `assets-src/` (fora do build); `public/assets/` só leva o que alguma página usa.
 
 ## 7. Spec por seção
 
@@ -227,10 +238,12 @@ Estes componentes são reutilizados entre clientes; só os tokens mudam. É o at
 **Implementados** (`src/components/ds/`, documentados no catálogo com snippet e "use quando / não use quando"). Regras comuns: props tipadas, variações por union type, sem `className`/`style`, só tokens.
 
 - `Button`: `variant` primary | ghost | link. Com `href` vira `<a>`, sem vira `<button>`. `disabled` real (button `disabled`; link sem `href` e com `aria-disabled`). Altura mínima 44px. Hover e foco: camada que sobe com `--ease-snap`, `--dur-fast`. Label vazio dá `console.error` em dev.
+- `Nav`: fixo, com wordmark em texto, âncoras e um CTA (`cta: { label, shortLabel?, href }`) sempre visível na barra; abaixo de 640px vale o `shortLabel`, e o nome acessível é o texto visível. Menu fullscreen no mobile, com foco preso, `Esc` para fechar e o foco de volta no botão; não repete o CTA. Esconde ao rolar para baixo e volta ao rolar para cima, só com `transform`, sem empurrar o conteúdo (altura fixa em `--nav-height`).
 - `HeroTitle`: `lines` com 1 a 3 itens, `as` h1 | h2 | p, `play` load | scroll. Linhas em máscara com stagger e `--dur-scene`; `load` = só CSS (§5.10), `scroll` = GSAP. Avisa em dev se houver mais de um `h1`.
 - `RevealText`: `by` line | word, `as`, `size` body | h3 | h2, `tone` ink | muted. O leitor de tela lê uma cópia `sr-only`; a parte dividida pelo SplitText fica `aria-hidden`.
-- `MediaFrame`: `ratio` video | portrait | square; mídia `image` (`alt` obrigatório no tipo) ou `video` (`label`, `poster`, `muted`, `playsInline`; `ambient` = loop sem controles, toca só visível, com botão de pausa e parado em reduced-motion). Proporção fixa, então CLS zero. `lazy` por padrão; `priority` = `eager` + `fetchpriority=high` e sem máscara.
+- `MediaFrame`: `ratio` video | portrait | square; mídia `image` (`alt` obrigatório no tipo) ou `video` (`label`, `poster`, `muted`, `playsInline`; `ambient` = loop sem controles, toca só visível, com botão de pausa e parado em reduced-motion). Proporção fixa, então CLS zero. `lazy` por padrão; `priority` = `eager` + `fetchpriority=high` e sem máscara. Em mídia `video`, `priority` também vira `preload="auto"`, o que o hero não pode fazer (§5.7b): o vídeo do hero vai **sem** `priority`, e por isso precisa de `reveal={false}` explícito, já que `reveal` tem padrão `!priority`. `focus` center | top | bottom | left | right (padrão center): ponto focal do recorte (`object-position`), para quando a proporção do frame corta a mídia.
 - `PortalCard`: o card inteiro é um link, e o nome vem do texto visível (título + descrição). Imagem troca no hover, no foco por teclado e, sem hover, no centro da tela. Imagens `absolute` dentro da proporção, então sem layout shift. `titleAs` h2 | h3 | h4. Título vazio dá `console.error` em dev.
+- `CollectionGrid`: o item inteiro é um link (`href` obrigatório), e o nome acessível vem do texto visível (nome, pontuação, processo, notas). `columns` 2 | 3 | 4, `ratio`, `gap` na escala, `nameAs` h3 | h4. A imagem base troca pela ativa no hover, no foco por teclado e, sem hover, quando o item cruza o centro da tela, um item por vez. Imagens `absolute` na proporção, então sem layout shift; no estado ativo o destaque vai para o acento. `name` ou `highlight` vazio dá `console.error` em dev.
 - `StatCounter`: `value` (negativo dá `console.error` em dev), `decimals` (padrão 0), `prefix` e `suffix` opcionais sem espaço automático, `label` obrigatório embaixo do número (vazio dá `console.error` em dev), `size` h2 | display (padrão h2). Formato pt-BR com separador de milhar. Conta de 0 ao valor com `--dur-slow` e `--ease-out` ao cruzar o disparo do §5.8, uma vez. O HTML pré-renderizado já traz o valor final (§5.11). Reduced-motion: sem contagem; número, prefixo e sufixo entram juntos com fade de `--dur-fast`. O leitor de tela lê só o valor final (cópia `sr-only`, parte animada `aria-hidden`). `tabular-nums` e largura reservada do valor final, então a contagem não mexe no layout.
 
 A regra dos 2 projetos vale só para componente fora da tabela acima: ele só entra na biblioteca depois de usado em 2 projetos. Os componentes da tabela são a base do estúdio e entram direto, registrados no catálogo.
@@ -354,6 +367,20 @@ Cada onda fecha com PASSA, APROVADO (quando visual) e um commit do diretor. As o
 **Impeccable com uso restrito.** Neste projeto só passam `critique`, `audit`, `harden`, `clarify`, `polish` e `document`. Os comandos que criam estética (`bolder`, `colorize`, `overdrive`, `delight`, `animate`, `typeset`, `layout`) e os demais são negados por regras `Skill(args:…)` no `.claude/settings.json` e por uma lista branca no hook `.claude/hooks/impeccable-guard.mjs`, que também nega pedido livre e chamada sem comando. Os subagentes `impeccable-*` ficam bloqueados. Os hooks de detector da impeccable estão desligados neste projeto (`.impeccable/config.json`, `hook.enabled: false`).
 
 **Duração: interação rápida, cena lenta.** A regra da `review-animations` (animação de UI abaixo de 300ms) vale só para interação: hover, botão, menu, foco, toggle, controle de vídeo, com `--dur-fast` e `--ease-snap`. Não vale para cena e scroll (hero, revelações, `StatCounter`, galeria, footer, transição de página), que seguem os tokens do §5: `--dur-base`, `--dur-slow` e `--dur-scene`. O ritmo lento é o conceito da marca; o crítico não reprova duração de cena que usa o token certo.
+
+**Decisões da onda A (site Golden Grains):**
+
+- Marquee do `LogoWall`: exceção registrada ao "nada entra pelos lados" (movimento ambiente contínuo, não entrada). Regra no `DESIGN.md`.
+- `Nav` abaixo de 640px: CTA curto "Assinar" visível na barra, alvo ≥ 44px.
+- Troca de imagem no hover (`PortalCard`, `CollectionGrid`): o crossfade fica em `--dur-base` (500ms) como linguagem da marca; texto e cor que mudam no mesmo gesto vão para `--dur-fast`. Regra no `DESIGN.md`.
+- `Footer`: frase em 3 linhas ("Café bom" / "não tem" / "pressa.").
+- `HorizontalGallery`: sem pin com altura de janela abaixo de 700px (cai no scroll-snap). `CollectionGrid`: 3 colunas no desktop no site, como a `Spec_Golden_Grains.md` §6 seção 5; 4 colunas é variante só de desktop com mouse.
+- Constantes de motion do passo A0 aprovadas. Copy aprovada, com "Continuar" no lugar de "Reproduzir".
+- `CollectionGrid`: cada item é um link `wa.me` com a mensagem "Quero o lote <nome>", sem `tabindex` avulso. O número fica em `site.config.ts` (`SITE.whatsapp`), único dado fictício a trocar num cliente real.
+- `MediaFrame`: prop `focus` (`center | top | bottom | left | right`) para o ponto focal do recorte; é ela que resolve o 4:5 da Origem, sem arquivo derivado por slot.
+- Assets: busca por API cancelada. As imagens vêm geradas por IA no Google Flow, com os nomes atuais em `public/assets/images/`; original acima de 400KB vai para `assets-src/images/` e a versão servida é otimizada com o mesmo nome. Vídeo do hero em loop contínuo, sem áudio, até 3,5MB por formato.
+- Onda B, integração autorizada na sessão principal: `Nav` fora do `<main>` no `Site.tsx`; `padding-top` e `scroll-padding-top` com `--nav-height` na casca; âncoras do `Nav`: Origem, Cafés, Clube, Contato.
+- Tokens `--nav-*`, `--gallery-*` e `--collection-*` conferidos: derivam só de token semântico ou estrutural. As duas constantes cruas são contagem de coluna (`--gallery-item-span`) e fator de zoom (`--collection-zoom: 1.04`, o mesmo do `--portal-zoom`); nenhuma cor, fonte ou espaço novo.
 
 **Decisões da rodada 1 (site Golden Grains):**
 

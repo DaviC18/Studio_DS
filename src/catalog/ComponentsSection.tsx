@@ -3,7 +3,6 @@ import {
   Button,
   Container,
   HeroTitle,
-  MediaFrame,
   PortalCard,
   RevealText,
   Section,
@@ -14,9 +13,10 @@ import { CollectionGridDemo } from "./demos/CollectionGrid";
 import { FooterDemo } from "./demos/Footer";
 import { HorizontalGalleryDemo } from "./demos/HorizontalGallery";
 import { LogoWallDemo } from "./demos/LogoWall";
+import { MediaFrameDemo } from "./demos/MediaFrame";
 import { NavDemo } from "./demos/Nav";
 import { DocEntry, Variant } from "./DocEntry";
-import { IMAGE, PORTAL, VIDEO } from "./media";
+import { PORTAL } from "./media";
 
 /** Célula visível para demonstrar o layout. */
 function Cell({ children }: { children: ReactNode }) {
@@ -114,23 +114,7 @@ export function ComponentsSection() {
           </Container>
         </DocEntry>
 
-        <DocEntry
-          name="MediaFrame"
-          use="foto ou vídeo com proporção fixa (16:9, 4:5, 1:1) e legenda opcional; priority só no hero."
-          avoid="ícones ou logos (use img simples); vídeo com som ou que precisa de controles próprios."
-          snippet={`
-<MediaFrame ratio="video" caption="Torra da manhã"
-  media={{ kind: "image", src: "/assets/torra.webp", alt: "Grãos saindo do torrador" }} />
-<MediaFrame ratio="square" priority
-  media={{ kind: "video", ambient: true, label: "Fumaça", poster: "/assets/p.webp",
-           sources: [{ src: "/assets/v.webm", type: "video/webm" }] }} />`}
-        >
-          <Container layout="thirds" gap={12}>
-            <MediaFrame ratio="video" media={IMAGE.wide} caption="16:9, imagem" />
-            <MediaFrame ratio="portrait" media={IMAGE.tall} caption="4:5, imagem" />
-            <MediaFrame ratio="square" media={VIDEO} caption="1:1, vídeo de ambiente" />
-          </Container>
-        </DocEntry>
+        <MediaFrameDemo />
 
         <HorizontalGalleryDemo />
 

@@ -6,13 +6,21 @@ import { Button } from "./Button";
 
 export type NavLink = { label: string; href: string };
 
+/**
+ * CTA da barra. `shortLabel` é o rótulo abaixo de 640px, onde o label completo
+ * não cabe ao lado do wordmark e do botão Menu; a partir de 640px vale o
+ * `label`. O rótulo visível é também o nome acessível (WCAG 2.5.3): o leitor de
+ * tela lê o curto no mobile, dentro do landmark <nav> e com destino explícito.
+ */
+export type NavCta = NavLink & { shortLabel?: string };
+
 export type NavProps = {
   /** Wordmark em texto; o link volta ao topo (ex.: `#inicio`). */
   wordmark: NavLink;
   /** Âncoras da página. No desktop ficam na barra; abaixo de 1024px, no menu fullscreen. */
   links: readonly NavLink[];
-  /** CTA principal, renderizado com Button primary. */
-  cta: NavLink;
+  /** CTA principal, renderizado com Button primary. Sempre na barra. */
+  cta: NavCta;
   /** Nome do landmark <nav>. */
   label?: string;
 };
@@ -57,8 +65,11 @@ function AnchorLink({
       href={link.href}
       onClick={onClick}
       className={cx(
-        "group inline-flex min-h-(--touch-target) items-center",
-        size === "bar" ? "type-button" : "type-h2",
+        "group min-h-(--touch-target) items-center",
+        // Na barra o link mede o texto. No menu ele é a faixa inteira: ocupa a
+        // altura da fileira e a largura de borda a borda, com o texto na margem
+        // da página. Área de toque e anel de foco acompanham a faixa.
+        size === "bar" ? "inline-flex type-button" : "flex w-full px-(--page-margin) type-h2",
       )}
     >
       <span className="relative">
@@ -79,7 +90,8 @@ const isFilled = (l: NavLink) => !isEmptyText(l.label) && !isEmptyText(l.href);
  * Esconde ao rolar para baixo e volta ao rolar para cima, só com transform;
  * nunca esconde perto do topo, com foco dentro ou com o menu aberto.
  * Fixo e de altura fixa: não empurra o hero nem gera CLS. A seção abaixo
- * reserva o espaço com --nav-height.
+ * reserva o espaço com --nav-height. O CTA fica sempre na barra: abaixo de
+ * 640px com `cta.shortLabel`, a partir de 640px com `cta.label`.
  */
 export function Nav({ wordmark, links, cta, label = "Principal" }: NavProps) {
   const root = useRef<HTMLElement>(null);
@@ -89,19 +101,23 @@ export function Nav({ wordmark, links, cta, label = "Principal" }: NavProps) {
   const [scrolledAway, setScrolledAway] = useState(false);
   const [focusWithin, setFocusWithin] = useState(false);
   const items = links.filter(isFilled);
+  // shortLabel vazio cai no label completo (o dev.error avisa em DEV).
+  const short = isEmptyText(cta.shortLabel) ? undefined : cta.shortLabel;
   const hidden = scrolledAway && !open && !focusWithin;
 
   useEffect(() => {
     if (!import.meta.env.DEV) return;
     if (isEmptyText(wordmark.label))
       console.error("Nav: wordmark vazio. O link de topo fica sem nome.");
+    if (cta.shortLabel !== undefined && isEmptyText(cta.shortLabel))
+      console.error("Nav: cta.shortLabel vazio. Abaixo de 640px o CTA usa o label completo.");
     links.forEach((l, i) => {
       if (!isFilled(l))
         console.error(
           `Nav: link ${i} com label ou href vazio (label="${l.label}", href="${l.href}"). Ele não é renderizado.`,
         );
     });
-  }, [wordmark.label, links]);
+  }, [wordmark.label, links, cta.shortLabel]);
 
   // Direção da rolagem. Lê window.scrollY (o Lenis rola a janela), então
   // funciona com e sem smooth. Re-render só quando o estado muda.
@@ -130,12 +146,16 @@ export function Nav({ wordmark, links, cta, label = "Principal" }: NavProps) {
     const html = document.documentElement;
     const previous = html.style.overflow;
     html.style.overflow = "hidden";
-    // Primeiro item visível do menu (sem links, o CTA; a partir de 640px o CTA
-    // do menu é display: none e fica de fora).
+    // Primeiro item visível do menu. Sem links o menu não tem foco nenhum: o
+    // foco fica no botão Menu, que o trap já segura junto com a barra.
     const panel = document.getElementById(panelId);
+    // preventScroll: a cortina é fixa na janela e a página está travada, então
+    // não há nada para rolar; sem ele o navegador rola o documento atrás da
+    // cortina para "mostrar" o link focado (visível na moldura do catálogo,
+    // onde o transform ancora os filhos fixos).
     [...(panel?.querySelectorAll<HTMLElement>(FOCUSABLE) ?? [])]
       .find((el) => el.getClientRects().length > 0)
-      ?.focus();
+      ?.focus({ preventScroll: true });
 
     const onKey = (e: globalThis.KeyboardEvent) => {
       if (e.key !== "Escape") return;
@@ -188,14 +208,22 @@ export function Nav({ wordmark, links, cta, label = "Principal" }: NavProps) {
       }}
     >
       <div className={cx(BAR, hidden && BAR_HIDDEN)}>
-        <div className="flex h-full items-center justify-between gap-6 px-(--page-margin)">
+        {/* Orçamento em 375px (margem 2×16px → 343px), medido no navegador com
+         * as fontes carregadas: wordmark "Golden Grains" 106px (Big Shoulders
+         * 24px/600), CTA "Assinar" 107,6px, toggle "Menu" 94,8px e "Fechar"
+         * 103,2px (Literata 16px/500 + px-6, borda). O pior caso é o menu
+         * aberto, porque "Fechar" é mais largo que "Menu": 106 + 107,6 + 103,2
+         * = 316,8px, mais gap-4 fora e gap-2 entre os botões = 340,8px, ou seja
+         * 2,2px de folga. Com o menu fechado sobram 10,6px. É apertado de
+         * propósito: o wordmark trunca antes de qualquer coisa estourar. */}
+        <div className="flex h-full items-center justify-between gap-4 px-(--page-margin) sm:gap-6">
           <a
             href={wordmark.href}
             className="inline-flex min-h-(--touch-target) min-w-0 items-center type-h3"
           >
             <span className="min-w-0 truncate">{wordmark.label}</span>
           </a>
-          <div className="flex shrink-0 items-center gap-6">
+          <div className="flex shrink-0 items-center gap-2 sm:gap-6">
             <nav aria-label={label} className="hidden lg:block">
               <ul className="flex items-center gap-6">
                 {items.map((l, i) => (
@@ -205,9 +233,21 @@ export function Nav({ wordmark, links, cta, label = "Principal" }: NavProps) {
                 ))}
               </ul>
             </nav>
-            {/* nowrap herdado: o CTA não quebra linha e não estoura a altura da barra. */}
-            <div className="hidden whitespace-nowrap sm:block">
-              <Button href={cta.href}>{cta.label}</Button>
+            {/* nowrap herdado: o CTA não quebra linha e não estoura a altura da barra.
+             * Os dois rótulos convivem no HTML; o escondido sai da árvore de
+             * acessibilidade por display: none, então o nome acessível é sempre
+             * o texto visível e não há CTA duplicado para o leitor de tela. */}
+            <div className="whitespace-nowrap">
+              <Button href={cta.href}>
+                {short ? (
+                  <>
+                    <span className="sm:hidden">{short}</span>
+                    <span className="hidden sm:inline">{cta.label}</span>
+                  </>
+                ) : (
+                  cta.label
+                )}
+              </Button>
             </div>
             <div className="lg:hidden">
               <Button
@@ -225,22 +265,24 @@ export function Nav({ wordmark, links, cta, label = "Principal" }: NavProps) {
       </div>
 
       <div id={panelId} inert={!open} className={cx(PANEL, open ? PANEL_OPEN : PANEL_CLOSED)}>
-        <div className="flex grow flex-col justify-between gap-12 px-(--page-margin) py-8">
-          <nav aria-label={label}>
-            <ul className="flex flex-col gap-4">
-              {items.map((l, i) => (
-                <li key={`${i}-${l.href}`}>
-                  <AnchorLink link={l} size="menu" onClick={close} />
-                </li>
-              ))}
-            </ul>
-          </nav>
-          <div className="sm:hidden">
-            <Button href={cta.href} onClick={close}>
-              {cta.label}
-            </Button>
-          </div>
-        </div>
+        {/* Sem CTA aqui: a barra tem z maior que a cortina e continua na tela
+         * com o menu aberto, então o CTA segue a um toque. Um CTA por tela
+         * também evita dois links com o mesmo nome acessível.
+         * Cartaz, não lista solta: as âncoras viram fileiras de altura igual
+         * (flex-1) separadas por fio, de borda a borda. O bloco ocupa toda a
+         * altura livre abaixo da barra e toda a largura, então em 768px e em
+         * 1023px não sobra canto mudo. Em janela baixa cada fileira para na
+         * altura do próprio conteúdo (min-height auto do flex) e o painel
+         * rola, sem corte. Sem gap: a distância é a própria fileira. */}
+        <nav aria-label={label} className="flex grow flex-col py-8">
+          <ul className="flex grow flex-col border-t border-(--color-line)">
+            {items.map((l, i) => (
+              <li key={`${i}-${l.href}`} className="flex flex-1 border-b border-(--color-line)">
+                <AnchorLink link={l} size="menu" onClick={close} />
+              </li>
+            ))}
+          </ul>
+        </nav>
       </div>
     </header>
   );

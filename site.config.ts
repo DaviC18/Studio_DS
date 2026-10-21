@@ -14,10 +14,21 @@ export type SiteConfig = {
   readonly mode: SiteMode;
   /** false: <meta name="robots" content="noindex"> no site e robots.txt com Disallow: /. */
   readonly indexable: boolean;
+  /**
+   * Número do WhatsApp do CTA principal, com código do país. Vira link wa.me em
+   * src/lib/whatsapp.ts, que usa só os dígitos — separadores são livres.
+   *
+   * É o único dado fictício do site (Spec Golden Grains §2): num cliente real,
+   * trocar este campo é a única mudança de dado necessária.
+   */
+  readonly whatsapp: string;
 };
 
 export const SITE: SiteConfig = {
   theme: "torrefacao",
   mode: "production",
   indexable: true,
+  // Placeholder fictício: prefixo 5511 (Brasil, São Paulo) e número 90000-0000,
+  // que não existe. Trocar pelo número real do cliente antes de publicar.
+  whatsapp: "+55 11 90000-0000",
 };

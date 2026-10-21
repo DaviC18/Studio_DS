@@ -1,4 +1,4 @@
-import { createElement, useEffect, useId, useRef } from "react";
+import { createElement, useEffect, useRef } from "react";
 import { cx } from "../../lib/cx";
 import { isEmptyText } from "../../lib/dev";
 import {
@@ -16,7 +16,12 @@ import { RATIO, type MediaRatio } from "./ratio";
 export type CollectionImage = { src: string; srcSet?: string; sizes?: string };
 
 export type CollectionItem = {
-  /** Nome do item. Obrigatório: é o nome acessível do item focável. */
+  /**
+   * Destino do item. Obrigatório: o item inteiro é um link, como no PortalCard.
+   * Para o CTA do clube, use whatsappHref() (src/lib/whatsapp.ts).
+   */
+  href: string;
+  /** Nome do item. Obrigatório: abre o nome acessível do link. */
   name: string;
   /** Linha curta embaixo do nome (ex.: processo do lote). */
   process?: string;
@@ -83,35 +88,26 @@ function Item({
   ratio: MediaRatio;
   nameAs: "h3" | "h4";
 }) {
-  const id = useId();
-  const nameId = `${id}-name`;
-  const described = [
-    `${id}-highlight`,
-    item.process && `${id}-process`,
-    item.notes && `${id}-notes`,
-  ]
-    .filter(Boolean)
-    .join(" ");
-
   useEffect(() => {
     if (!import.meta.env.DEV) return;
     if (isEmptyText(item.name)) {
-      console.error("CollectionGrid: item com name vazio. O item focável fica sem nome acessível.");
+      console.error(
+        `CollectionGrid: item com name vazio (href="${item.href}"). O link fica sem nome acessível.`,
+      );
     }
     if (isEmptyText(item.highlight)) {
       console.error(`CollectionGrid: item "${item.name}" com highlight vazio.`);
     }
-  }, [item.name, item.highlight]);
+  }, [item.name, item.highlight, item.href]);
 
-  // Item focável sem ação: não é link nem botão, então não ganha role
-  // interativo. O foco existe para o teclado ver o estado ativo (SPEC §8).
+  // O item inteiro é um link, e o nome acessível vem do texto visível (nome,
+  // pontuação, processo e notas), como no PortalCard: nada de tabIndex avulso
+  // nem de aria-labelledby/describedby.
   return (
     <li>
-      <article
+      <a
         data-collection-item
-        tabIndex={0}
-        aria-labelledby={nameId}
-        aria-describedby={described}
+        href={item.href}
         className="group block rounded-(--collection-radius)"
       >
         <div
@@ -140,8 +136,8 @@ function Item({
             o nome não parte no meio da palavra; sem espaço, a pontuação desce
             para a linha de baixo (flex-wrap). */}
         <div className="mt-4 flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1">
-          {createElement(nameAs, { id: nameId, className: "type-h3" }, item.name)}
-          <p id={`${id}-highlight`} className="shrink-0 type-h3 tabular-nums">
+          {createElement(nameAs, { className: "type-h3" }, item.name)}
+          <p className="shrink-0 type-h3 tabular-nums">
             {/* Duas cópias na mesma célula: a troca de cor é só opacity. */}
             <span className="inline-grid *:col-start-1 *:row-start-1">
               <span className={cx("transition-opacity duration-fast ease-snap", ACTIVE_HIDE)}>
@@ -162,26 +158,19 @@ function Item({
             )}
           </p>
         </div>
-        {item.process && (
-          <p id={`${id}-process`} className="mt-1 type-micro text-ink-muted">
-            {item.process}
-          </p>
-        )}
-        {item.notes && (
-          <p id={`${id}-notes`} className="mt-2 max-w-measure type-body text-ink-muted">
-            {item.notes}
-          </p>
-        )}
-      </article>
+        {item.process && <p className="mt-1 type-micro text-ink-muted">{item.process}</p>}
+        {item.notes && <p className="mt-2 max-w-measure type-body text-ink-muted">{item.notes}</p>}
+      </a>
     </li>
   );
 }
 
 /**
- * Grid de itens colecionáveis (SPEC §8): cada item troca a imagem base pela
- * ativa no hover, no foco por teclado e, sem hover (toque), quando cruza o
- * centro da tela, um item por vez. Imagens absolute na proporção fixa: sem layout shift. Texto
- * real fora da imagem; no estado ativo o destaque vai para o acento.
+ * Grid de itens colecionáveis (SPEC §8): cada item é um link (no Golden Grains,
+ * o wa.me do lote) e troca a imagem base pela ativa no hover, no foco por
+ * teclado e, sem hover (toque), quando cruza o centro da tela, um item por vez.
+ * Imagens absolute na proporção fixa: sem layout shift. Texto real fora da
+ * imagem; no estado ativo o destaque vai para o acento.
  */
 export function CollectionGrid({
   items,
