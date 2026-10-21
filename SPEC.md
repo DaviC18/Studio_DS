@@ -303,7 +303,7 @@ Fluxo:
 1. **Você (diretor)** fecha as seções 1 a 6 da spec.
 2. **Orquestrador** divide a spec em tarefas.
 3. **Agentes executores:** Fundação (tokens e componentes) → depois, em paralelo, Seções (1 agente por seção) e Motion e 3D (3D, Rive e transições).
-4. **Revisor (QA)** checa os critérios da seção 10. Depois do PASSA, toda entrega visual (seção, componente que aparece na página, motion) vai ao **Crítico**, que julga a direção de arte contra o `DESIGN.md`. Reprovado por qualquer um dos dois: volta ao agente da tarefa. No máximo 2 voltas por tarefa, somando revisor e crítico; se uma terceira fosse necessária, o orquestrador para e pergunta ao diretor.
+4. **Revisor (QA)** checa os critérios da seção 10. Depois do PASSA, **só a entrega visual** (seção, componente que aparece na página, motion) vai ao **Crítico**, que julga a direção de arte contra o `DESIGN.md`. Reprovado por qualquer um dos dois: volta ao agente da tarefa. Limite de voltas por tarefa, somando revisor e crítico: 2 em geral, 1 para ajuste pequeno; estourou, o orquestrador para e pergunta ao diretor (ver "Orçamento de revisão").
 5. **Rodada 7:** antes da sua revisão, um passe de `impeccable polish`, `harden` e `clarify`, cada dono nos próprios arquivos, e de novo revisor e crítico.
 6. **Você** faz a revisão visual em celular real e desktop.
 7. **Deploy na Vercel** com link de preview para o cliente.
@@ -346,10 +346,26 @@ O orquestrador não edita código. O resto (`vite.config.ts`, `index.html`, `cat
 2. Arquivos compartilhados (`src/App.tsx`, `src/Site.tsx`, `src/components/ds/index.ts`, o registro do catálogo em `src/catalog/ComponentsSection.tsx`, `SPEC.md`, `package.json` e o lockfile) não são tocados pelos executores. Cada um lista o que precisa entrar neles, e a sessão principal integra no fim da onda. É a única edição de código do orquestrador.
 3. Demos do catálogo em arquivos separados, `src/catalog/demos/<Nome>.tsx`, para dois agentes não editarem o mesmo arquivo.
 4. Executores em paralelo rodam só `npx tsc -p tsconfig.app.json --noEmit --incremental false` e `npm run lint`, nunca `npm run build`, porque o `dist/` é compartilhado. Build, Lighthouse, revisor e crítico rodam uma vez, depois da integração da onda.
-5. Revisão por onda: revisor primeiro, crítico depois, sobre o mesmo build. Reprovação volta só para o agente dono do item; o limite de 2 voltas vale por item.
+5. Revisão por onda: revisor primeiro, crítico depois, sobre o mesmo build, cada um com a sua porta de preview quando rodarem em paralelo (4173 e 4174). Reprovação volta só para o agente dono do item, e o recheque é no modo volta (ver "Orçamento de revisão").
 6. Se dois agentes precisarem do mesmo arquivo, o orquestrador serializa essas tarefas em vez de paralelizar.
 
 Cada onda fecha com PASSA, APROVADO (quando visual) e um commit do diretor. As ondas agrupam as rodadas do §8 da `Spec_Golden_Grains.md` sem mudar o conteúdo delas.
+
+**Orçamento de revisão** (decisão do diretor, rodada 6). A revisão completa custa caro e a maior parte desse custo não muda o veredito. O rigor fica inteiro no fim de cada onda; no meio, a revisão é proporcional.
+
+| | o que roda |
+| --- | --- |
+| **Revisão intermediária** | checks completos do revisor, com **1 execução** do Lighthouse |
+| **Revisão final da onda** | checks completos, com **3 execuções** do Lighthouse e a **mediana** de cada métrica (mais o intervalo nas que ficarem perto do limite do §10) |
+| **Volta** (recheque de correção) | só os itens corrigidos, mais lint e build (frescor do `dist/` + `check-bundle`). **Sem Lighthouse e sem varredura de regressão**; o veredito anterior continua valendo para o resto |
+
+O orquestrador diz o modo no prompt do revisor; sem modo declarado, o revisor pergunta antes de revisar.
+
+**O crítico só vê item visual.** Documentação, spec, configuração, constante, token solto e **copy** fecham com o PASSA do revisor e não passam por ele. Copy é do diretor: dentro de um item visual, o crítico critica a composição e, se o texto for mesmo o problema, isso vira pergunta para o diretor, nunca ajuste.
+
+**Voltas por tamanho do ajuste.** Ajuste pequeno — copy, uma constante, um token de duração, um rótulo, um número num comentário — tem **1 volta**; se a primeira não resolver, o orquestrador para e pergunta ao diretor em vez de tentar de novo. Composição, layout, motion e acessibilidade seguem com 2.
+
+**Medição.** O orquestrador reporta, no resumo de cada onda, a duração de cada agente (`duration_ms` da notificação de tarefa), somada por papel, e o total do relógio da onda. Linha de base da onda R (tudo em Opus, revisão completa, antes destas regras): revisor 988 s na revisão cheia e 245 s na volta; crítico 1.412 s na crítica cheia e 347 s na volta; `fundacao` 414 s + 379 s no conserto. Em teste desde a rodada 6: `model: sonnet` no revisor, que é checagem mecânica. O crítico fica no modelo de antes, porque a nota de estúdio é julgamento.
 
 **Estética travada.** `DESIGN.md` (gerado do código pela `impeccable document`; North Star "A Torra Lenta") e `PRODUCT.md` (da `Spec_Golden_Grains.md`) são o critério de direção de arte. O código vence o `DESIGN.md`: se divergirem, regenera-se o arquivo. Mudar token, tema ou um desses arquivos é decisão do diretor.
 
